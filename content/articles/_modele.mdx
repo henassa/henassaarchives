@@ -1,0 +1,28 @@
+---
+# MODÈLE D'ARTICLE
+# Copie ce fichier, renomme-le sans le « _ » du début (ex. mon-article.mdx).
+# Le nom du fichier devient l'adresse : /articles/mon-article
+# Les fichiers qui commencent par « _ » ne sont pas publiés.
+
+title: "Titre complet de l'article"      # obligatoire
+display: "Mot géant"                      # facultatif : ce qui s'affiche en très grand (par défaut : le titre)
+echo: "Mot gothique"                      # facultatif : le mot en gothique derrière (par défaut : display)
+dek: "Le chapô, une ou deux phrases."    # facultatif
+date: 2026-10-01                          # obligatoire, format AAAA-MM-JJ
+categorie: "Musique"                      # facultatif : étiquette de catégorie
+auteur: "Ton nom"                         # facultatif : affiché « Écrit par … » sur l'article et dans la liste
+couleur: "#FF4D3D"                        # facultatif : couleur de l'article (écho, étiquette, citations)
+une: false                                # true pour le mettre à la une de l'accueil
+
+cover: /images/mon-image.jpg              # facultatif : image dans le dossier public/images
+coverAlt: "Ce que montre l'image"
+credit: "Illustration : Nom"
+---
+
+Ton texte ici, en Markdown.
+
+## Un intertitre
+
+<Citation>Une phrase forte, affichée en grand dans la couleur de l'article.</Citation>
+
+<Image src="/images/autre-image.jpg" alt="Description" legende="Légende facultative" />
