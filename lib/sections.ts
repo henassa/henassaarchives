@@ -7,6 +7,12 @@ export const SECTIONS = {
   playlist: { label: "Playlist", href: "/playlist", couleur: "#FFC928" },
 } as const;
 
+// Bouton Instagram du menu : colle ici le lien de ton compte.
+export const INSTAGRAM = {
+  url: "https://www.instagram.com/henassaa",
+  couleur: "#E1306C",
+};
+
 // Bouton Discord du menu : colle ici ton lien d'invitation
 // (Discord → ton serveur → Inviter des gens → « Modifier le lien » → n'expire jamais).
 export const DISCORD = {

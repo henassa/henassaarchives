@@ -22,7 +22,14 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/ea-monster.jpg",
       "media": "https://www.youtube.com/watch?v=VRc9FDF7KTk",
-      "liens": ["s-x-m-ney-dr-gs", "madman", "monster", "savage-mode", "glotoven", "playboi-carti"]
+      "liens": [
+        "s-x-m-ney-dr-gs",
+        "madman",
+        "monster",
+        "savage-mode",
+        "glotoven",
+        "playboi-carti"
+      ]
     },
     {
       "id": "s-x-m-ney-dr-gs",
@@ -69,6 +76,39 @@
       "liens": ["long-live-mexico", "barter-6", "jeune-morty-vol-1"]
     },
     {
+      "id": "summer-s-mine",
+      "titre": "Summer's Mine",
+      "auteur": "Babyface Ray",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Hip-Hop",
+      "cover": "/images/oeuvres/summer-s-mine.jpg",
+      "media": "https://www.youtube.com/watch?v=BDo5XTyt0f8",
+      "liens": ["summer-s-mine", "fada-3of"]
+    },
+      {
+      "id": "tee-s-coney-island.jpg",
+      "titre": "Tee's Coney Island",
+      "auteur": "Tee Grizzley",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Hip-Hop",
+      "cover": "/images/oeuvres/tee-s-coney-island.jpg",
+      "media": "https://www.youtube.com/watch?v=TB1tZAvjIZg",
+      "liens": ["summer-s-mine"]
+    },
+        {
+      "id": "beezy",
+      "titre": "BEEZY",
+      "auteur": "Doe Boy",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Hip-Hop",
+      "cover": "/images/oeuvres/beezy.jpg",
+      "media": "https://www.youtube.com/watch?v=VoZJF3cl22k",
+      "liens": ["summer-s-mine"]
+    },
+       {
       "id": "applying-pressure",
       "titre": "Applying Pressure",
       "auteur": "BandGang Paid Will",
@@ -77,7 +117,7 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/applying-pressure.jpg",
       "media": "https://www.youtube.com/watch?v=z1Q0u_UXQjs",
-      "liens": []
+      "liens": ["summer-s-mine"]
     },
     {
       "id": "memories-of-tokyo-to",
@@ -88,7 +128,12 @@
       "genre": "Big Beat",
       "cover": "/images/oeuvres/memories-of-tokyo-to.jpg",
       "media": "https://www.youtube.com/watch?v=kP-_CGyM9Yk",
-      "liens": ["groove-rush", "jet-set-radio-sega-original-tracks", "euphonic-rush", "true-magic"]
+      "liens": [
+        "groove-rush",
+        "jet-set-radio-sega-original-tracks",
+        "euphonic-rush",
+        "true-magic"
+      ]
     },
     {
       "id": "dmvp-extend",
@@ -209,7 +254,12 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/god-don-t-make-mistakes.jpg",
       "media": "https://www.youtube.com/watch?v=bMEUkIIe1eE",
-      "liens": ["the-b-coming", "reloaded", "only-built-4-cuban-linx", "return-of-the-mac"]
+      "liens": [
+        "the-b-coming",
+        "reloaded",
+        "only-built-4-cuban-linx",
+        "return-of-the-mac"
+      ]
     },
     {
       "id": "uw6",
@@ -242,7 +292,12 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/only-built-4-cuban-linx.jpg",
       "media": "https://www.youtube.com/watch?v=_xj5AcHcl9E",
-      "liens": ["deeper-than-rap", "god-don-t-make-mistakes", "alfredo", "don-cartagena"]
+      "liens": [
+        "deeper-than-rap",
+        "god-don-t-make-mistakes",
+        "alfredo",
+        "don-cartagena"
+      ]
     },
     {
       "id": "don-cartagena",
@@ -253,7 +308,11 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/don-cartagena.jpg",
       "media": "https://www.youtube.com/watch?v=mI-63G8itt0",
-      "liens": ["deeper-than-rap", "only-built-4-cuban-linx", "return-of-the-mac"]
+      "liens": [
+        "deeper-than-rap",
+        "only-built-4-cuban-linx",
+        "return-of-the-mac"
+      ]
     },
     {
       "id": "hard-core",
@@ -319,7 +378,15 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/burning-desire.jpg",
       "media": "https://www.youtube.com/watch?v=B_YoH-KQmJQ",
-      "liens": ["wap-konn-joj", "dali-aint-dead", "lerado-khalil-surf-gang", "unorthodox", "you-only-die-1nce", "fada-3of", "ways-of-knowing"]
+      "liens": [
+        "wap-konn-joj",
+        "dali-aint-dead",
+        "lerado-khalil-surf-gang",
+        "unorthodox",
+        "you-only-die-1nce",
+        "fada-3of",
+        "ways-of-knowing"
+      ]
     },
     {
       "id": "dali-aint-dead",
@@ -341,7 +408,13 @@
       "genre": "Alt-Pop",
       "cover": "/images/oeuvres/choke-enough.jpg",
       "media": "https://www.youtube.com/watch?v=rfCOUn9zOPY",
-      "liens": ["segunda-temporada", "vanities", "raven", "u", "the-road-to-hell-is-paved-with-good-intentions"]
+      "liens": [
+        "segunda-temporada",
+        "vanities",
+        "raven",
+        "u",
+        "the-road-to-hell-is-paved-with-good-intentions"
+      ]
     },
     {
       "id": "segunda-temporada",
@@ -396,7 +469,12 @@
       "genre": "Alternative R&B",
       "cover": "/images/oeuvres/play-with-the-changes.jpg",
       "media": "https://www.youtube.com/watch?v=cdbVegCND_Y",
-      "liens": ["raven", "overgrown", "the-road-to-hell-is-paved-with-good-intentions", "still"]
+      "liens": [
+        "raven",
+        "overgrown",
+        "the-road-to-hell-is-paved-with-good-intentions",
+        "still"
+      ]
     },
     {
       "id": "overgrown",
@@ -495,7 +573,12 @@
       "genre": "Downtempo",
       "cover": "/images/oeuvres/still.jpg",
       "media": "https://www.youtube.com/watch?v=Tfl5Yn_0r88",
-      "liens": ["play-with-the-changes", "the-road-to-hell-is-paved-with-good-intentions", "essex-honey", "suntub"]
+      "liens": [
+        "play-with-the-changes",
+        "the-road-to-hell-is-paved-with-good-intentions",
+        "essex-honey",
+        "suntub"
+      ]
     },
     {
       "id": "essex-honey",
@@ -528,7 +611,12 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/savage-mode.jpg",
       "media": "https://www.youtube.com/watch?v=0EIKUh6GWzc",
-      "liens": ["ea-monster", "monster", "nightmare-on-e-street", "slime-ball-2"]
+      "liens": [
+        "ea-monster",
+        "monster",
+        "nightmare-on-e-street",
+        "slime-ball-2"
+      ]
     },
     {
       "id": "nightmare-on-e-street",
@@ -605,7 +693,17 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/a-futuristic-summa.jpg",
       "media": "https://www.youtube.com/watch?v=uaMp0nld1x4",
-      "liens": ["ready-set-go", "mr-futuristic", "jamboree", "i-think-i-can-sang", "still-shop", "the-deandre-way", "married-to-the-money", "the-state-vs-radric-davis", "forever-i-love-atlanta"]
+      "liens": [
+        "ready-set-go",
+        "mr-futuristic",
+        "jamboree",
+        "i-think-i-can-sang",
+        "still-shop",
+        "the-deandre-way",
+        "married-to-the-money",
+        "the-state-vs-radric-davis",
+        "forever-i-love-atlanta"
+      ]
     },
     {
       "id": "mr-futuristic",
@@ -671,7 +769,13 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/married-to-the-money.jpg",
       "media": "https://www.youtube.com/watch?v=_2TZboOJdig",
-      "liens": ["a-futuristic-summa", "almighty-so", "super-saiyan-vol-1", "dope-n-music", "glossip-girl-part-1"]
+      "liens": [
+        "a-futuristic-summa",
+        "almighty-so",
+        "super-saiyan-vol-1",
+        "dope-n-music",
+        "glossip-girl-part-1"
+      ]
     },
     {
       "id": "the-state-vs-radric-davis",
@@ -704,7 +808,14 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/almighty-so.jpg",
       "media": "https://www.youtube.com/watch?v=Lo45KFdTYjs",
-      "liens": ["slime-ball-2", "married-to-the-money", "the-state-vs-radric-davis", "playboi-carti", "que-la-famille", "glossip-girl-part-1"]
+      "liens": [
+        "slime-ball-2",
+        "married-to-the-money",
+        "the-state-vs-radric-davis",
+        "playboi-carti",
+        "que-la-famille",
+        "glossip-girl-part-1"
+      ]
     },
     {
       "id": "forever-i-love-atlanta",
@@ -770,7 +881,13 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/whole-lotta-red.jpg",
       "media": "https://www.youtube.com/watch?v=3wO10rIofGw",
-      "liens": ["king-pin", "playboi-carti", "a-great-chaos", "cold-visions", "rest-in-bass-encore"]
+      "liens": [
+        "king-pin",
+        "playboi-carti",
+        "a-great-chaos",
+        "cold-visions",
+        "rest-in-bass-encore"
+      ]
     },
     {
       "id": "a-great-chaos",
@@ -813,7 +930,7 @@
       "type": "album",
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/high-anxiety.jpg",
-      "media": "https://www.youtube.com/watch?v=rQJasBcOgpw",
+      "media": "https://www.youtube.com/watch?v=D0L9f6IH0",
       "liens": ["rest-in-bass-encore"]
     },
     {
@@ -891,7 +1008,16 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/oi.jpg",
       "media": "https://www.youtube.com/watch?v=b4MbPMFI2Ws",
-      "liens": ["fingers-crossed", "new-world-order", "xavier", "flight-233", "blair-babies", "steeze-kills", "black-british-music-2025", "conglomerate"]
+      "liens": [
+        "fingers-crossed",
+        "new-world-order",
+        "xavier",
+        "flight-233",
+        "blair-babies",
+        "steeze-kills",
+        "black-british-music-2025",
+        "conglomerate"
+      ]
     },
     {
       "id": "flight-233",
@@ -923,7 +1049,7 @@
       "type": "album",
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/steeze-kills.jpg",
-      "media": "https://www.youtube.com/watch?v=YxZOIS9W74",
+      "media": "https://www.youtube.com/watch?v=55ND9-3Euq8",
       "liens": ["oi"]
     },
     {
@@ -946,7 +1072,13 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/jeune-morty-vol-1.jpg",
       "media": "https://www.youtube.com/watch?v=Jbxm9QRuJpA",
-      "liens": ["saaheem", "conglomerate", "la-vie-en-violet", "sans-frontiere-toute-la-terre", "dirty-sprite-19"]
+      "liens": [
+        "saaheem",
+        "conglomerate",
+        "la-vie-en-violet",
+        "sans-frontiere-toute-la-terre",
+        "dirty-sprite-19"
+      ]
     },
     {
       "id": "conglomerate",
@@ -957,7 +1089,13 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/conglomerate.jpg",
       "media": "https://www.youtube.com/watch?v=YLvJ10WQdzY",
-      "liens": ["fingers-crossed", "new-world-order", "oi", "black-british-music-2025", "jeune-morty-vol-1"]
+      "liens": [
+        "fingers-crossed",
+        "new-world-order",
+        "oi",
+        "black-british-music-2025",
+        "jeune-morty-vol-1"
+      ]
     },
     {
       "id": "la-vie-en-violet",
@@ -979,7 +1117,12 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/sans-frontiere-toute-la-terre.jpg",
       "media": "https://www.youtube.com/watch?v=bbzn507j6Ds",
-      "liens": ["jeune-morty-vol-1", "lerado-khalil-surf-gang", "unorthodox", "club-godfather"]
+      "liens": [
+        "jeune-morty-vol-1",
+        "lerado-khalil-surf-gang",
+        "unorthodox",
+        "club-godfather"
+      ]
     },
     {
       "id": "titan",
@@ -1001,7 +1144,12 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/que-la-famille.jpg",
       "media": "https://www.youtube.com/watch?v=8eXdXBlVGcg",
-      "liens": ["le-son-d-apres", "nightmare-on-e-street", "almighty-so", "titan"]
+      "liens": [
+        "le-son-d-apres",
+        "nightmare-on-e-street",
+        "almighty-so",
+        "titan"
+      ]
     },
     {
       "id": "dirty-sprite-19",
@@ -1078,7 +1226,15 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/lerado-khalil-surf-gang.jpg",
       "media": "https://www.youtube.com/watch?v=qEE4KSQi74w",
-      "liens": ["burning-desire", "a-dog-s-chance", "sans-frontiere-toute-la-terre", "jackzebra", "unorthodox", "casts-of-a-dreamer", "fada-3of"]
+      "liens": [
+        "burning-desire",
+        "a-dog-s-chance",
+        "sans-frontiere-toute-la-terre",
+        "jackzebra",
+        "unorthodox",
+        "casts-of-a-dreamer",
+        "fada-3of"
+      ]
     },
     {
       "id": "unorthodox",
@@ -1089,7 +1245,12 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/unorthodox.jpg",
       "media": "https://www.youtube.com/watch?v=_S2CmRxxE2I",
-      "liens": ["burning-desire", "sans-frontiere-toute-la-terre", "lerado-khalil-surf-gang", "club-godfather"]
+      "liens": [
+        "burning-desire",
+        "sans-frontiere-toute-la-terre",
+        "lerado-khalil-surf-gang",
+        "club-godfather"
+      ]
     },
     {
       "id": "casts-of-a-dreamer",
@@ -1133,7 +1294,14 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/fada-3of.jpg",
       "media": "https://www.youtube.com/watch?v=GUWIeEXxuEw",
-      "liens": ["burning-desire", "dali-aint-dead", "lerado-khalil-surf-gang", "casts-of-a-dreamer", "you-only-die-1nce"]
+      "liens": [
+        "burning-desire",
+        "dali-aint-dead",
+        "lerado-khalil-surf-gang",
+        "casts-of-a-dreamer",
+        "you-only-die-1nce",
+        "summer-s-mine"
+      ]
     },
     {
       "id": "chun",
@@ -1143,7 +1311,7 @@
       "type": "album",
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/chun.jpg",
-      "media": "https://www.youtube.com/watch?v=rRB1RpO-CSk",
+      "media": "https://www.youtube.com/watch?v=0p-2PTo4mQg",
       "liens": ["jackzebra", "dong-ji-lian-ge"]
     },
     {
@@ -1265,7 +1433,51 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/les-2-pieds-d-dans.jpg",
       "media": "https://www.youtube.com/watch?v=9b9IqYWcwYw",
-      "liens": ["adc", "hegemonie"]
+      "liens": ["adc", "hegemonie", "dont-trust-me", "trife-god"]
+    },
+    {
+      "id": "strictly-only-brothers",
+      "titre": "Strictly Only Brothers",
+      "auteur": "SOB x RBE",
+      "annee": 2019,
+      "type": "album",
+      "genre": "Hip-Hop",
+      "cover": "/images/oeuvres/strictly-only-brothers.jpg",
+      "media": "https://www.youtube.com/watch?v=WAENFxJOp8Q",
+      "liens": ["dont-trust-me"]
+    },
+      {
+      "id": "parkside-baby",
+      "titre": "Parkside Baby",
+      "auteur": "MoneySign Suede",
+      "annee": 2022,
+      "type": "album",
+      "genre": "Hip-Hop",
+      "cover": "/images/oeuvres/parkside-baby.jpg",
+      "media": "https://www.youtube.com/watch?v=kMLoCxvSSSY",
+      "liens": ["strictly-only-brothers"]
+    },
+    {
+      "id": "dont-trust-me",
+      "titre": "Don't Trust Me",
+      "auteur": "EBK Jaaybo",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip-Hop",
+      "cover": "/images/oeuvres/dont-trust-me.jpg",
+      "media": "https://www.youtube.com/watch?v=barHZWJp15M",
+      "liens": ["les-2-pieds-d-dans", "dont-trust-me"]
+    },
+       {
+      "id": "trife-god",
+      "titre": "Trife God",
+      "auteur": "EBK Bckdoe",
+      "annee": 2022,
+      "type": "album",
+      "genre": "Hip-Hop",
+      "cover": "/images/oeuvres/trife-god.jpg",
+      "media": "https://www.youtube.com/watch?v=UG0J3wRFhK8",
+      "liens": ["les-2-pieds-d-dans", "dont-trust-me"]
     },
     {
       "id": "e-music",
@@ -1364,7 +1576,11 @@
       "genre": "Hip-Hop",
       "cover": "/images/oeuvres/club-godfather.jpg",
       "media": "https://www.youtube.com/watch?v=yvx_HnlKpp0",
-      "liens": ["sans-frontiere-toute-la-terre", "unorthodox", "2-slizzy-2-sexy"]
+      "liens": [
+        "sans-frontiere-toute-la-terre",
+        "unorthodox",
+        "2-slizzy-2-sexy"
+      ]
     },
     {
       "id": "le-general",

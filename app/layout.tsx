@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: "HENASSA",
     template: "HENASSA",
   },
-  description: "Articles, connexions entre les œuvres et playlist du mois.",
+  description: "Média indépendant.",
 };
 
 // L'écran d'arrivée ne se joue qu'une fois par visite : ce petit script
