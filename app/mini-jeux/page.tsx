@@ -18,7 +18,7 @@ export default function MiniJeuxPage() {
           <span className="echo-title__echo" aria-hidden="true">Jeux</span>
           <h1 className="echo-title__main">Mini-jeux</h1>
         </div>
-        <p className="section-intro">Les œuvres de Connexions, mais pour jouer : les classer, les départager, les deviner.</p>
+        <p className="section-intro">Classer, départager, deviner les œuvres présents sur le site.</p>
         <CartesJeux />
       </main>
       <Footer />
