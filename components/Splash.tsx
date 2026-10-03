@@ -28,11 +28,12 @@ export function Splash() {
       }}
     >
       <div className="splash__inner">
-        <span className="splash__echo">HENASSA</span>
-        <span className="splash__title">HENASSA</span>
+        <span className="splash__echo">Henassa</span>
+        <span className="splash__title">Henassa</span>
         <span className="splash__bars">
-          {SECTION_SLUGS.map((s) => (
-            <i key={s} style={{ background: SECTIONS[s].couleur }} />
+          {/* une barre par rubrique, l'une après l'autre (le délai suit le nombre de rubriques) */}
+          {SECTION_SLUGS.map((s, i) => (
+            <i key={s} style={{ background: SECTIONS[s].couleur, animationDelay: `${(0.9 + i * 0.1).toFixed(2)}s` }} />
           ))}
         </span>
       </div>

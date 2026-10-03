@@ -2152,25 +2152,88 @@ a.tag.tag--outline:hover {
     gap: 4px;
   }
 
+  /* Fiche sur téléphone : un tiroir en bas, qui laisse la moitié haute de l'écran visible.
+     Sa hauteur suit son contenu, et on fait défiler dedans s'il y en a trop. */
   .panneau {
     top: auto;
     width: 100vw;
-    height: 88vh;
+    height: auto;
+    max-height: 52vh;
+    max-height: 52dvh;
     border-left: 0;
     border-top: 3px solid var(--fg);
     box-shadow: 0 -24px 48px rgba(0, 0, 0, 0.6);
   }
 
+  .panneau:not([hidden]) {
+    animation-name: panel-up;
+  }
+
+  .panneau__bar {
+    padding: 6px 12px;
+  }
+
+  .panneau__body {
+    padding: 12px;
+    gap: 12px;
+  }
+
   .panneau__head {
-    grid-template-columns: 104px minmax(0, 1fr);
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
   }
 
   .panneau__cover {
-    width: 104px;
+    width: 76px;
+    border-bottom-width: 4px;
+  }
+
+  .panneau__info {
+    padding-top: 0;
+    gap: 2px;
+  }
+
+  .panneau__echo {
+    font-size: 48px;
+    top: -8px;
   }
 
   .panneau__title {
-    font-size: 26px;
+    font-size: 22px;
+    -webkit-line-clamp: 2;
+  }
+
+  .panneau__author {
+    font-size: 14px;
+  }
+
+  .panneau__desc {
+    font-size: 14px;
+  }
+
+  .panneau__h {
+    margin-bottom: 8px;
+    font-size: 18px;
+  }
+
+  /* Les connexions défilent sur une seule ligne, au doigt */
+  .panneau__grid {
+    display: flex;
+    gap: 8px;
+    margin: 0 -12px;
+    padding: 0 12px 4px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .panneau__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .panneau__grid li {
+    flex: 0 0 76px;
   }
 
   .toile {
@@ -2675,6 +2738,17 @@ textarea.admin-input {
 
 .panneau__body {
   animation: fade-in 0.35s ease both;
+}
+
+@keyframes panel-up {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
 }
 
 @keyframes fade-in {
