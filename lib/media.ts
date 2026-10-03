@@ -13,3 +13,15 @@ export function isAudioFile(url?: string): boolean {
 export function isPlayable(url?: string): boolean {
   return !!youtubeId(url) || isAudioFile(url);
 }
+
+/**
+ * Ignore les liens média pas encore remplis
+ * (ex. "https://www.youtube.com/watch?v=" ou "https://...").
+ */
+export function mediaRempli(url?: string): string | undefined {
+  const u = url?.trim();
+  if (!u) return undefined;
+  if (u.includes("...") || /[?&]v=$/.test(u) || /^https?:\/\/?$/.test(u)) return undefined;
+  if (/youtube\.com|youtu\.be/.test(u) && !youtubeId(u)) return undefined;
+  return u;
+}

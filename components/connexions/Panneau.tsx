@@ -5,7 +5,8 @@ import type { Oeuvre } from "@/lib/oeuvres";
 import { isPlayable } from "@/lib/media";
 import { PlayButton, usePlayer } from "@/components/player/Lecteur";
 import { TYPES_OEUVRE } from "@/lib/sections";
-import { initiales, type Voisin } from "./utils";
+import { Pochette } from "./Pochette";
+import type { Voisin } from "./utils";
 
 function Ecouter({ oeuvre, couleur }: { oeuvre: Oeuvre; couleur: string }) {
   const media = oeuvre.media;
@@ -34,12 +35,7 @@ function Ecouter({ oeuvre, couleur }: { oeuvre: Oeuvre; couleur: string }) {
 }
 
 function Thumb({ o }: { o: Oeuvre }) {
-  return o.cover ? (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={o.cover} alt="" loading="lazy" draggable={false} />
-  ) : (
-    <span className="tile__fallback">{initiales(o)}</span>
-  );
+  return <Pochette o={o} />;
 }
 
 export function Panneau({

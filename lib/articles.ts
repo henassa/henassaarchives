@@ -68,7 +68,15 @@ export function getAllArticles(): Article[] {
 }
 
 export function getArticle(slug: string): Article | undefined {
-  return getAllArticles().find((a) => a.slug === slug);
+  const found = getAllArticles().find((a) => a.slug === slug);
+  if (found) return found;
+  // En local (npm run dev), les brouillons « _xxx.mdx » sont visibles
+  // sur /articles/_xxx, mais jamais publiés sur le site en ligne.
+  if (process.env.NODE_ENV !== "production" && slug.startsWith("_")) {
+    const file = fs.readdirSync(ARTICLES_DIR).find((f) => f.replace(/\.mdx?$/, "") === slug);
+    if (file) return readArticleFile(file);
+  }
+  return undefined;
 }
 
 /** 2026-09-27 → 27.09.2026 */

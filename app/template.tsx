@@ -7,6 +7,7 @@ function couleurPour(pathname: string) {
   if (pathname.startsWith("/articles")) return SECTIONS.articles.couleur;
   if (pathname.startsWith("/connexions")) return SECTIONS.connexions.couleur;
   if (pathname.startsWith("/playlist")) return SECTIONS.playlist.couleur;
+  if (pathname.startsWith("/mini-jeux")) return SECTIONS.jeux.couleur;
   return "#ffffff";
 }
 

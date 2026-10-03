@@ -6,6 +6,8 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Tag } from "@/components/Tag";
 import { Tracklist } from "@/components/Tracklist";
+import { Pochette } from "@/components/connexions/Pochette";
+import { CartesJeux } from "@/components/jeux/CartesJeux";
 import { getAllArticles } from "@/lib/articles";
 import { readConnexions } from "@/lib/oeuvres";
 import { getPlaylist } from "@/lib/playlist";
@@ -80,8 +82,7 @@ export default function HomePage() {
               {vitrine.map((o) => (
                 <li key={o.id} style={{ ["--type" as string]: TYPES_OEUVRE[o.type].couleur }}>
                   <Link href={`/connexions?oeuvre=${o.slug ?? o.id}`} className="vitrine__item" title={`${o.titre} — ${o.auteur}`}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={o.cover} alt={`${o.titre} — ${o.auteur}`} loading="lazy" />
+                    <Pochette o={o} alt={`${o.titre} — ${o.auteur}`} />
                   </Link>
                 </li>
               ))}
@@ -136,6 +137,10 @@ export default function HomePage() {
             </div>
           </section>
         )}
+        <section>
+          <SectionTitle label="Mini-jeux" href={SECTIONS.jeux.href} couleur={SECTIONS.jeux.couleur} more="Jouer →" />
+          <CartesJeux />
+        </section>
       </main>
 
       <Footer />

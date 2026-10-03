@@ -2,7 +2,8 @@
 
 import type { Oeuvre } from "@/lib/oeuvres";
 import { TYPES_OEUVRE } from "@/lib/sections";
-import { initiales, type VoisinsMap } from "./utils";
+import { Pochette } from "./Pochette";
+import type { VoisinsMap } from "./utils";
 
 export function Mosaique({
   oeuvres,
@@ -53,12 +54,7 @@ export function Mosaique({
               onClick={() => onSelect(o.id)}
               aria-label={`${o.titre} — ${o.auteur}${nb ? `, ${nb} connexion${nb > 1 ? "s" : ""}` : ""}`}
             >
-              {o.cover ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={o.cover} alt="" loading="lazy" draggable={false} />
-              ) : (
-                <span className="tile__fallback">{initiales(o)}</span>
-              )}
+              <Pochette o={o} />
               <span className="tile__label" aria-hidden="true">
                 <span className="tile__title">{o.titre}</span>
                 <span className="tile__author">{o.auteur}</span>

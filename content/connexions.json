@@ -1,1652 +1,3518 @@
 {
   "_modele": {
     "_info": "Modèle : copie ce bloc dans « oeuvres » pour ajouter une œuvre. Ce bloc-ci n'est pas affiché sur le site.",
-    "id": "identifiant-unique (obligatoire, minuscules et tirets, ex : barter-6)",
+    "id": "identifiant-unique (obligatoire, minuscules et tirets, ex : nas-illmatic)",
     "titre": "Titre de l'œuvre (obligatoire)",
     "auteur": "Artiste, réalisateur, studio, écrivain... (obligatoire)",
-    "annee": 2024,
+    "annee": 1994,
     "type": "album | film | jeu | livre | autre (obligatoire)",
-    "genre": "Hip-Hop, science-fiction, RPG...",
-    "cover": "/images/oeuvres/nom-de-l-image.jpg",
+    "genre": "Hip-Hop",
+    "sousGenres": [
+      "Du plus significatif",
+      "au moins significatif",
+      "c'est ce qui crée les connexions"
+    ],
+    "cover": "facultatif : inutile si l'image s'appelle comme l'id (public/images/oeuvres/identifiant-unique.jpg)",
     "media": "https://www.youtube.com/watch?v=... (ou /audio/extrait.mp3)",
     "description": "Une ou deux phrases, affichées dans la fiche de l'œuvre.",
-    "liens": ["id-d-une-autre-oeuvre", "id-d-une-troisieme"]
+    "liens": [
+      "facultatif : id d'une œuvre à relier de force"
+    ],
+    "pasDeLien": [
+      "facultatif : id d'une œuvre à ne PAS relier"
+    ]
   },
   "oeuvres": [
     {
-      "id": "ea-monster",
-      "titre": "EA Monster",
-      "auteur": "Young Nudy",
-      "annee": 2022,
+      "id": "nas-illmatic",
+      "titre": "Illmatic",
+      "auteur": "Nas",
+      "annee": 1994,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/ea-monster.jpg",
-      "media": "https://www.youtube.com/watch?v=VRc9FDF7KTk",
-      "liens": [
-        "s-x-m-ney-dr-gs",
-        "madman",
-        "monster",
-        "savage-mode",
-        "glotoven",
-        "playboi-carti"
-      ]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Boom Bap",
+        "Jazz Rap",
+        "Hardcore Hip Hop",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=2U9bQbRrsV0"
     },
     {
-      "id": "s-x-m-ney-dr-gs",
-      "titre": "s*x m*ney dr*gs",
-      "auteur": "LUCKI",
-      "annee": 2023,
+      "id": "big-l-lifestylez-ov-da-poor-and-dangerous",
+      "titre": "Lifestylez ov da Poor & Dangerous",
+      "auteur": "Big L",
+      "annee": 1995,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/s-x-m-ney-dr-gs.jpg",
-      "media": "https://www.youtube.com/watch?v=88oFlVnMEsc",
-      "liens": ["ea-monster"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Boom Bap",
+        "Gangsta Rap",
+        "East Coast Hip Hop",
+        "Hardcore Hip Hop",
+        "Horrorcore",
+        "Jazz Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=iCZGMFCPOZM"
     },
     {
-      "id": "madman",
-      "titre": "MadMan",
-      "auteur": "BabyDrill",
-      "annee": 2023,
+      "id": "kool-g-rap-4-5-6",
+      "titre": "4, 5, 6",
+      "auteur": "Kool G Rap",
+      "annee": 1995,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/madman.jpg",
-      "media": "https://www.youtube.com/watch?v=QMWKAWky4Kk",
-      "liens": ["ea-monster", "happy-halloween-5"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Boom Bap",
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "East Coast Hip Hop",
+        "Hardcore Hip Hop",
+        "Coke Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=yNlyVWlXnNQ"
     },
     {
-      "id": "long-live-mexico",
-      "titre": "Long Live Mexico",
-      "auteur": "Lil Keed",
-      "annee": 2019,
+      "id": "mf-doom-operation-doomsday",
+      "titre": "Operation Doomsday",
+      "auteur": "MF DOOM",
+      "annee": 1999,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/long-live-mexico.jpg",
-      "media": "https://www.youtube.com/watch?v=j42TggDgKU8",
-      "liens": ["saaheem", "barter-6"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Abstract Hip Hop",
+        "Jazz Rap",
+        "Turntablism",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=7wxbRcqosPU"
     },
     {
-      "id": "saaheem",
-      "titre": "Saaheem",
-      "auteur": "SahBabii",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/saaheem.jpg",
-      "media": "https://www.youtube.com/watch?v=1ppx0knHjMI",
-      "liens": ["long-live-mexico", "barter-6", "jeune-morty-vol-1"]
-    },
-    {
-      "id": "summer-s-mine",
-      "titre": "Summer's Mine",
-      "auteur": "Babyface Ray",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/summer-s-mine.jpg",
-      "media": "https://www.youtube.com/watch?v=BDo5XTyt0f8",
-      "liens": ["summer-s-mine", "fada-3of"]
-    },
-      {
-      "id": "tee-s-coney-island.jpg",
-      "titre": "Tee's Coney Island",
-      "auteur": "Tee Grizzley",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/tee-s-coney-island.jpg",
-      "media": "https://www.youtube.com/watch?v=TB1tZAvjIZg",
-      "liens": ["summer-s-mine"]
-    },
-        {
-      "id": "beezy",
-      "titre": "BEEZY",
-      "auteur": "Doe Boy",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/beezy.jpg",
-      "media": "https://www.youtube.com/watch?v=VoZJF3cl22k",
-      "liens": ["summer-s-mine"]
-    },
-       {
-      "id": "applying-pressure",
-      "titre": "Applying Pressure",
-      "auteur": "BandGang Paid Will",
-      "annee": 2020,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/applying-pressure.jpg",
-      "media": "https://www.youtube.com/watch?v=z1Q0u_UXQjs",
-      "liens": ["summer-s-mine"]
-    },
-    {
-      "id": "memories-of-tokyo-to",
-      "titre": "Memories of Tokyo-To",
-      "auteur": "2 Mello",
-      "annee": 2018,
-      "type": "album",
-      "genre": "Big Beat",
-      "cover": "/images/oeuvres/memories-of-tokyo-to.jpg",
-      "media": "https://www.youtube.com/watch?v=kP-_CGyM9Yk",
-      "liens": [
-        "groove-rush",
-        "jet-set-radio-sega-original-tracks",
-        "euphonic-rush",
-        "true-magic"
-      ]
-    },
-    {
-      "id": "dmvp-extend",
-      "titre": "DMVP EXTEND",
-      "auteur": "Sherifflazone",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/dmvp-extend.jpg",
-      "media": "https://www.youtube.com/watch?v=fjbHL7B7NKk",
-      "liens": ["youth-madness-deluxe-edition"]
-    },
-    {
-      "id": "happy-halloween-5",
-      "titre": "Happy Halloween 5",
-      "auteur": "CEO Trayle",
-      "annee": 2022,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/happy-halloween-5.jpg",
-      "media": "https://www.youtube.com/watch?v=HtTD3RmDoVQ",
-      "liens": ["madman"]
-    },
-    {
-      "id": "king-pin",
-      "titre": "King Pin",
-      "auteur": "SlimeGetEm",
-      "annee": 2026,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/king-pin.jpg",
-      "media": "https://www.youtube.com/watch?v=LF-2XO01UHU",
-      "liens": ["youth-madness-deluxe-edition", "uw6", "whole-lotta-red"]
-    },
-    {
-      "id": "youth-madness-deluxe-edition",
-      "titre": "Youth Madness (Deluxe Edition)",
-      "auteur": "Skino",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/youth-madness-deluxe-edition.jpg",
-      "media": "https://www.youtube.com/watch?v=RXdXQk6tu1U",
-      "liens": ["dmvp-extend", "king-pin"]
-    },
-    {
-      "id": "deeper-than-rap",
-      "titre": "Deeper Than Rap",
-      "auteur": "Rick Ross",
-      "annee": 2009,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/deeper-than-rap.jpg",
-      "media": "https://www.youtube.com/watch?v=PvBMgmRqUik",
-      "liens": ["shyne", "the-fix", "only-built-4-cuban-linx", "don-cartagena"]
-    },
-    {
-      "id": "shyne",
-      "titre": "Shyne",
-      "auteur": "Shyne",
-      "annee": 2000,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/shyne.jpg",
-      "media": "https://www.youtube.com/watch?v=lmFPTqexVzE",
-      "liens": ["deeper-than-rap", "the-fix"]
-    },
-    {
-      "id": "the-fix",
+      "id": "scarface-the-fix",
       "titre": "The Fix",
       "auteur": "Scarface",
       "annee": 2002,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/the-fix.jpg",
-      "media": "https://www.youtube.com/watch?v=WyY-HTpH_lw",
-      "liens": ["deeper-than-rap", "shyne", "the-b-coming", "hard-core"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "Southern Hip Hop",
+        "Hardcore Hip Hop",
+        "Coke Rap",
+        "Dirty South",
+        "Houston Sound"
+      ],
+      "media": "https://www.youtube.com/watch?v=WyY-HTpH_lw"
     },
     {
-      "id": "the-b-coming",
-      "titre": "The B. Coming",
-      "auteur": "Beanie Sigel",
-      "annee": 2025,
+      "id": "rick-ross-deeper-than-rap",
+      "titre": "Deeper Than Rap",
+      "auteur": "Rick Ross",
+      "annee": 2009,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/the-b-coming.jpg",
-      "media": "https://www.youtube.com/watch?v=_LmoCpq6mcY",
-      "liens": ["the-fix", "the-jack-artist", "god-don-t-make-mistakes"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Mafioso Rap",
+        "Southern Hip Hop",
+        "Gangsta Rap",
+        "Hardcore Hip Hop",
+        "Coke Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=CiyKkCEQPHg"
     },
     {
-      "id": "the-jack-artist",
-      "titre": "The Jack Artist",
-      "auteur": "The Jacka",
-      "annee": 2005,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/the-jack-artist.jpg",
-      "media": "https://www.youtube.com/watch?v=mrfjJfxtch0",
-      "liens": ["the-b-coming"]
-    },
-    {
-      "id": "reloaded",
-      "titre": "Reloaded",
-      "auteur": "Roc Marciano",
-      "annee": 2012,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/reloaded.jpg",
-      "media": "https://www.youtube.com/watch?v=U6OVgYatLv4",
-      "liens": ["god-don-t-make-mistakes", "alfredo"]
-    },
-    {
-      "id": "god-don-t-make-mistakes",
-      "titre": "God Don't Make Mistakes",
-      "auteur": "Conway the Machine",
-      "annee": 2022,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/god-don-t-make-mistakes.jpg",
-      "media": "https://www.youtube.com/watch?v=bMEUkIIe1eE",
-      "liens": [
-        "the-b-coming",
-        "reloaded",
-        "only-built-4-cuban-linx",
-        "return-of-the-mac"
-      ]
-    },
-    {
-      "id": "uw6",
-      "titre": "UW6",
-      "auteur": "ST6 JodyBoof",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/uw6.jpg",
-      "media": "https://www.youtube.com/watch?v=TYDa1gQ9Ncw",
-      "liens": ["king-pin"]
-    },
-    {
-      "id": "alfredo",
-      "titre": "Alfredo",
-      "auteur": "Freddie Gibbs & The Alchemist",
-      "annee": 2020,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/alfredo.jpg",
-      "media": "https://www.youtube.com/watch?v=Tth8cgSp2QQ",
-      "liens": ["reloaded", "only-built-4-cuban-linx", "return-of-the-mac"]
-    },
-    {
-      "id": "only-built-4-cuban-linx",
-      "titre": "Only Built 4 Cuban Linx...",
-      "auteur": "Raekwon",
-      "annee": 1995,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/only-built-4-cuban-linx.jpg",
-      "media": "https://www.youtube.com/watch?v=_xj5AcHcl9E",
-      "liens": [
-        "deeper-than-rap",
-        "god-don-t-make-mistakes",
-        "alfredo",
-        "don-cartagena"
-      ]
-    },
-    {
-      "id": "don-cartagena",
-      "titre": "Don Cartagena",
-      "auteur": "Fat Joe",
-      "annee": 1998,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/don-cartagena.jpg",
-      "media": "https://www.youtube.com/watch?v=mI-63G8itt0",
-      "liens": [
-        "deeper-than-rap",
-        "only-built-4-cuban-linx",
-        "return-of-the-mac"
-      ]
-    },
-    {
-      "id": "hard-core",
-      "titre": "Hard Core",
-      "auteur": "Lil' Kim",
-      "annee": 1996,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/hard-core.jpg",
-      "media": "https://www.youtube.com/watch?v=LuqcQrpRFcI",
-      "liens": ["the-fix"]
-    },
-    {
-      "id": "return-of-the-mac",
-      "titre": "Return Of The Mac",
-      "auteur": "Prodigy",
-      "annee": 2007,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/return-of-the-mac.jpg",
-      "media": "https://www.youtube.com/watch?v=g-ZbAtet6cQ",
-      "liens": ["god-don-t-make-mistakes", "alfredo", "don-cartagena"]
-    },
-    {
-      "id": "barter-6",
-      "titre": "Barter 6",
-      "auteur": "Young Thug",
-      "annee": 2016,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/barter-6.jpg",
-      "media": "https://www.youtube.com/watch?v=eOGuSIyRlfE",
-      "liens": ["long-live-mexico", "saaheem", "monster"]
-    },
-    {
-      "id": "monster",
-      "titre": "Monster",
-      "auteur": "Future",
-      "annee": 2016,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/monster.jpg",
-      "media": "https://www.youtube.com/watch?v=_AYD9-wjC_4",
-      "liens": ["ea-monster", "barter-6", "savage-mode"]
-    },
-    {
-      "id": "wap-konn-joj",
-      "titre": "Wap Konn Jòj!",
-      "auteur": "Mach-Hommy",
+      "id": "freddie-gibbs-madlib-bandana",
+      "titre": "Bandana",
+      "auteur": "Freddie Gibbs & Madlib",
       "annee": 2019,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/wap-konn-joj.jpg",
-      "media": "https://www.youtube.com/watch?v=U0fCGBbWM-g",
-      "liens": ["burning-desire"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Gangsta Rap",
+        "Coke Rap",
+        "Mafioso Rap",
+        "Drumless",
+        "Jazz Rap",
+        "Boom Bap"
+      ],
+      "media": "https://www.youtube.com/watch?v=99G6GU7Vv4g"
     },
     {
-      "id": "burning-desire",
-      "titre": "Burning Desire",
-      "auteur": "MIKE",
-      "annee": 2023,
+      "id": "sch-jvlivs",
+      "titre": "JVLIVS",
+      "auteur": "SCH",
+      "annee": 2018,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/burning-desire.jpg",
-      "media": "https://www.youtube.com/watch?v=B_YoH-KQmJQ",
-      "liens": [
-        "wap-konn-joj",
-        "dali-aint-dead",
-        "lerado-khalil-surf-gang",
-        "unorthodox",
-        "you-only-die-1nce",
-        "fada-3of",
-        "ways-of-knowing"
-      ]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Mafioso Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=JDWv2JB5IK0"
     },
     {
-      "id": "dali-aint-dead",
-      "titre": "Dali Aint Dead",
-      "auteur": "Zelooperz",
-      "annee": 2025,
+      "id": "lil-wayne-tha-carter-2",
+      "titre": "Tha Carter II",
+      "auteur": "Lil Wayne",
+      "annee": 2005,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/dali-aint-dead.jpg",
-      "media": "https://www.youtube.com/watch?v=JKC5tPxPuUU",
-      "liens": ["burning-desire", "you-only-die-1nce", "fada-3of"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Gangsta Rap",
+        "Southern Hip Hop",
+        "Dirty South",
+        "Crunk",
+        "Pop Rap",
+        "Chipmunk Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=i_RWHGu0mj0"
     },
     {
-      "id": "choke-enough",
-      "titre": "choke enough",
+      "id": "jay-z-reasonable-doubt",
+      "titre": "Reasonable Doubt",
+      "auteur": "JAY-Z",
+      "annee": 1996,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Mafioso Rap",
+        "East Coast Hip Hop",
+        "Boom Bap",
+        "Coke Rap",
+        "Gangsta Rap",
+        "Jazz Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=NH8ms2TiBP4"
+    },
+    {
+      "id": "mary-j-blige-my-life",
+      "titre": "My Life",
+      "auteur": "Mary J. Blige",
+      "annee": 1994,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Hip Hop Soul",
+        "Neo-Soul",
+        "Smooth Soul",
+        "Hip Hop",
+        "East Coast Hip Hop",
+        "Soul",
+        "New Jack Swing"
+      ],
+      "media": "https://www.youtube.com/watch?v=PymTCmXKcAk"
+    },
+    {
+      "id": "young-thug-barter-6",
+      "titre": "Barter 6",
+      "auteur": "Young Thug",
+      "annee": 2015,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Trap Soul",
+        "Pop Rap",
+        "Cloud Rap",
+        "Gangsta Rap",
+        "Southern Hip Hop",
+        "Contemporary R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=84pVVjwUi0c"
+    },
+    {
+      "id": "young-thug-slime-season",
+      "titre": "Slime Season",
+      "auteur": "Young Thug",
+      "annee": 2015,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Gangsta Rap",
+        "Southern Hip Hop",
+        "Trap Soul",
+        "Pop Rap",
+        "Contemporary R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=iqUfBGdYc_0"
+    },
+    {
+      "id": "pnl-que-la-famille",
+      "titre": "Que la famille",
+      "auteur": "PNL",
+      "annee": 2015,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Cloud Rap",
+        "Trap",
+        "Chicago Drill",
+        "Gangsta Rap",
+        "Drill"
+      ],
+      "media": "https://www.youtube.com/watch?v=7nFrBxCrV1w"
+    },
+    {
+      "id": "oklou-choke-enough",
+      "titre": "Choke Enough",
       "auteur": "Oklou",
       "annee": 2025,
       "type": "album",
       "genre": "Alt-Pop",
-      "cover": "/images/oeuvres/choke-enough.jpg",
-      "media": "https://www.youtube.com/watch?v=rfCOUn9zOPY",
-      "liens": [
-        "segunda-temporada",
-        "vanities",
-        "raven",
-        "u",
-        "the-road-to-hell-is-paved-with-good-intentions"
-      ]
+      "sousGenres": [
+        "Electronic",
+        "Alternative R&B",
+        "Ambient Trance",
+        "Indietronica",
+        "Bubblegum Bass",
+        "Trance",
+        "Chillout",
+        "Downtempo",
+        "Contemporary R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=rfCOUn9zOPY"
     },
     {
-      "id": "segunda-temporada",
-      "titre": "Segunda Temporada",
-      "auteur": "Zuukou Mayzie",
-      "annee": 2021,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/segunda-temporada.jpg",
-      "media": "https://www.youtube.com/watch?v=NL_B5DM4zmk",
-      "liens": ["choke-enough", "le-son-d-apres"]
-    },
-    {
-      "id": "le-son-d-apres",
-      "titre": "Le son d'après",
-      "auteur": "Lala &ce",
-      "annee": 2019,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/le-son-d-apres.jpg",
-      "media": "https://www.youtube.com/watch?v=OSQkkf5mVNY",
-      "liens": ["segunda-temporada", "que-la-famille"]
-    },
-    {
-      "id": "vanities",
-      "titre": "Vanities",
-      "auteur": "Malibu",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Ambient",
-      "cover": "/images/oeuvres/vanities.jpg",
-      "media": "https://www.youtube.com/watch?v=jUCuOnCItbk",
-      "liens": ["choke-enough"]
-    },
-    {
-      "id": "raven",
-      "titre": "Raven",
-      "auteur": "Kelela",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Alternative R&B",
-      "cover": "/images/oeuvres/raven.jpg",
-      "media": "https://www.youtube.com/watch?v=sGX9GawLLZY",
-      "liens": ["choke-enough", "play-with-the-changes"]
-    },
-    {
-      "id": "play-with-the-changes",
-      "titre": "Play With The Changes",
-      "auteur": "Rochelle Jordan",
-      "annee": 2021,
-      "type": "album",
-      "genre": "Alternative R&B",
-      "cover": "/images/oeuvres/play-with-the-changes.jpg",
-      "media": "https://www.youtube.com/watch?v=cdbVegCND_Y",
-      "liens": [
-        "raven",
-        "overgrown",
-        "the-road-to-hell-is-paved-with-good-intentions",
-        "still"
-      ]
-    },
-    {
-      "id": "overgrown",
-      "titre": "Overgrown",
-      "auteur": "Joyce Wrice",
-      "annee": 2021,
-      "type": "album",
-      "genre": "Alternative R&B",
-      "cover": "/images/oeuvres/overgrown.jpg",
-      "media": "https://www.youtube.com/watch?v=sO1FAslKSu8",
-      "liens": ["play-with-the-changes"]
-    },
-    {
-      "id": "u",
+      "id": "underscores-u",
       "titre": "U",
       "auteur": "underscores",
       "annee": 2026,
       "type": "album",
       "genre": "Electropop",
-      "cover": "/images/oeuvres/u.jpg",
-      "media": "https://www.youtube.com/watch?v=8f_vY3wqdlk",
-      "liens": ["choke-enough", "korean-american", "j-is-for-joon", "boy"]
+      "sousGenres": [
+        "Electronic Dance Music",
+        "Dance-Pop",
+        "Hyperpop",
+        "Electro House",
+        "Future Bass",
+        "Bubblegum Bass",
+        "Alt-Pop",
+        "Contemporary R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=8f_vY3wqdlk"
     },
     {
-      "id": "korean-american",
-      "titre": "Korean American",
-      "auteur": "kimj",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Electronic Dance Music",
-      "cover": "/images/oeuvres/korean-american.jpg",
-      "media": "https://www.youtube.com/watch?v=SwIKmgxZmn0",
-      "liens": ["u"]
-    },
-    {
-      "id": "j-is-for-joon",
-      "titre": "J is for Joon",
-      "auteur": "Ms* Gloom",
+      "id": "mgna-crrrta-beautiful-disaster",
+      "titre": "Beautiful Disaster",
+      "auteur": "MGNA Crrrta",
       "annee": 2026,
       "type": "album",
       "genre": "Electropop",
-      "cover": "/images/oeuvres/j-is-for-joon.jpg",
-      "media": "https://www.youtube.com/watch?v=JuWasSq44fw",
-      "liens": ["u", "crest"]
+      "sousGenres": [
+        "Electro House",
+        "Complextro",
+        "Brostep",
+        "Indie Sleaze Revival",
+        "Electronic Dance Music",
+        "New Rave",
+        "Electroclash"
+      ],
+      "media": "https://www.youtube.com/watch?v=huNqzVuUFbk"
     },
     {
-      "id": "crest",
-      "titre": "Crest",
-      "auteur": "Bladee & Ecco2k",
+      "id": "bone-thugs-n-harmony-e-1999-eternal",
+      "titre": "E. 1999 Eternal",
+      "auteur": "Bone Thugs-n-Harmony",
+      "annee": 1995,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Chopper",
+        "Gangsta Rap",
+        "Midwest Hip Hop",
+        "G-Funk",
+        "Horrorcore",
+        "Stoner Rap",
+        "Hip Hop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=pRKIWNaXH8E"
+    },
+    {
+      "id": "bones-2millionblunts",
+      "titre": "2MillionBlunts",
+      "auteur": "Bones",
       "annee": 2022,
       "type": "album",
-      "genre": "Synthpop",
-      "cover": "/images/oeuvres/crest.jpg",
-      "media": "https://www.youtube.com/watch?v=CSKHd6LhDH8",
-      "liens": ["j-is-for-joon", "boy", "babyonce"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Cloud Rap",
+        "Detroit Sound",
+        "Chopper",
+        "Trap",
+        "G-Funk",
+        "West Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=Fn1fkA1fNEY"
     },
     {
-      "id": "boy",
-      "titre": "boy",
-      "auteur": "2hollis",
+      "id": "tinashe-popstar",
+      "titre": "Popstar",
+      "auteur": "Tinashe",
+      "annee": 2026,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Alternative R&B",
+        "Electronic Dance Music",
+        "Alt-Pop",
+        "Post-Dubstep",
+        "UK Bass",
+        "Pop Rap",
+        "Dance-Pop",
+        "Contemporary R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=wTfyWa38hro"
+    },
+    {
+      "id": "anysia-kym-truest",
+      "titre": "Truest",
+      "auteur": "Anysia Kym",
       "annee": 2024,
       "type": "album",
-      "genre": "Electropop",
-      "cover": "/images/oeuvres/boy.jpg",
-      "media": "https://www.youtube.com/watch?v=OI-cHhUuWbk",
-      "liens": ["u", "crest", "babyonce"]
+      "genre": "R&B",
+      "sousGenres": [
+        "Alternative R&B",
+        "Neo-Soul",
+        "Electronic",
+        "Hypnagogic Pop",
+        "Atmospheric Drum and Bass",
+        "Drum and Bass",
+        "Dream Pop"
+      ],
+      "media": "https://www.youtube.com/watch?v=zgpvBvOS9Es"
     },
     {
-      "id": "dyr",
+      "id": "ecco2k-e",
+      "titre": "E",
+      "auteur": "Ecco2k",
+      "annee": 2019,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Alternative R&B",
+        "Cloud Rap",
+        "Art Pop",
+        "Ambient Pop",
+        "Experimental Hip Hop",
+        "UK Bass"
+      ],
+      "media": "https://www.youtube.com/watch?v=yXkhy5n1OEY"
+    },
+    {
+      "id": "dj-billybool-eurohead-dyr",
       "titre": "DYR",
       "auteur": "DJ Billybool & Eurohead",
       "annee": 2025,
       "type": "album",
       "genre": "Euro Trance",
-      "cover": "/images/oeuvres/dyr.jpg",
-      "media": "https://www.youtube.com/watch?v=Y_LhlkO6wnw",
-      "liens": []
+      "sousGenres": [
+        "Cloud Rap",
+        "Eurodance",
+        "Uplifting Trance",
+        "Experimental Hip Hop",
+        "Electronic Dance Music",
+        "Trance",
+        "UK Bass",
+        "Vocal Trance"
+      ],
+      "media": "https://www.youtube.com/watch?v=Y_LhlkO6wnw"
     },
     {
-      "id": "the-road-to-hell-is-paved-with-good-intentions",
-      "titre": "The Road To Hell Is Paved With Good Intentions",
-      "auteur": "Vegyn",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Downtempo",
-      "cover": "/images/oeuvres/the-road-to-hell-is-paved-with-good-intentions.jpg",
-      "media": "https://www.youtube.com/watch?v=CyzAD2Tploc",
-      "liens": ["choke-enough", "play-with-the-changes", "still"]
-    },
-    {
-      "id": "still",
-      "titre": "Still",
-      "auteur": "Erika de Casier",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Downtempo",
-      "cover": "/images/oeuvres/still.jpg",
-      "media": "https://www.youtube.com/watch?v=Tfl5Yn_0r88",
-      "liens": [
-        "play-with-the-changes",
-        "the-road-to-hell-is-paved-with-good-intentions",
-        "essex-honey",
-        "suntub"
-      ]
-    },
-    {
-      "id": "essex-honey",
-      "titre": "Essex Honey",
-      "auteur": "Blood Orange",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Alt-Pop",
-      "cover": "/images/oeuvres/essex-honey.jpg",
-      "media": "https://www.youtube.com/watch?v=Brt_wrBrSqQ",
-      "liens": ["still", "suntub", "hopefully"]
-    },
-    {
-      "id": "suntub",
-      "titre": "Suntub",
-      "auteur": "ML Buch",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Neo-Psychedelia",
-      "cover": "/images/oeuvres/suntub.jpg",
-      "media": "https://www.youtube.com/watch?v=HNyeLnWAxoc",
-      "liens": ["still", "essex-honey"]
-    },
-    {
-      "id": "savage-mode",
-      "titre": "Savage Mode",
-      "auteur": "21 Savage & Metro Boomin",
-      "annee": 2016,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/savage-mode.jpg",
-      "media": "https://www.youtube.com/watch?v=0EIKUh6GWzc",
-      "liens": [
-        "ea-monster",
-        "monster",
-        "nightmare-on-e-street",
-        "slime-ball-2"
-      ]
-    },
-    {
-      "id": "nightmare-on-e-street",
-      "titre": "Nightmare on E Street",
-      "auteur": "Fat Trel",
-      "annee": 2014,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/nightmare-on-e-street.jpg",
-      "media": "https://www.youtube.com/watch?v=xPoSRBjawts",
-      "liens": ["savage-mode", "que-la-famille"]
-    },
-    {
-      "id": "slime-ball-2",
-      "titre": "Slime Ball 2",
-      "auteur": "Young Nudy",
-      "annee": 2017,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/slime-ball-2.jpg",
-      "media": "https://www.youtube.com/watch?v=piAAJqPbrBU",
-      "liens": ["savage-mode", "almighty-so"]
-    },
-    {
-      "id": "still-goin-the-ep",
-      "titre": "Still Goin the Ep",
-      "auteur": "MexikoDro",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/still-goin-the-ep.jpg",
-      "media": "https://www.youtube.com/watch?v=HqCG7MOasGk",
-      "liens": ["life-of-a-hot-boy-2-real-trapper"]
-    },
-    {
-      "id": "life-of-a-hot-boy-2-real-trapper",
-      "titre": "Life Of A Hot Boy 2 : Real Trapper",
-      "auteur": "Bankroll Fresh",
-      "annee": 2015,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/life-of-a-hot-boy-2-real-trapper.jpg",
-      "media": "https://www.youtube.com/watch?v=rE2q1rswvRM",
-      "liens": ["still-goin-the-ep"]
-    },
-    {
-      "id": "ready-set-go",
-      "titre": "Ready Set Go!",
-      "auteur": "Roscoe Dash",
-      "annee": 2010,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/ready-set-go.jpg",
-      "media": "https://www.youtube.com/watch?v=L7VY6rRuNsI",
-      "liens": ["straight-like-that", "a-futuristic-summa", "mr-futuristic"]
-    },
-    {
-      "id": "straight-like-that",
-      "titre": "Straight Like That",
-      "auteur": "Rich Kidz",
-      "annee": 2010,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/straight-like-that.jpg",
-      "media": "https://www.youtube.com/watch?v=RXHgynSOtck",
-      "liens": ["ready-set-go"]
-    },
-    {
-      "id": "a-futuristic-summa",
-      "titre": "A Futuristic Summa",
-      "auteur": "Metro Boomin",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/a-futuristic-summa.jpg",
-      "media": "https://www.youtube.com/watch?v=uaMp0nld1x4",
-      "liens": [
-        "ready-set-go",
-        "mr-futuristic",
-        "jamboree",
-        "i-think-i-can-sang",
-        "still-shop",
-        "the-deandre-way",
-        "married-to-the-money",
-        "the-state-vs-radric-davis",
-        "forever-i-love-atlanta"
-      ]
-    },
-    {
-      "id": "mr-futuristic",
-      "titre": "Mr. Futuristic",
-      "auteur": "J Money",
-      "annee": 2009,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/mr-futuristic.jpg",
-      "media": "https://www.youtube.com/watch?v=KwHB1rFwwCA",
-      "liens": ["ready-set-go", "a-futuristic-summa", "forever-i-love-atlanta"]
-    },
-    {
-      "id": "jamboree",
-      "titre": "Jamboree",
-      "auteur": "Fast Life Yungstaz",
-      "annee": 2009,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/jamboree.jpg",
-      "media": "https://www.youtube.com/watch?v=kf5QZ-WUGKo",
-      "liens": ["a-futuristic-summa"]
-    },
-    {
-      "id": "i-think-i-can-sang",
-      "titre": "I Think I Can Sang",
-      "auteur": "Yung L.A.",
-      "annee": 2009,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/i-think-i-can-sang.jpg",
-      "media": "https://www.youtube.com/watch?v=qFQFI1Cjm9o",
-      "liens": ["a-futuristic-summa", "forever-i-love-atlanta"]
-    },
-    {
-      "id": "still-shop",
-      "titre": "Still Shop",
-      "auteur": "Shop Boyz",
-      "annee": 2011,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/still-shop.jpg",
-      "media": "https://www.youtube.com/watch?v=pSOG0bLsk78",
-      "liens": ["a-futuristic-summa"]
-    },
-    {
-      "id": "the-deandre-way",
-      "titre": "The DeAndre Way",
-      "auteur": "Soulja Boy",
-      "annee": 2010,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/the-deandre-way.jpg",
-      "media": "https://www.youtube.com/watch?v=IN88fXnjON8",
-      "liens": ["a-futuristic-summa"]
-    },
-    {
-      "id": "married-to-the-money",
-      "titre": "Married to the Money",
-      "auteur": "Speaker Knockerz",
-      "annee": 2013,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/married-to-the-money.jpg",
-      "media": "https://www.youtube.com/watch?v=_2TZboOJdig",
-      "liens": [
-        "a-futuristic-summa",
-        "almighty-so",
-        "super-saiyan-vol-1",
-        "dope-n-music",
-        "glossip-girl-part-1"
-      ]
-    },
-    {
-      "id": "the-state-vs-radric-davis",
-      "titre": "The State vs. Radric Davis",
-      "auteur": "Gucci Mane",
-      "annee": 2009,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/the-state-vs-radric-davis.jpg",
-      "media": "https://www.youtube.com/watch?v=14CskUt_OjM",
-      "liens": ["a-futuristic-summa", "almighty-so"]
-    },
-    {
-      "id": "glotoven",
-      "titre": "GloToven",
-      "auteur": "Chief Keef & Zaytoven",
-      "annee": 2019,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/glotoven.jpg",
-      "media": "https://www.youtube.com/watch?v=J9TCYBLKV0g",
-      "liens": ["ea-monster"]
-    },
-    {
-      "id": "almighty-so",
+      "id": "chief-keef-almighty-so",
       "titre": "Almighty So",
       "auteur": "Chief Keef",
       "annee": 2013,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/almighty-so.jpg",
-      "media": "https://www.youtube.com/watch?v=Lo45KFdTYjs",
-      "liens": [
-        "slime-ball-2",
-        "married-to-the-money",
-        "the-state-vs-radric-davis",
-        "playboi-carti",
-        "que-la-famille",
-        "glossip-girl-part-1"
-      ]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Chicago Drill",
+        "Drill",
+        "Bop",
+        "Cloud Rap",
+        "Gangsta Rap",
+        "Midwest Hip Hop",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=Lo45KFdTYjs"
     },
     {
-      "id": "forever-i-love-atlanta",
-      "titre": "Forever I Love Atlanta",
-      "auteur": "TM88",
-      "annee": 2025,
+      "id": "roscoe-dash-ready-set-go",
+      "titre": "Ready Set Go!",
+      "auteur": "Roscoe Dash",
+      "annee": 2010,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/forever-i-love-atlanta.jpg",
-      "media": "https://www.youtube.com/watch?v=P3T3FeAlhpw",
-      "liens": ["a-futuristic-summa", "mr-futuristic", "i-think-i-can-sang"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Futuristic Swag",
+        "Contemporary R&B",
+        "Southern Hip Hop",
+        "Pop Rap",
+        "Snap"
+      ],
+      "media": "https://www.youtube.com/watch?v=L7VY6rRuNsI"
     },
     {
-      "id": "groove-rush",
-      "titre": "Groove Rush",
-      "auteur": "Hydraa",
-      "annee": 2024,
+      "id": "kaaris-or-noir",
+      "titre": "Or noir",
+      "auteur": "Kaaris",
+      "annee": 2013,
       "type": "album",
-      "genre": "Funky Breaks",
-      "cover": "/images/oeuvres/groove-rush.jpg",
-      "media": "https://www.youtube.com/watch?v=G5iA5h9Bay0",
-      "liens": ["memories-of-tokyo-to"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Hardcore Hip Hop",
+        "Chicago Drill",
+        "Gangsta Rap",
+        "Drill"
+      ],
+      "media": "https://www.youtube.com/watch?v=Z4g9dmrLIEs"
     },
     {
-      "id": "jet-set-radio-sega-original-tracks",
-      "titre": "Jet Set Radio (Sega Original Tracks)",
-      "auteur": "Hideki Naganuma",
-      "annee": 2012,
+      "id": "despo-rutti-convictions-suicidaires",
+      "titre": "Convictions suicidaires",
+      "auteur": "Despo Rutti",
+      "annee": 2010,
       "type": "album",
-      "genre": "Big Beat",
-      "cover": "/images/oeuvres/jet-set-radio-sega-original-tracks.jpg",
-      "media": "https://www.youtube.com/watch?v=NqRxzJpeQ0c",
-      "liens": ["memories-of-tokyo-to"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop",
+        "Gangsta Rap",
+        "Spoken Word"
+      ],
+      "media": "https://www.youtube.com/watch?v=qcxuDwGs_oQ"
     },
     {
-      "id": "euphonic-rush",
-      "titre": "EUPHONIC RUSH",
-      "auteur": "BONESAW",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Breakbeat",
-      "cover": "/images/oeuvres/euphonic-rush.jpg",
-      "media": "https://www.youtube.com/watch?v=GAsCsFAs7qg",
-      "liens": ["memories-of-tokyo-to"]
-    },
-    {
-      "id": "playboi-carti",
-      "titre": "Playboi Carti",
-      "auteur": "Playboi Carti",
-      "annee": 2017,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/playboi-carti.jpg",
-      "media": "https://www.youtube.com/watch?v=zHXwcFLKrhE",
-      "liens": ["ea-monster", "almighty-so", "whole-lotta-red"]
-    },
-    {
-      "id": "whole-lotta-red",
-      "titre": "Whole Lotta Red",
-      "auteur": "Playboi Carti",
-      "annee": 2020,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/whole-lotta-red.jpg",
-      "media": "https://www.youtube.com/watch?v=3wO10rIofGw",
-      "liens": [
-        "king-pin",
-        "playboi-carti",
-        "a-great-chaos",
-        "cold-visions",
-        "rest-in-bass-encore"
-      ]
-    },
-    {
-      "id": "a-great-chaos",
-      "titre": "A Great Chaos",
-      "auteur": "Ken Carson",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/a-great-chaos.jpg",
-      "media": "https://www.youtube.com/watch?v=iwl_n_75Q1U",
-      "liens": ["whole-lotta-red"]
-    },
-    {
-      "id": "cold-visions",
-      "titre": "Cold Visions",
-      "auteur": "Bladee",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/cold-visions.jpg",
-      "media": "https://www.youtube.com/watch?v=OHuf8kjjdF4",
-      "liens": ["whole-lotta-red"]
-    },
-    {
-      "id": "rest-in-bass-encore",
-      "titre": "REST IN BASS : ENCORE",
-      "auteur": "Che",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/rest-in-bass-encore.jpg",
-      "media": "https://www.youtube.com/watch?v=W1xB5u_c8mM",
-      "liens": ["whole-lotta-red", "high-anxiety"]
-    },
-    {
-      "id": "high-anxiety",
-      "titre": "High Anxiety",
-      "auteur": "2Slimey",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/high-anxiety.jpg",
-      "media": "https://www.youtube.com/watch?v=D0L9f6IH0",
-      "liens": ["rest-in-bass-encore"]
-    },
-    {
-      "id": "fingers-crossed",
-      "titre": "Fingers Crossed",
-      "auteur": "kwes e",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/fingers-crossed.jpg",
-      "media": "https://www.youtube.com/watch?v=KaaQkhG7-0g",
-      "liens": ["oi", "conglomerate"]
-    },
-    {
-      "id": "duwap-so-based",
-      "titre": "Duwap So Based",
-      "auteur": "Duwap Kaine",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/duwap-so-based.jpg",
-      "media": "https://www.youtube.com/watch?v=ePsRJj7pcyo",
-      "liens": ["xavier"]
-    },
-    {
-      "id": "new-world-order",
-      "titre": "New World Order",
-      "auteur": "Fimiguerrero",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/new-world-order.jpg",
-      "media": "https://www.youtube.com/watch?v=hVOB7L992XQ",
-      "liens": ["oi", "black-british-music-2025", "conglomerate"]
-    },
-    {
-      "id": "a-dog-s-chance",
-      "titre": "A Dog's Chance",
-      "auteur": "Polo Perks <3 <3 <3, AyooLii & FearDorian",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/a-dog-s-chance.jpg",
-      "media": "https://www.youtube.com/watch?v=Ywj1sQK7F2I",
-      "liens": ["xavier", "lerado-khalil-surf-gang"]
-    },
-    {
-      "id": "xavier",
-      "titre": "Xavier",
-      "auteur": "xaviersobased",
+      "id": "slimegetem-king-pin",
+      "titre": "King Pin",
+      "auteur": "SlimeGetEm",
       "annee": 2026,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/xavier.jpg",
-      "media": "https://www.youtube.com/watch?v=RJ7OqR-yp7Q",
-      "liens": ["duwap-so-based", "a-dog-s-chance", "not-what-it-seems", "oi"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Free Car Music",
+        "DMV Hip Hop",
+        "Rage",
+        "Gangsta Rap",
+        "Horrorcore"
+      ],
+      "media": "https://www.youtube.com/watch?v=Gd0qRuzPPik"
     },
     {
-      "id": "not-what-it-seems",
-      "titre": "Not What It Seems",
-      "auteur": "ksuuvi",
-      "annee": 2024,
+      "id": "st6-jodyboof-strike-club",
+      "titre": "Strike Club",
+      "auteur": "ST6 JodyBoof",
+      "annee": 2026,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/not-what-it-seems.jpg",
-      "media": "https://www.youtube.com/watch?v=J6aMCZjv58g",
-      "liens": ["xavier"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Free Car Music",
+        "DMV Hip Hop",
+        "Rage",
+        "Gangsta Rap",
+        "Experimental Hip Hop",
+        "Breakbeat",
+        "Horrorcore"
+      ],
+      "media": "https://www.youtube.com/watch?v=yHl7XZS9s4w"
     },
     {
-      "id": "oi",
+      "id": "jaeychino-if-you-knew",
+      "titre": "If You Knew",
+      "auteur": "Jaeychino",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Free Car Music",
+        "DMV Hip Hop",
+        "Trap",
+        "Cloud Rap",
+        "Gangsta Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=2TSD6_7waBg"
+    },
+    {
+      "id": "lil-wayne-tha-carter-3",
+      "titre": "Tha Carter III",
+      "auteur": "Lil Wayne",
+      "annee": 2008,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Southern Hip Hop",
+        "Trap",
+        "Chipmunk Soul",
+        "Contemporary R&B",
+        "Dirty South"
+      ],
+      "media": "https://www.youtube.com/watch?v=xmj2QSbRZLE"
+    },
+    {
+      "id": "playboi-carti-music",
+      "titre": "MUSIC",
+      "auteur": "Playboi Carti",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Rage",
+        "Trap",
+        "Pop Rap",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=TuiSIQazYyI"
+    },
+    {
+      "id": "metro-boomin-a-futuristic-summa",
+      "titre": "A Futuristic Summa",
+      "auteur": "Metro Boomin",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Futuristic Swag",
+        "Contemporary R&B",
+        "Atlanta Bass",
+        "Southern Hip Hop",
+        "Trap",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=1GauoId2v-I"
+    },
+    {
+      "id": "21-savage-metro-boomin-savage-mode",
+      "titre": "Savage Mode",
+      "auteur": "21 Savage & Metro Boomin",
+      "annee": 2016,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Southern Hip Hop",
+        "Gangsta Rap",
+        "Horrorcore"
+      ],
+      "media": "https://www.youtube.com/watch?v=0nm-k-KJIIc"
+    },
+    {
+      "id": "brotha-lynch-hung-sesason-of-da-siccness",
+      "titre": "Season of da Sicness",
+      "auteur": "Brotha Lynch Hung",
+      "annee": 1994,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Horrorcore",
+        "Gangsta Rap",
+        "Chopper",
+        "Mobb Music",
+        "G-Funk",
+        "West Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=pAXiFEF4xxA"
+    },
+    {
+      "id": "yt-oi",
       "titre": "OI!",
       "auteur": "YT",
       "annee": 2025,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/oi.jpg",
-      "media": "https://www.youtube.com/watch?v=b4MbPMFI2Ws",
-      "liens": [
-        "fingers-crossed",
-        "new-world-order",
-        "xavier",
-        "flight-233",
-        "blair-babies",
-        "steeze-kills",
-        "black-british-music-2025",
-        "conglomerate"
-      ]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Jerk",
+        "Pop Rap",
+        "Lowend",
+        "Futuristic Swag",
+        "UK Hip Hop",
+        "Trap"
+      ],
+      "media": "https://www.youtube.com/watch?v=Dxr8Q_LaZ6M"
     },
     {
-      "id": "flight-233",
-      "titre": "FLIGHT 233",
-      "auteur": "N4T",
-      "annee": 2025,
+      "id": "fimiguerrero-new-world-order",
+      "titre": "New World Order",
+      "auteur": "Fimiguerrero",
+      "annee": 2024,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/flight-233.jpg",
-      "media": "https://www.youtube.com/watch?v=QNwA2UuqwUk",
-      "liens": ["oi"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Jerk",
+        "Trap",
+        "Rage",
+        "UK Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=JN9dxGZUeZs"
     },
     {
-      "id": "blair-babies",
-      "titre": "blair babies",
-      "auteur": "Ceebo",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/blair-babies.jpg",
-      "media": "https://www.youtube.com/watch?v=Ta3ZDtXGxLk",
-      "liens": ["oi"]
-    },
-    {
-      "id": "steeze-kills",
-      "titre": "Steeze Kills.",
-      "auteur": "Young Eman",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/steeze-kills.jpg",
-      "media": "https://www.youtube.com/watch?v=55ND9-3Euq8",
-      "liens": ["oi"]
-    },
-    {
-      "id": "black-british-music-2025",
-      "titre": "black british music (2025)",
+      "id": "jim-legxacy-black-british-music-2025",
+      "titre": "Black British Music (2025)",
       "auteur": "Jim Legxacy",
       "annee": 2025,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/black-british-music-2025.jpg",
-      "media": "https://www.youtube.com/watch?v=TCNeHyjAZ6g",
-      "liens": ["new-world-order", "oi", "conglomerate"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Jerk",
+        "Alternative R&B",
+        "Afrobeats",
+        "UK Hip Hop",
+        "Lowend",
+        "Alt-Pop",
+        "Emo Rap",
+        "Chipmunk Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=PFDyEQSB-nU"
     },
     {
-      "id": "jeune-morty-vol-1",
-      "titre": "Jeune Morty Vol.1",
-      "auteur": "Jeune Morty",
-      "annee": 2026,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/jeune-morty-vol-1.jpg",
-      "media": "https://www.youtube.com/watch?v=Jbxm9QRuJpA",
-      "liens": [
-        "saaheem",
-        "conglomerate",
-        "la-vie-en-violet",
-        "sans-frontiere-toute-la-terre",
-        "dirty-sprite-19"
-      ]
-    },
-    {
-      "id": "conglomerate",
-      "titre": "CONGLOMERATE",
-      "auteur": "Fimiguerrero, Len & Lancey Foux",
+      "id": "xaviersobased-with-2",
+      "titre": "With 2",
+      "auteur": "xaviersobased",
       "annee": 2024,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/conglomerate.jpg",
-      "media": "https://www.youtube.com/watch?v=YLvJ10WQdzY",
-      "liens": [
-        "fingers-crossed",
-        "new-world-order",
-        "oi",
-        "black-british-music-2025",
-        "jeune-morty-vol-1"
-      ]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Jerk",
+        "Plugg",
+        "Trap",
+        "Cloud Rap",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=Wxgxqs6z94I"
     },
     {
-      "id": "la-vie-en-violet",
-      "titre": "La Vie En Violet",
-      "auteur": "Ateyaba",
+      "id": "509-bmg-cracka-pack-chris-griffin-reloaded",
+      "titre": "Cracka Pack Chris Griffin : Reloaded",
+      "auteur": "509 BMG",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Plugg",
+        "Dark Plugg",
+        "Jerk",
+        "Gangsta Rap",
+        "Trap",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=uC1b-ZWdhW8"
+    },
+    {
+      "id": "polo-perks-ayoolii-feardorian-a-dog-s-chance",
+      "titre": "A Dog's Chance",
+      "auteur": "Polo Perks <3 <3 <3, AyooLii & FearDorian",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Lowend",
+        "Jerk",
+        "Cloud Rap",
+        "Plugg"
+      ],
+      "media": "https://www.youtube.com/watch?v=Ywj1sQK7F2I"
+    },
+    {
+      "id": "ksuuvi-sameone2",
+      "titre": "#sameone2",
+      "auteur": "ksuuvi",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Jerk",
+        "Cloud Rap",
+        "Lowend",
+        "Experimental Hip Hop",
+        "Trap"
+      ],
+      "media": "https://www.youtube.com/watch?v=BDZiWVaE-Yo"
+    },
+    {
+      "id": "fakemink-the-boy-who-cried-terrified",
+      "titre": "The Boy Who Cried Terrified .",
+      "auteur": "fakemink",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Cloud Rap",
+        "Jerk",
+        "Wave",
+        "UK Hip Hop",
+        "Pop Rap",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=PYBJ5Pw77DQ"
+    },
+    {
+      "id": "xaviersobased-keep-it-goin-xav",
+      "titre": "Keep It Goin Xav",
+      "auteur": "xaviersobased",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Jerk",
+        "Cloud Rap",
+        "Plugg",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=QlFyRBqtLmQ"
+    },
+    {
+      "id": "lucy-bedroque-egobreak-tether",
+      "titre": "Tether",
+      "auteur": "Lucy Bedroque & Egobreak",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Jerk",
+        "Cloud Rap",
+        "Digicore",
+        "Sigilkore",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=rDAPkHP16ig"
+    },
+    {
+      "id": "hi-c-sgt-hi-c",
+      "titre": "SGT-HI-C",
+      "auteur": "Hi-C",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Rage",
+        "Cloud Rap",
+        "Jerk",
+        "Bop",
+        "PluggnB"
+      ],
+      "media": "https://www.youtube.com/watch?v=JMquQWI4rrA"
+    },
+    {
+      "id": "yhapojj-evolution-of-xur",
+      "titre": "Evolution of Xur",
+      "auteur": "Yhapojj",
       "annee": 2023,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/la-vie-en-violet.jpg",
-      "media": "https://www.youtube.com/watch?v=dXqWpx9EFpc",
-      "liens": ["jeune-morty-vol-1"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Lowend",
+        "Cloud Rap",
+        "Jerk",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=VUWdxqG41aI"
     },
     {
-      "id": "sans-frontiere-toute-la-terre",
-      "titre": "Sans frontière toute la Terre",
-      "auteur": "Implaccable",
+      "id": "sickboyrari-ballad-of-a-glime",
+      "titre": "Ballad of a Glime",
+      "auteur": "Sickboyrari",
       "annee": 2024,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/sans-frontiere-toute-la-terre.jpg",
-      "media": "https://www.youtube.com/watch?v=bbzn507j6Ds",
-      "liens": [
-        "jeune-morty-vol-1",
-        "lerado-khalil-surf-gang",
-        "unorthodox",
-        "club-godfather"
-      ]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Plugg",
+        "Cloud Rap",
+        "Jerk",
+        "Rage",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=U6PaEBUoZoc"
     },
     {
-      "id": "titan",
-      "titre": "TITAN",
-      "auteur": "Cherry Pie & BBP",
+      "id": "skaiwater-gigi",
+      "titre": "#Gigi",
+      "auteur": "Skaiwater",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Alternative R&B",
+        "East Coast Club",
+        "Jerk",
+        "Trap",
+        "UK Hip Hop",
+        "Rage"
+      ],
+      "media": "https://www.youtube.com/watch?v=U6PaEBUoZoc"
+    },
+    {
+      "id": "quinn-feardorian-before-you-press-play",
+      "titre": "Before You Press Play",
+      "auteur": "quinn & FearDorian",
       "annee": 2025,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/titan.jpg",
-      "media": "https://www.youtube.com/watch?v=8DCj8LxvabU",
-      "liens": ["que-la-famille", "e-music"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Cloud Rap",
+        "Plugg",
+        "Jerk",
+        "Lowend",
+        "Digicore"
+      ],
+      "media": "https://www.youtube.com/watch?v=aPrV9Nn6yIU"
     },
     {
-      "id": "que-la-famille",
-      "titre": "Que la famille",
-      "auteur": "PNL",
-      "annee": 2015,
+      "id": "duwap-kaine-duwap-so-based",
+      "titre": "Duwap So Based",
+      "auteur": "Duwap Kaine",
+      "annee": 2023,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/que-la-famille.jpg",
-      "media": "https://www.youtube.com/watch?v=8eXdXBlVGcg",
-      "liens": [
-        "le-son-d-apres",
-        "nightmare-on-e-street",
-        "almighty-so",
-        "titan"
-      ]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Jerk",
+        "Cloud Rap",
+        "Lowend",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=NY6jwhjzYWs"
     },
     {
-      "id": "dirty-sprite-19",
-      "titre": "Dirty Sprite 19®",
-      "auteur": "Zoomy",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/dirty-sprite-19.jpg",
-      "media": "https://www.youtube.com/watch?v=A_ffQ_ixWgM",
-      "liens": ["jeune-morty-vol-1"]
-    },
-    {
-      "id": "true-magic",
-      "titre": "True Magic",
-      "auteur": "salute",
-      "annee": 2024,
-      "type": "album",
-      "genre": "UK Garage",
-      "cover": "/images/oeuvres/true-magic.jpg",
-      "media": "https://www.youtube.com/watch?v=uKZDKDbnucg",
-      "liens": ["memories-of-tokyo-to", "skepta-fred"]
-    },
-    {
-      "id": "hopefully",
-      "titre": "Hopefully !",
-      "auteur": "Loyle Carner",
+      "id": "sinn6r-federal",
+      "titre": "#FEDERAL",
+      "auteur": "SINN6R",
       "annee": 2025,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/hopefully.jpg",
-      "media": "https://www.youtube.com/watch?v=oQedbMow6-w",
-      "liens": ["essex-honey", "saison-00"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "UK Hip Hop",
+        "UK Drill",
+        "Jerk",
+        "Chicago Drill",
+        "Drill",
+        "Cloud Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=OWXRVo3XC6Y"
     },
     {
-      "id": "skepta-fred",
-      "titre": "Skepta ... Fred",
-      "auteur": "Skepta & Fred again..",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/skepta-fred.jpg",
-      "media": "https://www.youtube.com/watch?v=Y98WB67TCYc",
-      "liens": ["true-magic"]
-    },
-    {
-      "id": "jackzebra",
-      "titre": "Jackzebra",
-      "auteur": "King of Kings",
+      "id": "polo-perks-american-pie",
+      "titre": "American Pie",
+      "auteur": "Polo Perks <3 <3 <3",
       "annee": 2024,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/jackzebra.jpg",
-      "media": "https://www.youtube.com/watch?v=jR6Y15sD85o",
-      "liens": ["user116", "lerado-khalil-surf-gang", "chun"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Lowend",
+        "Jerk",
+        "Experimental Hip Hop",
+        "Midwest Emo",
+        "Rap Rock",
+        "Digicore"
+      ],
+      "media": "https://www.youtube.com/watch?v=hCYUAh99WxI"
     },
     {
-      "id": "user116",
-      "titre": "User116",
-      "auteur": "Baller Mixtape",
+      "id": "speaker-knockerz-married-to-the-money",
+      "titre": "Married to the Money",
+      "auteur": "Speaker Knockerz",
+      "annee": 2013,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Bop",
+        "Futuristic Swag",
+        "Trap",
+        "Bounce",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=_2TZboOJdig"
+    },
+    {
+      "id": "acid-souljah-octi-2evil",
+      "titre": "#2EVIL",
+      "auteur": "Acid Souljah & octi",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Chicago Drill",
+        "Bop",
+        "Plugg",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=JAOuBTlJ9DQ"
+    },
+    {
+      "id": "sd-life-of-a-savage-3",
+      "titre": "Life of a Savage 3",
+      "auteur": "SD",
+      "annee": 2013,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Chicago Drill",
+        "Gangsta Rap",
+        "Bop",
+        "Trap",
+        "Midwest Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=0OrJOIFer4E"
+    },
+    {
+      "id": "tisakorean-mumu-8818",
+      "titre": "MUMU 8818",
+      "auteur": "TisaKorean",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Trap",
+        "Bop",
+        "Snap",
+        "Futuristic Swag",
+        "Contemporary R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=R63iFpG4koA"
+    },
+    {
+      "id": "thirteendegrees-clique-city-vol-2",
+      "titre": "Clique City Vol. 2",
+      "auteur": "Thirteendegrees °",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Pop Rap",
+        "Bop",
+        "Plugg"
+      ],
+      "media": "https://www.youtube.com/watch?v=wl7lZZTlf44"
+    },
+    {
+      "id": "jeune-morty-eponyme",
+      "titre": "Eponyme",
+      "auteur": "Jeune Morty",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Pop Rap",
+        "Trap",
+        "Bop",
+        "Plugg",
+        "Cloud Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=h5gdHSCQMzo"
+    },
+    {
+      "id": "rocket-rese-doubted-me",
+      "titre": "Doubted Me",
+      "auteur": "Rocket Rese",
       "annee": 2026,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/user116.jpg",
-      "media": "https://www.youtube.com/watch?v=zGhz3u3O7Ic",
-      "liens": ["jackzebra"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Chicago Drill",
+        "Bop",
+        "Hardsyle"
+      ],
+      "media": "https://www.youtube.com/watch?v=ONT8C6yWeDU"
     },
     {
-      "id": "lerado-khalil-surf-gang",
-      "titre": "Lerado Khalil & SURF GANG",
-      "auteur": "Scenic Route",
+      "id": "benji-blue-bills-500k-degrees",
+      "titre": "500k Degrees",
+      "auteur": "Benji Blue Bills",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Rage",
+        "Trap",
+        "Bop"
+      ],
+      "media": "https://www.youtube.com/watch?v=IiBOM31ULk8"
+    },
+    {
+      "id": "playboi-carti-whole-lotta-red",
+      "titre": "Whole Lotta Red",
+      "auteur": "Playboi Carti",
+      "annee": 2020,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Rage",
+        "Trap",
+        "Experimental Hip Hop",
+        "Cloud Rap",
+        "Tread",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=3wO10rIofGw"
+    },
+    {
+      "id": "jane-remover-revengeseekerz",
+      "titre": "Revengeseekerz",
+      "auteur": "Jane Remover",
       "annee": 2025,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/lerado-khalil-surf-gang.jpg",
-      "media": "https://www.youtube.com/watch?v=qEE4KSQi74w",
-      "liens": [
-        "burning-desire",
-        "a-dog-s-chance",
-        "sans-frontiere-toute-la-terre",
-        "jackzebra",
-        "unorthodox",
-        "casts-of-a-dreamer",
-        "fada-3of"
-      ]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Digicore",
+        "Experimental Hip Hop",
+        "Electronic Dance Music",
+        "Rage",
+        "Hyperpop",
+        "Hard Dance",
+        "Bass House",
+        "Industrial Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=SXf1ZTxoGqg"
     },
     {
-      "id": "unorthodox",
-      "titre": "Unorthodox",
-      "auteur": "Moh Baretta",
+      "id": "bladee-cold-visions",
+      "titre": "Cold Visions",
+      "auteur": "Bladee",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Rage",
+        "Trap",
+        "Cloud Rap",
+        "Tread",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=Y1XjKC8Su14"
+    },
+    {
+      "id": "ken-carson-a-great-chaos",
+      "titre": "A Great Chaos",
+      "auteur": "Ken Carson",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Rage",
+        "Cloud Rap",
+        "Digicore",
+        "Trap",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=ey14bGbL4OI"
+    },
+    {
+      "id": "bladee-sulfur-surfer",
+      "titre": "A Sulfur Surfer",
+      "auteur": "Bladee",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Cloud Rap",
+        "Experimental Hip Hop",
+        "Wave",
+        "Trap",
+        "Drill",
+        "Rage"
+      ],
+      "media": "https://www.youtube.com/watch?v=tKqRDTVUhBQ"
+    },
+    {
+      "id": "slayr-half-blood-bloodluxe",
+      "titre": "Half Blood (BloodLuxe)",
+      "auteur": "slayr",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Rage",
+        "Pop Rap",
+        "Digicore",
+        "Electronic Dance Music",
+        "New Jazz",
+        "Rap Rock"
+      ],
+      "media": "https://www.youtube.com/watch?v=U1Ivwd58hp8"
+    },
+    {
+      "id": "edward-skeletrix-museum-music",
+      "titre": "Museum Music",
+      "auteur": "Edward Skeletrix",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Experimental Hip Hop",
+        "Electronic",
+        "Rage",
+        "Cloud Rap",
+        "Plugg",
+        "Glitch",
+        "Industrial Hip Hop",
+        "Glitch Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=d1-1cxQrms"
+    },
+    {
+      "id": "destroy-lonely-no-stylist-plus",
+      "titre": "NS+ (Ultra)",
+      "auteur": "Destroy Lonely",
       "annee": 2022,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/unorthodox.jpg",
-      "media": "https://www.youtube.com/watch?v=_S2CmRxxE2I",
-      "liens": [
-        "burning-desire",
-        "sans-frontiere-toute-la-terre",
-        "lerado-khalil-surf-gang",
-        "club-godfather"
-      ]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Rage",
+        "Pop Rap",
+        "Cloud Rap",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=JWxYdT-xTZQ"
     },
     {
-      "id": "casts-of-a-dreamer",
-      "titre": "Casts of a Dreamer",
-      "auteur": "454",
-      "annee": 2024,
+      "id": "lancey-foux-life-in-hell",
+      "titre": "Life In Hell",
+      "auteur": "Lancey Foux",
+      "annee": 2022,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/casts-of-a-dreamer.jpg",
-      "media": "https://www.youtube.com/watch?v=KNtLxdpO-7Y",
-      "liens": ["lerado-khalil-surf-gang", "fada-3of"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Rage",
+        "Trap",
+        "Alternative R&B",
+        "UK Hip Hop",
+        "Cloud Rap",
+        "Experimental Hip Hop",
+        "Neo-Psychedelia"
+      ],
+      "media": "https://www.youtube.com/watch?v=dEVV0tXJm0c"
     },
     {
-      "id": "babyonce",
-      "titre": "Babyonce",
-      "auteur": "Babyxsosa",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Alternative R&B",
-      "cover": "/images/oeuvres/babyonce.jpg",
-      "media": "https://www.youtube.com/watch?v=hqHp2ckctLM",
-      "liens": ["crest", "boy"]
-    },
-    {
-      "id": "you-only-die-1nce",
-      "titre": "You Only Die 1nce",
-      "auteur": "Freddie Gibbs",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/you-only-die-1nce.jpg",
-      "media": "https://www.youtube.com/watch?v=I0rvvapEz_o",
-      "liens": ["burning-desire", "dali-aint-dead", "fada-3of"]
-    },
-    {
-      "id": "fada-3of",
-      "titre": "Fada<3of$",
-      "auteur": "Niontay",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/fada-3of.jpg",
-      "media": "https://www.youtube.com/watch?v=GUWIeEXxuEw",
-      "liens": [
-        "burning-desire",
-        "dali-aint-dead",
-        "lerado-khalil-surf-gang",
-        "casts-of-a-dreamer",
-        "you-only-die-1nce",
-        "summer-s-mine"
-      ]
-    },
-    {
-      "id": "chun",
-      "titre": "家.生活.悬崖鹰",
-      "auteur": "Chun",
+      "id": "kuru-backstage-hologram",
+      "titre": "Backstage Hologram",
+      "auteur": "kuru",
       "annee": 2026,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/chun.jpg",
-      "media": "https://www.youtube.com/watch?v=0p-2PTo4mQg",
-      "liens": ["jackzebra", "dong-ji-lian-ge"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Cloud Rap",
+        "Rage",
+        "Digicore",
+        "Experimental Hip Hop",
+        "DMV Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=Tu8ngcSjHeE"
     },
     {
-      "id": "dong-ji-lian-ge",
-      "titre": "Dong ji lian ge",
-      "auteur": "Tupi",
+      "id": "homixide-gang-5th-amndmnt",
+      "titre": "5TH AMNDMNT",
+      "auteur": "Homixide Gang",
       "annee": 2023,
       "type": "album",
-      "genre": "Pop",
-      "cover": "/images/oeuvres/dong-ji-lian-ge.jpg",
-      "media": "https://www.youtube.com/watch?v=jbsDBf-Megc",
-      "liens": ["chun"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Rage",
+        "Southern Hip Hop",
+        "Trap",
+        "Plugg",
+        "Cloud Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=r8r8_N73bSw"
     },
     {
-      "id": "designer-junkie",
+      "id": "jackzebra-王中王",
+      "titre": "King of Kings",
+      "auteur": "jackzebra",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Chinese Hip Hop",
+        "Cloud Rap",
+        "PluggnB",
+        "Plugg",
+        "Asian Rock",
+        "Regalia",
+        "Rage"
+      ],
+      "media": "https://www.youtube.com/watch?v=jR6Y15sD85o"
+    },
+    {
+      "id": "young-stoner-life-young-thug-slime-language-3",
+      "titre": "Slime Language 3",
+      "auteur": "Young Stoner Life & Young Thug",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Pop Rap",
+        "Rage",
+        "Gangsta Rap",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=pttos-zpmWs"
+    },
+    {
+      "id": "sk8star-designer-junkie",
       "titre": "Designer Junkie",
       "auteur": "Sk8star",
       "annee": 2026,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/designer-junkie.jpg",
-      "media": "https://www.youtube.com/watch?v=_p8mDbGsQiA",
-      "liens": ["4souljasonly", "knight-shift", "trompe-l-oeil"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Rage",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=UIUOYLgMJRo"
     },
     {
-      "id": "4souljasonly",
-      "titre": "4SouljasOnly",
-      "auteur": "Devstacks",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/4souljasonly.jpg",
-      "media": "https://www.youtube.com/watch?v=xw9IkjuBypo",
-      "liens": ["designer-junkie", "trompe-l-oeil"]
-    },
-    {
-      "id": "knight-shift",
-      "titre": "Knight Shift",
-      "auteur": "Zukenee",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/knight-shift.jpg",
-      "media": "https://www.youtube.com/watch?v=NzqUFo6F9gc",
-      "liens": ["designer-junkie"]
-    },
-    {
-      "id": "trompe-l-oeil",
-      "titre": "trompe l'oeil",
-      "auteur": "untiljapan",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/trompe-l-oeil.jpg",
-      "media": "https://www.youtube.com/watch?v=YXtR10nzcK0",
-      "liens": ["designer-junkie", "4souljasonly"]
-    },
-    {
-      "id": "saison-00",
-      "titre": "Saison 00",
-      "auteur": "Luidji",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Neo-Soul",
-      "cover": "/images/oeuvres/saison-00.jpg",
-      "media": "https://www.youtube.com/watch?v=pvolIWxR9Qc",
-      "liens": ["hopefully", "ways-of-knowing", "moussa", "bleu-gospel"]
-    },
-    {
-      "id": "ways-of-knowing",
-      "titre": "Ways of Knowing",
-      "auteur": "Navy Blue",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/ways-of-knowing.jpg",
-      "media": "https://www.youtube.com/watch?v=4D8ouV0Lh8c",
-      "liens": ["burning-desire", "saison-00"]
-    },
-    {
-      "id": "moussa",
-      "titre": "Moussa",
-      "auteur": "Prince Waly",
-      "annee": 2022,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/moussa.jpg",
-      "media": "https://www.youtube.com/watch?v=QWu7U4quEbY",
-      "liens": ["saison-00", "bleu-gospel", "888"]
-    },
-    {
-      "id": "bleu-gospel",
-      "titre": "Bleu Gospel",
-      "auteur": "Tuerie",
-      "annee": 2021,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/bleu-gospel.jpg",
-      "media": "https://www.youtube.com/watch?v=ZnoxBS-_8Cg",
-      "liens": ["saison-00", "moussa"]
-    },
-    {
-      "id": "adc",
-      "titre": "ADC",
-      "auteur": "Freeze Corleone",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/adc.jpg",
-      "media": "https://www.youtube.com/watch?v=aOOJVSew6Kk",
-      "liens": ["les-2-pieds-d-dans", "hegemonie", "scarface-d-afrique"]
-    },
-    {
-      "id": "les-2-pieds-d-dans",
-      "titre": "Les 2 Pieds D'dans",
-      "auteur": "IGO",
-      "annee": 2023,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/les-2-pieds-d-dans.jpg",
-      "media": "https://www.youtube.com/watch?v=9b9IqYWcwYw",
-      "liens": ["adc", "hegemonie", "dont-trust-me", "trife-god"]
-    },
-    {
-      "id": "strictly-only-brothers",
-      "titre": "Strictly Only Brothers",
-      "auteur": "SOB x RBE",
-      "annee": 2019,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/strictly-only-brothers.jpg",
-      "media": "https://www.youtube.com/watch?v=WAENFxJOp8Q",
-      "liens": ["dont-trust-me"]
-    },
-      {
-      "id": "parkside-baby",
-      "titre": "Parkside Baby",
-      "auteur": "MoneySign Suede",
-      "annee": 2022,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/parkside-baby.jpg",
-      "media": "https://www.youtube.com/watch?v=kMLoCxvSSSY",
-      "liens": ["strictly-only-brothers"]
-    },
-    {
-      "id": "dont-trust-me",
-      "titre": "Don't Trust Me",
-      "auteur": "EBK Jaaybo",
-      "annee": 2025,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/dont-trust-me.jpg",
-      "media": "https://www.youtube.com/watch?v=barHZWJp15M",
-      "liens": ["les-2-pieds-d-dans", "dont-trust-me"]
-    },
-       {
-      "id": "trife-god",
-      "titre": "Trife God",
-      "auteur": "EBK Bckdoe",
-      "annee": 2022,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/trife-god.jpg",
-      "media": "https://www.youtube.com/watch?v=UG0J3wRFhK8",
-      "liens": ["les-2-pieds-d-dans", "dont-trust-me"]
-    },
-    {
-      "id": "e-music",
-      "titre": "E-MUSIC",
-      "auteur": "TH",
+      "id": "pz-no-turning-back",
+      "titre": "No Turning Back",
+      "auteur": "Pz'",
       "annee": 2026,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/e-music.jpg",
-      "media": "https://www.youtube.com/watch?v=hxdecXuvdJQ",
-      "liens": ["titan"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Rage",
+        "Southern Hip Hop",
+        "Pop Rap",
+        "Cloud Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=9xf1XYRjI6U"
     },
     {
-      "id": "hegemonie",
-      "titre": "HEGEMONIE",
-      "auteur": "Osirus Jack",
+      "id": "diamond-no-idols",
+      "titre": "Nø Idøls",
+      "auteur": "diamond*",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Plugg",
+        "Trap",
+        "Cloud Rap",
+        "Rage",
+        "Dark Plugg",
+        "Southern Hip Hop",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=EKE7Kj68V0c"
+    },
+    {
+      "id": "tezzus-the-resurrection",
+      "titre": "The Resurrectiøn",
+      "auteur": "Tezzus",
       "annee": 2026,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/hegemonie.jpg",
-      "media": "https://www.youtube.com/watch?v=XOQdUcLx04Q",
-      "liens": ["adc", "les-2-pieds-d-dans"]
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Rage",
+        "Pop Rap",
+        "Southern Hip Hop",
+        "Plugg"
+      ],
+      "media": "https://www.youtube.com/watch?v=TMR9hw5lMFc"
     },
     {
-      "id": "scarface-d-afrique",
-      "titre": "Scarface d'Afrique",
-      "auteur": "Alpha 5.20",
-      "annee": 2010,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/scarface-d-afrique.jpg",
-      "media": "https://www.youtube.com/watch?v=SiGQVrQU9qM",
-      "liens": ["adc"]
-    },
-    {
-      "id": "super-saiyan-vol-1",
-      "titre": "Super Saiyan Vol.1",
-      "auteur": "Sicko Mobb",
-      "annee": 2013,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/super-saiyan-vol-1.jpg",
-      "media": "https://www.youtube.com/watch?v=H9kyIvwG1Gc",
-      "liens": ["married-to-the-money"]
-    },
-    {
-      "id": "dope-n-music",
-      "titre": "Dope N' Music",
-      "auteur": "DJ Nate",
-      "annee": 2013,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/dope-n-music.jpg",
-      "media": "https://www.youtube.com/watch?v=SIGMrAV_hl4",
-      "liens": ["married-to-the-money"]
-    },
-    {
-      "id": "glossip-girl-part-1",
-      "titre": "Glossip Girl Part.1",
-      "auteur": "Fenka",
-      "annee": 2022,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/glossip-girl-part-1.jpg",
-      "media": "https://www.youtube.com/watch?v=mg-JUO33_pU",
-      "liens": ["married-to-the-money", "almighty-so"]
-    },
-    {
-      "id": "2-slizzy-2-sexy",
-      "titre": "2 Slizzy 2 Sexy",
-      "auteur": "Cash Cobain & Chow Lee",
-      "annee": 2022,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/2-slizzy-2-sexy.jpg",
-      "media": "https://www.youtube.com/watch?v=s0pEU7gKAug",
-      "liens": ["sexc-summer", "club-godfather"]
-    },
-    {
-      "id": "sexc-summer",
-      "titre": "Sexc Summer",
-      "auteur": "Baby Osamaa",
-      "annee": 2024,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/sexc-summer.jpg",
-      "media": "https://www.youtube.com/watch?v=01vGEIbDuDk",
-      "liens": ["2-slizzy-2-sexy"]
-    },
-    {
-      "id": "club-godfather",
-      "titre": "Club Godfather",
-      "auteur": "Bandmanrill",
-      "annee": 2022,
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/club-godfather.jpg",
-      "media": "https://www.youtube.com/watch?v=yvx_HnlKpp0",
-      "liens": [
-        "sans-frontiere-toute-la-terre",
-        "unorthodox",
-        "2-slizzy-2-sexy"
-      ]
-    },
-    {
-      "id": "le-general",
-      "titre": "Le Général",
-      "auteur": "Mac Tyer",
-      "annee": "2006",
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/le-general.jpg",
-      "media": "https://www.youtube.com/watch?v=4CjssMRl-to",
-      "liens": []
-    },
-    {
-      "id": "island-paradise-the-remixes",
-      "titre": "Island Paradise : The Remixes",
-      "auteur": "MGNA Crrrta",
-      "annee": "2024",
-      "type": "album",
-      "genre": "Electropop",
-      "cover": "/images/oeuvres/island-paradise-the-remixes.jpg",
-      "media": "https://www.youtube.com/watch?v=EOLADXKq8LU",
-      "liens": []
-    },
-    {
-      "id": "time-n-place",
-      "titre": "Time 'n' Place",
-      "auteur": "Kero Kero Bonito",
-      "annee": "2018",
-      "type": "album",
-      "genre": "Indie Pop",
-      "cover": "/images/oeuvres/time-n-place.jpg",
-      "media": "https://www.youtube.com/watch?v=rn1l2qNoNEU",
-      "liens": []
-    },
-    {
-      "id": "effendi",
-      "titre": "Effendi",
-      "auteur": "Sameer Ahmad",
-      "annee": "2021",
-      "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/effendi.jpg",
-      "media": "https://www.youtube.com/watch?v=Hxxon8TUDxY",
-      "liens": []
-    },
-    {
-      "id": "voodoo",
+      "id": "d-angelo-voodoo",
       "titre": "Voodoo",
       "auteur": "D'Angelo",
       "annee": 2000,
       "type": "album",
       "genre": "Neo-Soul",
-      "cover": "/images/oeuvres/voodoo.jpg",
-      "media": "https://www.youtube.com/watch?v=cGQ226b6YK8",
-      "liens": []
+      "sousGenres": [
+        "Funk",
+        "Contemporary R&B",
+        "Smooth Soul",
+        "Psychedelic Soul",
+        "Progressive Soul",
+        "Hip Hop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=EQq-KwgolxE"
     },
     {
-      "id": "888",
-      "titre": "888",
-      "auteur": "Infinit'",
-      "annee": "2024",
+      "id": "janet-jackson-the-velvet-rope",
+      "titre": "The Velvet Rope",
+      "auteur": "Janet Jackson",
+      "annee": 2000,
       "type": "album",
-      "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/888.jpg",
-      "media": "https://www.youtube.com/watch?v=9ijBelcoops",
-      "liens": ["moussa"]
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Pop",
+        "Neo-Soul",
+        "Trip Hop",
+        "Dance-Pop",
+        "Hip Hop Soul",
+        "Art Pop",
+        "New Jack Swing"
+      ],
+      "media": "https://www.youtube.com/watch?v=-IBToCUezfQ"
+    },
+    {
+      "id": "lauryn-hill-the-miseducation-of-lauryn-hill",
+      "titre": "The Miseducation of Lauryn Hill",
+      "auteur": "Lauryn Hill",
+      "annee": 1998,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Neo-Soul",
+        "Contemporary R&B",
+        "Boom Bap",
+        "Hip Hop Soul",
+        "Progressive Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=r3p3G0tZunE"
+    },
+    {
+      "id": "brandy-full-moon",
+      "titre": "Full Moon",
+      "auteur": "Brandy",
+      "annee": 2002,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Pop",
+        "Electropop",
+        "Dance-Pop",
+        "Hip Hop Soul",
+        "Smooth Soul",
+        "Wonky",
+        "Afrofuturism"
+      ],
+      "media": "https://www.youtube.com/watch?v=K7q7R3i1jvY"
+    },
+    {
+      "id": "malibu-vanities",
+      "titre": "Vanities",
+      "auteur": "Malibu",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Ambient",
+      "sousGenres": [
+        "New Age",
+        "Drone",
+        "Nature Recordings",
+        "Chillout",
+        "Ambient Trance",
+        "Epic Collage",
+        "Electronic"
+      ],
+      "media": "https://www.youtube.com/watch?v=dm-R_HWQk8A"
+    },
+    {
+      "id": "forever-united-wideawake",
+      "titre": "Wideawake",
+      "auteur": "Forever United",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Ambient",
+      "sousGenres": [
+        "Ambient Trance",
+        "Alternative R&B",
+        "Weightless",
+        "Wave"
+      ],
+      "media": "https://www.youtube.com/watch?v=wJxcZI5R7zI"
+    },
+    {
+      "id": "evian-christ-revanchist",
+      "titre": "Revanchist",
+      "auteur": "Evian Christ",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Trance",
+      "sousGenres": [
+        "Deconstructed Club",
+        "Ambient Trance",
+        "Melodic Techno",
+        "Epic Collage",
+        "Uplifting Trance"
+      ],
+      "media": "https://www.youtube.com/watch?v=Jwj7s4HDrNU"
+    },
+    {
+      "id": "pinkpantheress-fancy-that",
+      "titre": "Fancy That",
+      "auteur": "PinkPantheress",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Dance-Pop",
+      "sousGenres": [
+        "UK Garage",
+        "2-Step",
+        "Contemporary R&B",
+        "Liquid Drum and Bass",
+        "Speed Garage"
+      ],
+      "media": "https://www.youtube.com/watch?v=eh59FZMLvLA"
+    },
+    {
+      "id": "burial-untrue",
+      "titre": "Untrue",
+      "auteur": "Burial",
+      "annee": 2007,
+      "type": "album",
+      "genre": "Future Garage",
+      "sousGenres": [
+        "Dubstep",
+        "Hauntology",
+        "Ambient",
+        "2-Step",
+        "Dark Garage",
+        "Post-Dubstep"
+      ],
+      "media": "https://www.youtube.com/watch?v=PzYrr7K1dvU"
+    },
+    {
+      "id": "nia-archives-silence-is-loud",
+      "titre": "Silence Is Loud",
+      "auteur": "Nia Archives",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Jungle",
+      "sousGenres": [
+        "Liquid Drum and Bass",
+        "Contemporary R&B",
+        "R&B",
+        "Alt-Pop",
+        "Neo-Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=zeelqyob9DE"
+    },
+    {
+      "id": "makoto-believe-in-my-soul",
+      "titre": "Believe in My Soul",
+      "auteur": "Makoto",
+      "annee": 2007,
+      "type": "album",
+      "genre": "Liquid Drum and Bass",
+      "sousGenres": [
+        "Atmospheric Drum and Bass",
+        "Jazzstep",
+        "Acid Jazz"
+      ],
+      "media": "https://www.youtube.com/watch?v=HlWoi07jyMY"
+    },
+    {
+      "id": "thaiboy-digital-swedm-paradise",
+      "titre": "Paradise",
+      "auteur": "Thaiboy Digital & swedm®",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Uplifting Trance",
+      "sousGenres": [
+        "Vocal Trance",
+        "Hard Trance",
+        "Ambient Trance",
+        "Electro House",
+        "Electropop",
+        "Dance-Pop",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=YEQu90OX1yU"
+    },
+    {
+      "id": "slayyyter-worst-girl-in-america",
+      "titre": "Wor$t Girl in America",
+      "auteur": "Slayyyter",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Electropop",
+      "sousGenres": [
+        "Electroclash",
+        "Electro House",
+        "French Electro",
+        "Electro-Industrial",
+        "Dance-Pop",
+        "Indie Sleaze Revival",
+        "New Rave",
+        "Midtempo Bass"
+      ],
+      "media": "https://www.youtube.com/watch?v=gVs7BKk_dVE"
+    },
+    {
+      "id": "woesum-blue-summer",
+      "titre": "Blue Summer",
+      "auteur": "Woesum",
+      "annee": 2021,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Cloud Rap",
+        "Alternative R&B",
+        "Trap",
+        "Pop Rap",
+        "UK Drill"
+      ],
+      "media": "https://www.youtube.com/watch?v=lKzzSvHNTO0"
+    },
+    {
+      "id": "yung-lean-stranger",
+      "titre": "Stranger",
+      "auteur": "Yung Lean",
+      "annee": 2017,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Cloud Rap",
+        "Alternative R&B",
+        "Trap",
+        "Art Pop",
+        "Ambient Pop",
+        "Experimental Hip Hop",
+        "Emo Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=Pqa0DX4-TBM"
+    },
+    {
+      "id": "ghostface-killah-supreme-clientele",
+      "titre": "Supreme Clientele",
+      "auteur": "Ghostface Killah",
+      "annee": 2000,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Hardcore Hip Hop",
+        "Abstract Hip Hop",
+        "Boom Bap",
+        "East Coast Hip Hop",
+        "Mafioso Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=XnCAIEN-OVc"
+    },
+    {
+      "id": "454-casts-of-a-dreamer",
+      "titre": "Casts of a Dreamer",
+      "auteur": "454",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Cloud Rap",
+        "Florida Fast Music",
+        "PluggnB",
+        "Pop Rap",
+        "Tread",
+        "Detroit Sound",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=57QSmO2w1JE"
+    },
+    {
+      "id": "mike-burning-desire",
+      "titre": "Burning Desire",
+      "auteur": "MIKE",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Abstract Hip Hop",
+        "Jazz Rap",
+        "Drumless",
+        "Experimental Hip Hop",
+        "Cloud Rap",
+        "Vaporwave",
+        "Hypnagogic Pop"
+      ],
+      "media": "https://www.youtube.com/watch?v=RaUkYDS8PR0"
+    },
+    {
+      "id": "kanye-west-graduation",
+      "titre": "Graduation",
+      "auteur": "Kanye West",
+      "annee": 2007,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Electropop",
+        "Electro Hop",
+        "Chipmunk Soul",
+        "Midwest Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=ZtkNfC5Oymw"
+    },
+    {
+      "id": "waka-flocka-flame-flockaveli",
+      "titre": "Flockaveli",
+      "auteur": "Waka Flocka Flame",
+      "annee": 2010,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Gangsta Rap",
+        "Dirty South",
+        "Crunk",
+        "Chicago Drill",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=6C35FN1DOWY"
+    },
+    {
+      "id": "three-6-mafia-mystic-stylez",
+      "titre": "Mystic Stylez",
+      "auteur": "Three 6 Mafia",
+      "annee": 1995,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Memphis Rap",
+        "Horrorcore",
+        "Gangsta Rap",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=9tC94HZWKCs"
+    },
+    {
+      "id": "erykah-badu-mama-s-gun",
+      "titre": "Mama's Gun",
+      "auteur": "Erykah Badu",
+      "annee": 2000,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Psychedelic Soul",
+        "Funk",
+        "Soul Jazz",
+        "Progressive Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=b4fCymLkgOQ"
+    },
+    {
+      "id": "frank-ocean-channel-orange",
+      "titre": "Channel Orange",
+      "auteur": "Frank Ocean",
+      "annee": 2012,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Alternative R&B",
+        "Contemporary R&B",
+        "Neo-Soul",
+        "Psychedelic Soul",
+        "Progressive Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=kgplNxRbbaM"
+    },
+    {
+      "id": "solange-a-seat-at-the-table",
+      "titre": "A Seat at the Table",
+      "auteur": "Solange",
+      "annee": 2016,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Progressive Soul",
+        "Alternative R&B",
+        "Art Pop",
+        "Spoken Word",
+        "Sophisti-Pop"
+      ],
+      "media": "https://www.youtube.com/watch?v=u8Y5gk8J7XQ"
+    },
+    {
+      "id": "sampha-process",
+      "titre": "Process",
+      "auteur": "Sampha",
+      "annee": 2017,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Alternative R&B",
+        "Neo-Soul",
+        "Future Garage",
+        "Art Pop",
+        "UK Bass",
+        "Singer-Songwriter",
+        "Post-Dubstep"
+      ],
+      "media": "https://www.youtube.com/watch?v=2K2LXuK3A78"
+    },
+    {
+      "id": "childish-gambino-awaken-my-love",
+      "titre": "\"Awaken, My Love!\"",
+      "auteur": "Childish Gambino",
+      "annee": 2016,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Psychedelic Soul",
+        "Funk",
+        "P-Funk",
+        "Psychedelic Rock",
+        "Synth Funk",
+        "Progressive Soul",
+        "Afrofuturism"
+      ],
+      "media": "https://www.youtube.com/watch?v=82ede35RJsQ"
+    },
+    {
+      "id": "cleo-sol-mother",
+      "titre": "Mother",
+      "auteur": "Cleo Sol",
+      "annee": 2021,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Smooth Soul",
+        "Gospel",
+        "Contemporary R&B",
+        "Singer-Songwriter",
+        "Progressive Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=Aelj6QvMUc0"
+    },
+    {
+      "id": "luedji-luna-bom-mesmo-e-estar-debaixo-d-agua",
+      "titre": "Bom mesmo é estar debaixo d'água",
+      "auteur": "Luedji Luna",
+      "annee": 2022,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Smooth Soul",
+        "MPB",
+        "Alternative R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=dW2PLyPqf_0"
+    },
+    {
+      "id": "musiq-soulchild-aijuswanaseing",
+      "titre": "Aijuswanaseing",
+      "auteur": "Musiq Soulchild",
+      "annee": 2000,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Smooth Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=01Io8re3SJM"
+    },
+    {
+      "id": "kali-uchis-red-moon-in-venus",
+      "titre": "Red Moon in Venus",
+      "auteur": "Kali Uchis",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Psychedelic Soul",
+        "Smooth Soul",
+        "Funk"
+      ],
+      "media": "https://www.youtube.com/watch?v=sfs9vfarc9o"
+    },
+    {
+      "id": "joi-the-pendulum-vibe",
+      "titre": "The Pendulum Vibe",
+      "auteur": "Joi",
+      "annee": 1994,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Hip Hop Soul",
+        "Psychedelic Soul",
+        "Trip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=7bWHf_lx9cc"
+    },
+    {
+      "id": "alicia-keys-the-diary-of-alicia-keys",
+      "titre": "The Diary of Alicia Keys",
+      "auteur": "Alicia Keys",
+      "annee": 2003,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Neo-Soul",
+        "Smooth Soul",
+        "Pop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=wyaA5Hooh1o"
+    },
+    {
+      "id": "thundercat-drunk",
+      "titre": "Drunk",
+      "auteur": "Thundercat",
+      "annee": 2017,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Psychedelic Soul",
+        "Progressive Soul",
+        "Funk",
+        "Funktronica",
+        "Acid Jazz",
+        "Jazz Fusion",
+        "Alternative R&B",
+        "Neo-Psychedelia"
+      ],
+      "media": "https://www.youtube.com/watch?v=TQYSTAW_2s4"
+    },
+    {
+      "id": "kendrick-lamar-to-pimp-a-butterfly",
+      "titre": "To Pimp a Butterfly",
+      "auteur": "Kendrick Lamar",
+      "annee": 2015,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Jazz Rap",
+        "West Coast Hip Hop",
+        "Neo-Soul",
+        "Funk",
+        "Poetry",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=g0NVaX8DRN4"
+    },
+    {
+      "id": "snoop-dogg-doggystyle",
+      "titre": "Doggystyle",
+      "auteur": "Snoop Dogg",
+      "annee": 1993,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "G-Funk",
+        "Gangsta Rap",
+        "West Coast Hip Hop",
+        "Stoner Rap",
+        "Pimp Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=h3jOkCksXo4"
+    },
+    {
+      "id": "les-nubians-princesses-nubiennes",
+      "titre": "Princesses Nubiennes",
+      "auteur": "Les Nubians",
+      "annee": 1998,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Nouvelle chanson française",
+        "Acid Jazz",
+        "Hip Hop Soul",
+        "French Pop"
+      ],
+      "media": "https://www.youtube.com/watch?v=rEyDzJ9oB6w"
+    },
+    {
+      "id": "doc-gyneco-premiere-consultation",
+      "titre": "Première consultation",
+      "auteur": "Doc Gynéco",
+      "annee": 1996,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "G-Funk",
+        "Contemporary R&B",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=a7-xRazC2h4"
+    },
+    {
+      "id": "luidji-saison-00",
+      "titre": "Saison 00",
+      "auteur": "Luidji",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "French Pop",
+        "Alternative R&B",
+        "French Hip Hop",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=pvolIWxR9Qc"
+    },
+    {
+      "id": "theodora-mega-bbl",
+      "titre": "Mega BBL",
+      "auteur": "Theodora",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Dance-Pop",
+      "sousGenres": [
+        "French Pop",
+        "Alt-Pop",
+        "Afrobeats",
+        "Alternative R&B",
+        "Funk carioca",
+        "Pop Rap",
+        "Afropiano",
+        "Bouyon",
+        "French Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=RMOzQH0ApZg"
+    },
+    {
+      "id": "rema-heis",
+      "titre": "HEIS",
+      "auteur": "Rema",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Afrobeats",
+      "sousGenres": [
+        "Electronic Dance Music",
+        "Batida",
+        "Soca",
+        "Amapiano",
+        "Alté"
+      ],
+      "media": "https://www.youtube.com/watch?v=hHw1DfUn8UQ"
+    },
+    {
+      "id": "res-how-i-do",
+      "titre": "How I Do",
+      "auteur": "Res",
+      "annee": 2001,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Alternative Rock",
+        "Trip Hop",
+        "Hip Hop Soul",
+        "Pop Rock"
+      ],
+      "media": "https://www.youtube.com/watch?v=UoFdCA6C8Z4"
+    },
+    {
+      "id": "sade-lovers-rock",
+      "titre": "Lovers Rock",
+      "auteur": "Sade",
+      "annee": 2000,
+      "type": "album",
+      "genre": "Soul",
+      "sousGenres": [
+        "Smooth Soul",
+        "Neo-Soul",
+        "Trip Hop",
+        "Contemporary R&B",
+        "Dub",
+        "Downtempo"
+      ],
+      "media": "https://www.youtube.com/watch?v=v7HCA3ZCxeo"
+    },
+    {
+      "id": "maxwell-now",
+      "titre": "Now",
+      "auteur": "Maxwell",
+      "annee": 2001,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Funk",
+        "Smooth Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=pYYL03Btgfk"
+    },
+    {
+      "id": "anthony-hamilton-comin-from-where-i-m-from",
+      "titre": "Comin' From Where I'm From",
+      "auteur": "Anthony Hamilton",
+      "annee": 2003,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Southern Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=Y321-TZE92g"
+    },
+    {
+      "id": "amel-larrieux-infinite-possibilities",
+      "titre": "Infinite Possibilities",
+      "auteur": "Amel Larrieux",
+      "annee": 2000,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Smooth Soul",
+        "Acid Jazz",
+        "Trip Hop",
+        "Contemporary R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=dh1VCsscAmc"
+    },
+    {
+      "id": "q-tip-kamaal-the-abstract",
+      "titre": "Kamaal the Abstract",
+      "auteur": "Q-Tip",
+      "annee": 2009,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Neo-Soul",
+        "Jazz Rap",
+        "Progressive Soul",
+        "Jazz-Funk",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=ndLjG_nnZ7I"
+    },
+    {
+      "id": "raphael-saadiq-instant-vintage",
+      "titre": "Instant Vintage",
+      "auteur": "Raphael Saadiq",
+      "annee": 2002,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Progressive Soul",
+        "Smooth Soul",
+        "Funk",
+        "Hip Hop",
+        "Contemporary R&B",
+        "Hip Hop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=0CpMo8a_mDU"
+    },
+    {
+      "id": "john-legend-once-again",
+      "titre": "Once Again",
+      "auteur": "John Legend",
+      "annee": 2006,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=x28QhTvVURg"
+    },
+    {
+      "id": "lucy-pearl-lucy-pearl",
+      "titre": "Lucy Pearl",
+      "auteur": "Lucy Pearl",
+      "annee": 2000,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Funk"
+      ],
+      "media": "https://www.youtube.com/watch?v=8PUme0vK4LQ"
+    },
+    {
+      "id": "prince-musicology",
+      "titre": "Musicology",
+      "auteur": "Prince",
+      "annee": 2004,
+      "type": "album",
+      "genre": "Funk",
+      "sousGenres": [
+        "Neo-Soul",
+        "Pop Rock",
+        "Contemporary R&B",
+        "Soul Jazz",
+        "Progressive Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=oFraEN1Dsmg"
+    },
+    {
+      "id": "van-hunt-van-hunt",
+      "titre": "Van Hunt",
+      "auteur": "Van Hunt",
+      "annee": 2004,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Psychedelic Soul",
+        "Smooth Soul",
+        "Funk"
+      ],
+      "media": "https://www.youtube.com/watch?v=j3YgTnHRtkk"
+    },
+    {
+      "id": "dwele-subject",
+      "titre": "Subject",
+      "auteur": "Dwele",
+      "annee": 2003,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=7ihfwcpQ6DA"
+    },
+    {
+      "id": "nneka-victim-of-truth",
+      "titre": "Victim of Truth",
+      "auteur": "Nneka",
+      "annee": 2006,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Hip Hop",
+        "Reggae",
+        "Afrobeat"
+      ],
+      "media": "https://www.youtube.com/watch?v=_0H9oNS2c_c"
+    },
+    {
+      "id": "angie-stone-black-diamond",
+      "titre": "Black Diamond",
+      "auteur": "Angie Stone",
+      "annee": 1999,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Smooth Soul",
+        "Hip Hop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=eGGOcGNinbM"
+    },
+    {
+      "id": "groove-theory-groove-theory",
+      "titre": "Groove Theory",
+      "auteur": "Groove Theory",
+      "annee": 1995,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Hip Hop Soul",
+        "Neo-Soul",
+        "Downtempo",
+        "Smooth Soul",
+        "Trip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=munm6lzoR3I"
+    },
+    {
+      "id": "aaliyah-one-in-a-million",
+      "titre": "One in a Million",
+      "auteur": "Aaliyah",
+      "annee": 1996,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Hip Hop Soul",
+        "Contemporary R&B",
+        "Neo-Soul",
+        "Smooth Soul",
+        "Pop Rap",
+        "Trip Hop",
+        "Pop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=xNlguQ5wTac"
+    },
+    {
+      "id": "jodeci-diary-of-a-mad-band",
+      "titre": "Diary of a Mad Band",
+      "auteur": "Jodeci",
+      "annee": 1993,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Hip Hop Soul",
+        "G-Funk",
+        "Smooth Soul",
+        "Boy Band"
+      ],
+      "media": "https://www.youtube.com/watch?v=N8S4ZnQB-DA"
+    },
+    {
+      "id": "swv-its-about-time",
+      "titre": "It's About Time",
+      "auteur": "SWV",
+      "annee": 1992,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Hip Hop Soul",
+        "New Jack Swing",
+        "Smooth Soul",
+        "Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=qEGCYDcNeEM"
+    },
+    {
+      "id": "tlc-crazysexycool",
+      "titre": "CrazySexyCool",
+      "auteur": "TLC",
+      "annee": 1994,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Hip Hop Soul",
+        "Contemporary R&B",
+        "New Jack Swing",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=GxTqqjJWGpc"
+    },
+    {
+      "id": "stevie-wonder-songs-in-the-key-of-life",
+      "titre": "Songs in the Key of Life",
+      "auteur": "Stevie Wonder",
+      "annee": 1976,
+      "type": "album",
+      "genre": "Soul",
+      "sousGenres": [
+        "Progressive Soul",
+        "Funk",
+        "Smooth Soul",
+        "Pop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=EnNgASBdCeo"
+    },
+    {
+      "id": "marvin-gaye-whats-going-on",
+      "titre": "What's Going On",
+      "auteur": "Marvin Gaye",
+      "annee": 1971,
+      "type": "album",
+      "genre": "Soul",
+      "sousGenres": [
+        "Progressive Soul",
+        "Smooth Soul",
+        "Philly Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=_f5xq6vCQS8"
+    },
+    {
+      "id": "curtis-mayfield-curtis",
+      "titre": "Curtis",
+      "auteur": "Curtis Mayfield",
+      "annee": 1970,
+      "type": "album",
+      "genre": "Soul",
+      "sousGenres": [
+        "Chicago Soul",
+        "Progressive Soul",
+        "Funk",
+        "Psychedelic Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=vW33M7GB7Vs"
+    },
+    {
+      "id": "dangelo-and-the-vanguard-black-messiah",
+      "titre": "Black Messiah",
+      "auteur": "D'Angelo and The Vanguard",
+      "annee": 2014,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Progressive Soul",
+        "Funk",
+        "Psychedelic Soul",
+        "Funk Rock"
+      ],
+      "media": "https://www.youtube.com/watch?v=2haOtNzacIs"
+    },
+    {
+      "id": "isaac-hayes-hot-buttered-soul",
+      "titre": "Hot Buttered Soul",
+      "auteur": "Isaac Hayes",
+      "annee": 1969,
+      "type": "album",
+      "genre": "Soul",
+      "sousGenres": [
+        "Progressive Soul",
+        "Funk",
+        "Deep Soul",
+        "Smooth Soul",
+        "Psychedelic Soul",
+        "Spoken Word",
+        "Deep Funk"
+      ],
+      "media": "https://www.youtube.com/watch?v=5loAY27W5IY"
+    },
+    {
+      "id": "janelle-monae-the-archandroid",
+      "titre": "The ArchAndroid",
+      "auteur": "Janelle Monáe",
+      "annee": 2010,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Art Pop",
+        "Progressive Soul",
+        "Neo-Soul",
+        "Funk",
+        "Psychedelic Soul",
+        "Progressive Pop",
+        "Neo-Psychedelia",
+        "Afrofuturism"
+      ],
+      "media": "https://www.youtube.com/watch?v=vGy-iOar_BA"
+    },
+    {
+      "id": "michael-jackson-thriller",
+      "titre": "Thriller",
+      "auteur": "Michael Jackson",
+      "annee": 1982,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Dance-Pop",
+        "Disco",
+        "Synth Funk",
+        "Funk",
+        "Pop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=oqLpko9Gprs"
+    },
+    {
+      "id": "gaelle-transient",
+      "titre": "Transient",
+      "auteur": "Gaelle",
+      "annee": 2004,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Downtempo",
+        "Deep House",
+        "Neo-Soul",
+        "Broken Beat",
+        "Alternative R&B",
+        "Trip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=psDVbeXj2RI"
+    },
+    {
+      "id": "miles-davis-bitches-brew",
+      "titre": "Bitches Brew",
+      "auteur": "Miles Davis",
+      "annee": 1970,
+      "type": "album",
+      "genre": "Jazz Fusion",
+      "sousGenres": [
+        "Avant-Garde Jazz",
+        "Jazz-Rock",
+        "Jazz-Funk",
+        "Psychedelia",
+        "Afrofuturism"
+      ],
+      "media": "https://www.youtube.com/watch?v=Q26k14yBAnM"
+    },
+    {
+      "id": "outkast-atliens",
+      "titre": "ATLiens",
+      "auteur": "Outkast",
+      "annee": 1996,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Neo-Soul",
+        "Trip Hop",
+        "Southern Hip Hop",
+        "Afrofuturism"
+      ],
+      "media": "https://www.youtube.com/watch?v=T-tauH80mFI"
+    },
+    {
+      "id": "herbie-hancock-head-hunters",
+      "titre": "Head Hunters",
+      "auteur": "Herbie Hancock",
+      "annee": 1973,
+      "type": "album",
+      "genre": "Jazz-Funk",
+      "sousGenres": [
+        "Jazz Fusion",
+        "Deep Funk",
+        "Afrofuturism"
+      ],
+      "media": "https://www.youtube.com/watch?v=ppJQKfqhFfE"
+    },
+    {
+      "id": "sun-ra-lanquidity",
+      "titre": "Lanquidity",
+      "auteur": "Sun Ra",
+      "annee": 1978,
+      "type": "album",
+      "genre": "Jazz Fusion",
+      "sousGenres": [
+        "Jazz-Funk",
+        "Avant-Garde Jazz",
+        "Experimental Big Band",
+        "Afrofuturism"
+      ],
+      "media": "https://www.youtube.com/watch?v=zQBeVdymxXk"
+    },
+    {
+      "id": "deltron-3030-deltron-3030",
+      "titre": "Deltron 3030",
+      "auteur": "Deltron 3030",
+      "annee": 2000,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Abstract Hip Hop",
+        "Experimental Hip Hop",
+        "Boom Bap",
+        "Turntablism",
+        "West Coast Hip Hop",
+        "Bay Area Hip Hop",
+        "Afrofuturism"
+      ],
+      "media": "https://www.youtube.com/watch?v=V-Easr4-qJk"
+    },
+    {
+      "id": "parliament-mothership-connection",
+      "titre": "Mothership Connection",
+      "auteur": "Parliament",
+      "annee": 1975,
+      "type": "album",
+      "genre": "P-Funk",
+      "sousGenres": [
+        "Synth Funk",
+        "Progressive Soul",
+        "Afrofuturism"
+      ],
+      "media": "https://www.youtube.com/watch?v=kvyNe7f7WhA"
+    },
+    {
+      "id": "janet-jackson-rhythm-nation-1814",
+      "titre": "Rhythm Nation 1814",
+      "auteur": "Janet Jackson",
+      "annee": 1989,
+      "type": "album",
+      "genre": "New Jack Swing",
+      "sousGenres": [
+        "Dance-Pop",
+        "Minneapolis Sound",
+        "Post-Industrial",
+        "Art Pop",
+        "Afrofuturism"
+      ],
+      "media": "https://www.youtube.com/watch?v=U-2cv70nLwo"
+    },
+    {
+      "id": "london-elektricity-pull-the-plug",
+      "titre": "Pull the Plug",
+      "auteur": "London Elektricity",
+      "annee": 1999,
+      "type": "album",
+      "genre": "Jazzstep",
+      "sousGenres": [
+        "Liquid Drum and Bass"
+      ],
+      "media": "https://www.youtube.com/watch?v=xPHV2nmsjWY"
+    },
+    {
+      "id": "amon-tobin-bricolage",
+      "titre": "Bricolage",
+      "auteur": "Amon Tobin",
+      "annee": 1997,
+      "type": "album",
+      "genre": "Nu Jazz",
+      "sousGenres": [
+        "Jazzstep",
+        "IDM",
+        "Downtempo",
+        "Drum and Bass",
+        "Darkstep"
+      ],
+      "media": "https://www.youtube.com/watch?v=WjlNL_V6Q8k"
+    },
+    {
+      "id": "kanye-west-the-college-dropout",
+      "titre": "The College Dropout",
+      "auteur": "Kanye West",
+      "annee": 2004,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Chipmunk Soul",
+        "Pop Rap",
+        "Neo-Soul",
+        "Midwest Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=0Tdpq3FRGhY"
+    },
+    {
+      "id": "jay-z-the-blueprint",
+      "titre": "The Blueprint",
+      "auteur": "JAY-Z",
+      "annee": 2001,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Chipmunk Soul",
+        "Pop Rap",
+        "Hardcore Hip Hop",
+        "Mafioso Rap",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=Evpc2pRHX9I"
+    },
+    {
+      "id": "the-diplomats-diplomatic-immunity",
+      "titre": "Diplomatic Immunity",
+      "auteur": "The Diplomats",
+      "annee": 2003,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Gangsta Rap",
+        "Chipmunk Soul",
+        "Boom Bap",
+        "Pop Rap",
+        "Coke Rap",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=uCi6hFINi8w"
+    },
+    {
+      "id": "camron-purple-haze",
+      "titre": "Purple Haze",
+      "auteur": "Cam'ron",
+      "annee": 2004,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Gangsta Rap",
+        "Chipmunk Soul",
+        "Pop Rap",
+        "Abstract Hip Hop",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=zEQRfATHhgw"
+    },
+    {
+      "id": "9th-wonder-buckshot-chemistry",
+      "titre": "Chemistry",
+      "auteur": "9th Wonder & Buckshot",
+      "annee": 2005,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Boom Bap",
+        "Chipmunk Soul",
+        "Hardcore Hip Hop",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=WSxjF7Wj28k"
+    },
+    {
+      "id": "juelz-santana-from-me-to-u",
+      "titre": "From Me to U",
+      "auteur": "Juelz Santana",
+      "annee": 2003,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Chipmunk Soul",
+        "Gangsta Rap",
+        "Pop Rap",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=9kFUampVf_0"
+    },
+    {
+      "id": "clipse-hell-hath-no-fury",
+      "titre": "Hell Hath No Fury",
+      "auteur": "Clipse",
+      "annee": 2006,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Gangsta Rap",
+        "Coke Rap",
+        "Experimental Hip Hop",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=tRtEZuFhFwc"
+    },
+    {
+      "id": "boldy-james-sterling-toles-manger-on-mcnichols",
+      "titre": "Manger on McNichols",
+      "auteur": "Boldy James & Sterling Toles",
+      "annee": 2020,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Jazz Rap",
+        "Gangsta Rap",
+        "Chamber Jazz",
+        "Experimental Hip Hop",
+        "Coke Rap",
+        "Midwest Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=RjE7Nc7fqrU"
+    },
+    {
+      "id": "pusha-t-daytona",
+      "titre": "Daytona",
+      "auteur": "Pusha T",
+      "annee": 2018,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Hardcore Hip Hop",
+        "Coke Rap",
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=RMhIC6195KU"
+    },
+    {
+      "id": "raekwon-only-built-4-cuban-linx",
+      "titre": "Only Built 4 Cuban Linx...",
+      "auteur": "Raekwon",
+      "annee": 1995,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Boom Bap",
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "Coke Rap",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=XzkHQlR4Hzo"
+    },
+    {
+      "id": "roc-marciano-reloaded",
+      "titre": "Reloaded",
+      "auteur": "Roc Marciano",
+      "annee": 2012,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Drumless",
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "Coke Rap",
+        "Boom Bap",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=7UGlz3ZtKk4"
+    },
+    {
+      "id": "griselda-wwcd",
+      "titre": "WWCD",
+      "auteur": "Griselda",
+      "annee": 2019,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Boom Bap",
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "Coke Rap",
+        "Drumless",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=Cf5Vi9NBHEc"
+    },
+    {
+      "id": "pusha-t-its-almost-dry",
+      "titre": "It's Almost Dry",
+      "auteur": "Pusha T",
+      "annee": 2022,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Gangsta Rap",
+        "Coke Rap",
+        "Chipmunk Soul",
+        "Mafioso Rap",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=unRSQs7aABE"
+    },
+    {
+      "id": "currensy-freddie-gibbs-the-alchemist-fetti",
+      "titre": "Fetti",
+      "auteur": "Curren$y, Freddie Gibbs & The Alchemist",
+      "annee": 2018,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Gangsta Rap",
+        "Coke Rap",
+        "Mafioso Rap",
+        "Jazz Rap",
+        "Boom Bap",
+        "Drumless"
+      ],
+      "media": "https://www.youtube.com/watch?v=oBmj_d9XkxQ"
+    },
+    {
+      "id": "big-pun-capital-punishment",
+      "titre": "Capital Punishment",
+      "auteur": "Big Pun",
+      "annee": 1998,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Boom Bap",
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "Pop Rap",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=5tSDhGea27E"
+    },
+    {
+      "id": "nas-it-was-written",
+      "titre": "It Was Written",
+      "auteur": "Nas",
+      "annee": 1996,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Boom Bap",
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "Jazz Rap",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=pmmnzusZZMU"
+    },
+    {
+      "id": "the-notorious-b-i-g-life-after-death",
+      "titre": "Life After Death",
+      "auteur": "The Notorious B.I.G.",
+      "annee": 1997,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "Pop Rap",
+        "Boom Bap",
+        "Contemporary R&B",
+        "Hip Hop Soul",
+        "Coke Rap",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=ioYkj7SjhbY"
+    },
+    {
+      "id": "benny-the-butcher-tana-talk-3",
+      "titre": "Tana Talk 3",
+      "auteur": "Benny the Butcher",
+      "annee": 2018,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "Boom Bap",
+        "Hardcore Hip Hop",
+        "Coke Rap",
+        "East Coast Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=_DIYqQnJNZE"
+    },
+    {
+      "id": "young-bleed-all-i-have-in-this-world-are-my-balls-and-my-word",
+      "titre": "\"All I Have in This World, Are...\" My Balls and My Word",
+      "auteur": "Young Bleed",
+      "annee": 1998,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Dirty South",
+        "Gangsta Rap",
+        "Mafioso Rap",
+        "G-Funk",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=xIb6KfA711Q"
+    },
+    {
+      "id": "zukenee-blunts-blades",
+      "titre": "Blunts & Blades",
+      "auteur": "Zukenee",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Rage",
+        "Dirty South",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=o6gQdAfyJb0"
+    },
+    {
+      "id": "nine-vicious-tumblr-music",
+      "titre": "Tumblr Music",
+      "auteur": "Nine Vicious",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=tA25qy4poBc"
+    },
+    {
+      "id": "untiljapan-trompe-l-oeil",
+      "titre": "trompe l’oeil",
+      "auteur": "untiljapan",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Cloud Rap",
+        "Pop Rap",
+        "Neo-Psychedelia"
+      ],
+      "media": "https://www.youtube.com/watch?v=tA25qy4poBc"
+    },
+    {
+      "id": "young-eman-steeze-kills",
+      "titre": "Steeze Kills.",
+      "auteur": "Young Eman",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "UK Hip Hop",
+        "Rage",
+        "Jerk"
+      ],
+      "media": "https://www.youtube.com/watch?v=-YxZOIS9W74"
+    },
+    {
+      "id": "lazer-dim-700-injoy",
+      "titre": "Injoy",
+      "auteur": "LAZER DIM 700",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Dark Plugg",
+        "Gangsta Rap",
+        "Terror Plugg"
+      ],
+      "media": "https://www.youtube.com/watch?v=fK6NHjvdeUs"
+    },
+    {
+      "id": "uno-the-activist-omega-music-reloaded",
+      "titre": "Omega Music Reloaded",
+      "auteur": "UnoTheActivist",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Chicago Drill",
+        "Rage"
+      ],
+      "media": "https://www.youtube.com/watch?v=asvasWoXwMI"
+    },
+    {
+      "id": "kanye-west-late-registration",
+      "titre": "Late Registration",
+      "auteur": "Kanye West",
+      "annee": 2005,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Neo-Soul",
+        "Jazz Rap",
+        "Chipmunk Soul",
+        "Midwest Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=Q1ViJEYNki4"
+    },
+    {
+      "id": "kanye-west-808s-and-heartbreak",
+      "titre": "808s & Heartbreak",
+      "auteur": "Kanye West",
+      "annee": 2008,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Electropop",
+        "Synthpop",
+        "Contemporary R&B",
+        "Art Pop",
+        "Alternative R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=d9BMPmfxaoM"
+    },
+    {
+      "id": "kanye-west-my-beautiful-dark-twisted-fantasy",
+      "titre": "My Beautiful Dark Twisted Fantasy",
+      "auteur": "Kanye West",
+      "annee": 2010,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Art Pop",
+        "Midwest Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=UTH1VNHLjng"
+    },
+    {
+      "id": "kanye-west-yeezus",
+      "titre": "Yeezus",
+      "auteur": "Kanye West",
+      "annee": 2013,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Experimental Hip Hop",
+        "Industrial Hip Hop",
+        "Electro-Industrial",
+        "Midwest Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=5gjKuISTMRE"
+    },
+    {
+      "id": "kanye-west-the-life-of-pablo",
+      "titre": "The Life of Pablo",
+      "auteur": "Kanye West",
+      "annee": 2016,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Experimental Hip Hop",
+        "Trap",
+        "Contemporary R&B",
+        "Art Pop"
+      ],
+      "media": "https://www.youtube.com/watch?v=fWD9GF-Ogf4"
+    },
+    {
+      "id": "kanye-west-donda",
+      "titre": "Donda",
+      "auteur": "Kanye West",
+      "annee": 2021,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Experimental Hip Hop",
+        "Christian Hip Hop",
+        "Pop Rap",
+        "Alternative R&B",
+        "Gospel",
+        "Pop Rap",
+        "Urban Contemporary Gospel",
+        "Contemporary Christian Music"
+      ],
+      "media": "https://www.youtube.com/watch?v=fc8-lG6Wnus"
+    },
+    {
+      "id": "sahbabii-saheem",
+      "titre": "Saaheem",
+      "auteur": "Sahbabii",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Trap",
+        "Pop Rap",
+        "Cloud Rap",
+        "Southern Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=eBFvgm3wni4"
+    },
+    {
+      "id": "la-rvfleuze-numero-d-ecrou",
+      "titre": "Numéro d'écrou",
+      "auteur": "La Rvfleuze",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Gangsta Rap",
+        "Philly Drill"
+      ],
+      "media": "https://www.youtube.com/watch?v=nScjQLT5Vyw"
+    },
+    {
+      "id": "th-e-music",
+      "titre": "E-MUSIC",
+      "auteur": "TH",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Cloud Rap",
+        "Hardcore Hip Hop",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=dXXdppF-HbI"
+    },
+    {
+      "id": "linlin-disco-inferno",
+      "titre": "Disco Inferno",
+      "auteur": "LinLin",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Pop Rap",
+        "Electronic Dance Music",
+        "French Pop",
+        "House",
+        "Funk brasileiro",
+        "East Coast Club",
+        "Miami Bass"
+      ],
+      "media": "https://www.youtube.com/watch?v=CnrUtmNTTLo"
+    },
+    {
+      "id": "jeune-lc-nouveau-hustle",
+      "titre": "Nouveau hustle",
+      "auteur": "Jeune LC",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Memphis Rap",
+        "Trap",
+        "Houston Sound",
+        "Detroit Sound"
+      ],
+      "media": "https://www.youtube.com/watch?v=TB--490DoZo"
+    },
+    {
+      "id": "al-walid-big-man-tings",
+      "titre": "Big Man Tings",
+      "auteur": "Al-Walid",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Grime"
+      ],
+      "media": "https://www.youtube.com/watch?v=2bXe7Rmmyao"
+    },
+    {
+      "id": "cherry-pie-bbp-titan",
+      "titre": "TITAN",
+      "auteur": "Cherry Pie & BBP",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Cloud Rap",
+        "Trap"
+      ],
+      "media": "https://www.youtube.com/watch?v=Juwau9NqgOA"
+    },
+    {
+      "id": "skefre-ismayyyel-prima-macula",
+      "titre": "Prima macula",
+      "auteur": "Skefre & Ismayyyel",
+      "annee": 2026,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop",
+        "Gangsta Rap",
+        "Boom Bap",
+        "Trap"
+      ],
+      "media": "https://www.youtube.com/watch?v=1oNQ1LL_LLQ"
+    },
+    {
+      "id": "huntrill-le-bruit-de-la-machine-a-billets",
+      "titre": "Le bruit de la machina à billets",
+      "auteur": "Huntrill",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Gangsta Rap",
+        "Scam Rap",
+        "Jazz Rap",
+        "Boom Bap"
+      ],
+      "media": "https://www.youtube.com/watch?v=dkI77bHDilA"
+    },
+    {
+      "id": "sameer-ahmad-la-vie-est-bien-faite",
+      "titre": "La vie est bien faite",
+      "auteur": "Sameer Ahmad",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Jazz Trap",
+        "Abstract Hip Hop",
+        "Boom Bap"
+      ],
+      "media": "https://www.youtube.com/watch?v=crLBkdct4HI"
+    },
+    {
+      "id": "igo-tribulation",
+      "titre": "Tribulation",
+      "auteur": "IGO",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Nervous Music",
+        "Gangsta Rap",
+        "Detroit Sound",
+        "Philly Drill"
+      ],
+      "media": "https://www.youtube.com/watch?v=v86igyie6P4"
+    },
+    {
+      "id": "bob-marlich-les-points-sur-l-hay",
+      "titre": "Les points sur L'Haÿ",
+      "auteur": "Bob Marlich",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Sample Drill"
+      ],
+      "media": "https://www.youtube.com/watch?v=qYwtH49Q2V0"
+    },
+    {
+      "id": "lilguwop-bricksy-3g-glowop",
+      "titre": "Glowop",
+      "auteur": "Lilguwop, Bricksy & 3G",
+      "annee": 2024,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Plugg",
+        "Digicore",
+        "Bop",
+        "Cloud Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=rzUtwPtVQYY"
+    },
+    {
+      "id": "la-feve-24",
+      "titre": "24",
+      "auteur": "La Fève",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Plugg",
+        "Cloud Rap",
+        "Pop Rap",
+        "Chicago Drill"
+      ],
+      "media": "https://www.youtube.com/watch?v=bIWlLmuTodg"
+    },
+    {
+      "id": "freeze-corleone-adc",
+      "titre": "ADC",
+      "auteur": "Freeze Corleone",
+      "annee": 2023,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "UK Drill",
+        "Hardcore Hip Hop",
+        "Boom Bap",
+        "Nervous Music"
+      ],
+      "media": "https://www.youtube.com/watch?v=HXqzsI4Pz40"
+    },
+    {
+      "id": "sherifflazone-dmvp-extend",
+      "titre": "DMVP Extend",
+      "auteur": "Sherifflazone",
+      "annee": 2025,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Free Car Music",
+        "DMV Hip Hop",
+        "Gangsta Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=OG9hCUAa-8k"
+    },
+
+    {
+      "id": "prince-wally-moussa",
+      "titre": "Moussa",
+      "auteur": "Prince Waly",
+      "annee": 2022,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Neo-Soul",
+        "Trap"
+      ],
+      "media": "https://www.youtube.com/watch?v=-GqMLfFJoc0"
+    },
+    {
+      "id": "ateyaba-infinigga",
+      "titre": "Infinigga",
+      "auteur": "Ateyaba",
+      "annee": 2022,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Cloud Rap",
+        "Plugg",
+        "Trap"
+      ],
+      "media": "https://www.youtube.com/watch?v="
+    },
+    {
+      "id": "lala-ace-everything-tasteful",
+      "titre": "Everything Tasteful",
+      "auteur": "Lala &ce",
+      "annee": 2022,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Cloud Rap",
+        "Alternative R&B",
+        "Trap",
+        "Pop Rap",
+        "Afroswing",
+        "Dancehall"
+      ],
+      "media": "https://www.youtube.com/watch?v=Sa24sDQENHg"
+    },
+    {
+      "id": "green-montana-alaska",
+      "titre": "Alaska",
+      "auteur": "Green Montana",
+      "annee": 2022,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Cloud Rap",
+        "Trap",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=A9DQIBWzyIY"
+    },
+    {
+      "id": "pnl-deux-freres",
+      "titre": "Deux frères",
+      "auteur": "PNL",
+      "annee": 2019,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Cloud Rap",
+        "Pop Rap",
+        "Trap",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=-V7j_gqtR7o"
+    },
+    {
+      "id": "makala-radio-suicide",
+      "titre": "Radio Suicide",
+      "auteur": "Makala",
+      "annee": 2019,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Pop Rap",
+        "Experimental Hip Hop",
+        "Neo-Soul",
+        "Trap",
+        "Alternative R&B",
+        "Synth Funk"
+      ],
+      "media": "https://www.youtube.com/watch?v=1TS9paOGRKk"
+    },
+    {
+      "id": "varnish-la-piscine-le-regard-qui-tue",
+      "titre": "Le regard qui tue",
+      "auteur": "Varnish La Piscine",
+      "annee": 2019,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Neo-Soul",
+        "Synth Funk",
+        "Alternative R&B",
+        "Trap"
+      ],
+      "media": "https://www.youtube.com/watch?v=tAZ2xLgYm-8"
+    },
+    {
+      "id": "alpha-wann-une-main-lave-l-autre",
+      "titre": "Une main lave l'autre",
+      "auteur": "Alpha Wann",
+      "annee": 2018,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Boom Bap"
+      ],
+      "media": "https://www.youtube.com/watch?v=-PCd8FsR0mQ"
+    },
+    {
+      "id": "laylow-raw-z",
+      "titre": ".RAW-Z",
+      "auteur": "Laylow",
+      "annee": 2018,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Cloud Rap",
+        "Trap",
+        "Alternative R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=Dl4km-HFqtY"
+    },
+    {
+      "id": "13-block-triple-s",
+      "titre": "Triple S : Sueur soif sous",
+      "auteur": "13 Block",
+      "annee": 2018,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Gangsta Rap",
+        "Cloud Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=0c0OGn1nGJE"
+    },
+    {
+      "id": "hamza-1994",
+      "titre": "1994",
+      "auteur": "Hamza",
+      "annee": 2017,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap Soul",
+        "Alternative R&B",
+        "Cloud Rap",
+        "Trap Dancehall",
+        "Trap",
+        "Dancehall"
+      ],
+      "media": "https://www.youtube.com/watch?v=cbNoHA7jBRY"
+    },
+    {
+      "id": "kekra-vreel-3",
+      "titre": "Vréel 3",
+      "auteur": "Kekra",
+      "annee": 2017,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "2-Step",
+        "Wonky",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=cDSKzqZO9FM"
+    },
+    {
+      "id": "cheu-b-welcome-to-skyland",
+      "titre": "Welcome to Skyland",
+      "auteur": "Cheu-B",
+      "annee": 2017,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Cloud Rap",
+        "Gangsta Rap",
+        "Drill",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=lHRnhUY6xP8"
+    },
+    {
+      "id": "kaaris-le-bruit-de-mon-ame",
+      "titre": "Le bruit de mon âme",
+      "auteur": "Kaaris",
+      "annee": 2015,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Hardcore Hip Hop",
+        "Drill",
+        "Cloud Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=00jNi5yTjsc"
     }
+    
+    
   ]
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

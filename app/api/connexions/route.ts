@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readConnexions, writeConnexions, type ConnexionsData } from "@/lib/oeuvres";
+import { readAdmin, writeConnexions, type ConnexionsBrut } from "@/lib/oeuvres";
 import { isTypeOeuvre } from "@/lib/sections";
 
 export const dynamic = "force-dynamic";
@@ -15,14 +15,14 @@ function devOnly() {
 export async function GET() {
   const blocked = devOnly();
   if (blocked) return blocked;
-  return NextResponse.json(readConnexions());
+  return NextResponse.json(readAdmin());
 }
 
 export async function PUT(request: Request) {
   const blocked = devOnly();
   if (blocked) return blocked;
 
-  const body = (await request.json()) as ConnexionsData;
+  const body = (await request.json()) as ConnexionsBrut;
   if (!Array.isArray(body?.oeuvres) || !Array.isArray(body?.liens)) {
     return NextResponse.json({ error: "Format invalide" }, { status: 400 });
   }
@@ -31,7 +31,8 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: `Œuvre invalide : ${o.titre || o.id}` }, { status: 400 });
     }
   }
-  const clean: ConnexionsData = {
+  const paires = (v: unknown) => (Array.isArray(v) ? v : []).map((l: { a: unknown; b: unknown }) => ({ a: Number(l.a), b: Number(l.b) }));
+  const clean: ConnexionsBrut = {
     oeuvres: body.oeuvres.map((o) => {
       const out: Record<string, unknown> = { id: o.id, slug: o.slug, titre: o.titre.trim(), auteur: o.auteur.trim(), type: o.type };
       if (o.annee) out.annee = Number(o.annee);
@@ -39,10 +40,13 @@ export async function PUT(request: Request) {
         const v = o[k]?.toString().trim();
         if (v) out[k] = v;
       }
-      return out as unknown as ConnexionsData["oeuvres"][number];
+      const sg = (Array.isArray(o.sousGenres) ? o.sousGenres : []).map((x) => String(x).trim()).filter(Boolean);
+      if (sg.length) out.sousGenres = [...new Set(sg)];
+      return out as unknown as ConnexionsBrut["oeuvres"][number];
     }),
-    liens: body.liens.map((l) => ({ a: Number(l.a), b: Number(l.b) })),
+    liens: paires(body.liens),
+    exclus: paires(body.exclus),
   };
   writeConnexions(clean);
-  return NextResponse.json(readConnexions());
+  return NextResponse.json(readAdmin());
 }

@@ -5,7 +5,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { Cover } from "@/components/Cover";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { mdxComponents } from "@/components/mdx";
+import { mdxComponents, mdxOptions } from "@/components/mdx";
 import { Tag } from "@/components/Tag";
 import { formatDate, getAllArticles, getArticle } from "@/lib/articles";
 
@@ -54,7 +54,7 @@ export default async function ArticlePage({ params }: Props) {
         </figure>
 
         <div className="prose">
-          <MDXRemote source={article.content} components={mdxComponents} />
+          <MDXRemote source={article.content} components={mdxComponents} options={mdxOptions} />
         </div>
       </article>
 

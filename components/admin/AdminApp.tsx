@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { ConnexionsData, Lien, Oeuvre } from "@/lib/oeuvres";
+import type { ConnexionsAdmin, ConnexionsBrut, Lien, Oeuvre } from "@/lib/oeuvres";
 import { TYPES_OEUVRE, TYPE_SLUGS, type TypeOeuvre } from "@/lib/sections";
+import { Pochette } from "@/components/connexions/Pochette";
 
 type Draft = {
   id: number | null;
@@ -11,12 +12,13 @@ type Draft = {
   annee: string;
   type: TypeOeuvre;
   genre: string;
+  sousGenres: string[];
   cover: string;
   media: string;
   description: string;
 };
 
-const EMPTY: Draft = { id: null, titre: "", auteur: "", annee: "", type: "album", genre: "", cover: "", media: "", description: "" };
+const EMPTY: Draft = { id: null, titre: "", auteur: "", annee: "", type: "album", genre: "", sousGenres: [], cover: "", media: "", description: "" };
 
 function norm(s: string) {
   return s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
@@ -27,7 +29,7 @@ function sameLink(l: Lien, a: number, b: number) {
 }
 
 export function AdminApp() {
-  const [data, setData] = useState<ConnexionsData | null>(null);
+  const [data, setData] = useState<ConnexionsAdmin | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<"oeuvres" | "liens">("oeuvres");
   const [query, setQuery] = useState("");
@@ -50,13 +52,13 @@ export function AdminApp() {
 
   const byId = useMemo(() => new Map((data?.oeuvres ?? []).map((o) => [o.id, o])), [data]);
 
-  async function save(next: ConnexionsData, message: string) {
+  async function save(next: ConnexionsBrut, message: string) {
     setSaving(true);
     try {
       const r = await fetch("/api/connexions", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(next),
+        body: JSON.stringify({ oeuvres: next.oeuvres, liens: next.liens, exclus: next.exclus }),
       });
       const json = await r.json();
       if (!r.ok) throw new Error(json.error ?? "Erreur");
@@ -76,15 +78,16 @@ export function AdminApp() {
 
   const q = norm(query.trim());
   const oeuvres = [...data.oeuvres]
-    .filter((o) => !q || norm(`${o.titre} ${o.auteur} ${o.genre ?? ""} ${o.annee ?? ""}`).includes(q))
+    .filter((o) => !q || norm(`${o.titre} ${o.auteur} ${o.genre ?? ""} ${(o.sousGenres ?? []).join(" ")} ${o.annee ?? ""}`).includes(q))
     .sort((a, b) => a.titre.localeCompare(b.titre, "fr", { sensitivity: "base" }));
-  const liens = data.liens.filter((l) => {
+  const liens = [...data.finales].sort((x, y) => (y.score ?? 99) - (x.score ?? 99)).filter((l) => {
     if (!q) return true;
     const a = byId.get(l.a);
     const b = byId.get(l.b);
     return norm(`${a?.titre} ${a?.auteur} ${b?.titre} ${b?.auteur}`).includes(q);
   });
-  const degree = (id: number) => data.liens.filter((l) => l.a === id || l.b === id).length;
+  const degree = (id: number) => data.finales.filter((l) => l.a === id || l.b === id).length;
+  const tousSousGenres = [...new Set(data.oeuvres.flatMap((o) => o.sousGenres ?? []))].sort((a, b) => a.localeCompare(b, "fr"));
 
   function openDraft(o?: Oeuvre) {
     setDraft(
@@ -96,6 +99,7 @@ export function AdminApp() {
             annee: o.annee ? String(o.annee) : "",
             type: o.type,
             genre: o.genre ?? "",
+            sousGenres: o.sousGenres ?? [],
             cover: o.cover ?? "",
             media: o.media ?? "",
             description: o.description ?? "",
@@ -119,6 +123,7 @@ export function AdminApp() {
       annee: d.annee ? Number(d.annee) : undefined,
       type: d.type,
       genre: d.genre || undefined,
+      sousGenres: d.sousGenres.length ? d.sousGenres : undefined,
       cover: d.cover || undefined,
       media: d.media || undefined,
       description: d.description || undefined,
@@ -132,20 +137,40 @@ export function AdminApp() {
     if (!data) return;
     if (!window.confirm(`Supprimer « ${o.titre} » et ses connexions ?`)) return;
     await save(
-      { oeuvres: data.oeuvres.filter((x) => x.id !== o.id), liens: data.liens.filter((l) => l.a !== o.id && l.b !== o.id) },
+      {
+        oeuvres: data.oeuvres.filter((x) => x.id !== o.id),
+        liens: data.liens.filter((l) => l.a !== o.id && l.b !== o.id),
+        exclus: data.exclus.filter((l) => l.a !== o.id && l.b !== o.id),
+      },
       "Œuvre supprimée"
     );
     setDraft(null);
   }
 
+  // Ajouter un lien à la main (et le retirer des liens cassés s'il y était)
   async function addLink(a: number, b: number) {
     if (!data || a === b || data.liens.some((l) => sameLink(l, a, b))) return;
-    await save({ ...data, liens: [...data.liens, { a, b }] }, "Connexion ajoutée");
+    await save(
+      { ...data, liens: [...data.liens, { a, b }], exclus: data.exclus.filter((l) => !sameLink(l, a, b)) },
+      "Connexion ajoutée"
+    );
   }
 
+  // Retirer un lien : manuel → on l'enlève ; automatique → on le casse (pasDeLien)
   async function removeLink(a: number, b: number) {
     if (!data) return;
-    await save({ ...data, liens: data.liens.filter((l) => !sameLink(l, a, b)) }, "Connexion retirée");
+    const lien = data.finales.find((l) => sameLink(l, a, b));
+    const liensNext = data.liens.filter((l) => !sameLink(l, a, b));
+    const resteAuto = lien?.score !== undefined;
+    await save(
+      { ...data, liens: liensNext, exclus: resteAuto ? [...data.exclus, { a, b }] : data.exclus },
+      resteAuto ? "Lien automatique cassé" : "Connexion retirée"
+    );
+  }
+
+  async function restoreLink(a: number, b: number) {
+    if (!data) return;
+    await save({ ...data, exclus: data.exclus.filter((l) => !sameLink(l, a, b)) }, "Lien automatique rétabli");
   }
 
   return (
@@ -153,8 +178,9 @@ export function AdminApp() {
       <div className="admin__head">
         <h1 className="admin__title">Admin</h1>
         <p className="admin__info">
-          {data.oeuvres.length} œuvres · {data.liens.length} connexions. Visible seulement en local : tout est enregistré
-          dans <code>content/connexions.json</code>.
+          {data.oeuvres.length} œuvres · {data.finales.length} connexions ({data.finales.filter((l) => l.auto).length} automatiques). Visible
+          seulement en local : tout est enregistré dans <code>content/connexions.json</code>. Les liens automatiques viennent des
+          sous-genres (réglages dans <code>lib/liens-auto.ts</code>).
         </p>
       </div>
 
@@ -183,8 +209,7 @@ export function AdminApp() {
           {oeuvres.map((o) => (
             <li key={o.id} className="admin-row" style={{ ["--type" as string]: TYPES_OEUVRE[o.type].couleur }}>
               <span className="admin-row__cover">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {o.cover ? <img src={o.cover} alt="" loading="lazy" /> : null}
+                <Pochette o={o} />
               </span>
               <span className="admin-row__text">
                 <span className="admin-row__title">{o.titre}</span>
@@ -192,6 +217,7 @@ export function AdminApp() {
                   {o.auteur}
                   {o.annee ? ` · ${o.annee}` : ""}
                   {o.genre ? ` · ${o.genre}` : ""}
+                  {o.sousGenres?.length ? ` · ${o.sousGenres.join(", ")}` : ""}
                 </span>
               </span>
               <span className="tag tag--sans" style={{ background: TYPES_OEUVRE[o.type].couleur }}>
@@ -210,23 +236,43 @@ export function AdminApp() {
           ))}
         </ul>
       ) : (
-        <ul className="admin-list">
-          {liens.map((l) => {
-            const a = byId.get(l.a);
-            const b = byId.get(l.b);
-            if (!a || !b) return null;
-            return (
-              <li key={`${l.a}-${l.b}`} className="admin-link">
-                <span className="admin-link__pair">
-                  <strong>{a.titre}</strong> <span className="admin-link__sep">⟷</span> <strong>{b.titre}</strong>
-                </span>
-                <button type="button" className="ctrl-btn ctrl-btn--text ctrl-btn--danger" onClick={() => removeLink(l.a, l.b)}>
-                  Retirer
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+        <>
+          <ul className="admin-list">
+            {liens.map((l) => {
+              const a = byId.get(l.a);
+              const b = byId.get(l.b);
+              if (!a || !b) return null;
+              return (
+                <li key={`${l.a}-${l.b}`} className="admin-link">
+                  <span className="admin-link__pair">
+                    <strong>{a.titre}</strong> <span className="admin-link__sep">⟷</span> <strong>{b.titre}</strong>
+                    <LienInfo l={l} />
+                  </span>
+                  <button type="button" className="ctrl-btn ctrl-btn--text ctrl-btn--danger" onClick={() => removeLink(l.a, l.b)}>
+                    {l.auto ? "Casser" : "Retirer"}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          {data.exclus.length > 0 && (
+            <>
+              <h2 className="panneau__h">Liens automatiques cassés</h2>
+              <ul className="admin-list">
+                {data.exclus.map((l) => (
+                  <li key={`x${l.a}-${l.b}`} className="admin-link">
+                    <span className="admin-link__pair">
+                      <strong>{byId.get(l.a)?.titre}</strong> <span className="admin-link__sep">⟷</span> <strong>{byId.get(l.b)?.titre}</strong>
+                    </span>
+                    <button type="button" className="ctrl-btn ctrl-btn--text" onClick={() => restoreLink(l.a, l.b)}>
+                      Rétablir
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </>
       )}
 
       {draft && (
@@ -240,6 +286,8 @@ export function AdminApp() {
           onClose={() => setDraft(null)}
           onAddLink={addLink}
           onRemoveLink={removeLink}
+          onRestoreLink={restoreLink}
+          tousSousGenres={tousSousGenres}
           onToast={setToast}
         />
       )}
@@ -263,22 +311,38 @@ function Editor({
   onClose,
   onAddLink,
   onRemoveLink,
+  onRestoreLink,
+  tousSousGenres,
   onToast,
 }: {
   draft: Draft;
   setDraft: (d: Draft) => void;
-  data: ConnexionsData;
+  data: ConnexionsAdmin;
   byId: Map<number, Oeuvre>;
   saving: boolean;
   onSave: (d: Draft) => void;
   onClose: () => void;
   onAddLink: (a: number, b: number) => void;
   onRemoveLink: (a: number, b: number) => void;
+  onRestoreLink: (a: number, b: number) => void;
+  tousSousGenres: string[];
   onToast: (m: string) => void;
 }) {
   const [linkQuery, setLinkQuery] = useState("");
+  const [sgInput, setSgInput] = useState("");
   const [uploading, setUploading] = useState(false);
-  const set = (k: keyof Draft, v: string) => setDraft({ ...draft, [k]: v });
+  const set = (k: Exclude<keyof Draft, "sousGenres">, v: string) => setDraft({ ...draft, [k]: v });
+  const addSg = (raw: string) => {
+    const nouveaux = raw
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean)
+      // Reprend l'orthographe d'un sous-genre existant (Boom Bap, pas boom bap)
+      .map((x) => tousSousGenres.find((t) => norm(t) === norm(x)) ?? x)
+      .filter((x) => !draft.sousGenres.some((t) => norm(t) === norm(x)));
+    if (nouveaux.length) setDraft({ ...draft, sousGenres: [...draft.sousGenres, ...nouveaux] });
+    setSgInput("");
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -287,7 +351,8 @@ function Editor({
   }, [onClose]);
 
   const id = draft.id;
-  const linked = id === null ? [] : data.liens.filter((l) => l.a === id || l.b === id);
+  const linked = id === null ? [] : data.finales.filter((l) => l.a === id || l.b === id).sort((x, y) => (y.score ?? 99) - (x.score ?? 99));
+  const casses = id === null ? [] : data.exclus.filter((l) => l.a === id || l.b === id);
   const linkedIds = new Set(linked.map((l) => (l.a === id ? l.b : l.a)));
   const lq = norm(linkQuery.trim());
   const candidates =
@@ -357,11 +422,51 @@ function Editor({
             <input className="admin-input" value={draft.genre} onChange={(e) => set("genre", e.target.value)} placeholder="Hip-hop, film noir, RPG…" />
           </label>
           <div className="admin-field admin-field--full">
+            <span>Sous-genres (créent les connexions automatiques)</span>
+            {draft.sousGenres.length > 0 && (
+              <ul className="admin-chips">
+                {draft.sousGenres.map((sg) => (
+                  <li key={sg}>
+                    {sg}
+                    <button
+                      type="button"
+                      onClick={() => setDraft({ ...draft, sousGenres: draft.sousGenres.filter((x) => x !== sg) })}
+                      aria-label={`Retirer ${sg}`}
+                    >
+                      ×
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <input
+              className="admin-input"
+              list="admin-sous-genres"
+              value={sgInput}
+              onChange={(e) => setSgInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === ",") {
+                  e.preventDefault();
+                  addSg(sgInput);
+                }
+              }}
+              onBlur={() => sgInput.trim() && addSg(sgInput)}
+              placeholder="Tape un sous-genre puis Entrée (ex. Boom Bap)"
+              aria-label="Ajouter un sous-genre"
+            />
+            <datalist id="admin-sous-genres">
+              {tousSousGenres
+                .filter((t) => !draft.sousGenres.includes(t))
+                .map((t) => (
+                  <option key={t} value={t} />
+                ))}
+            </datalist>
+          </div>
+          <div className="admin-field admin-field--full">
             <span>Visuel</span>
             <div className="admin-cover">
               <span className="admin-row__cover admin-cover__preview">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {draft.cover ? <img src={draft.cover} alt="" /> : null}
+                <Pochette key={draft.cover} o={draft} />
               </span>
               <input className="admin-input" value={draft.cover} onChange={(e) => set("cover", e.target.value)} placeholder="/images/oeuvres/nom.jpg ou URL" aria-label="Chemin du visuel" />
               <label className="ctrl-btn ctrl-btn--text admin-upload">
@@ -398,22 +503,47 @@ function Editor({
                   return (
                     <li key={other.id} className="admin-links__item">
                       <span className="admin-row__cover">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        {other.cover ? <img src={other.cover} alt="" loading="lazy" /> : null}
+                        <Pochette o={other} />
                       </span>
                       <span className="admin-links__body">
                         <strong>{other.titre}</strong>
                         <span className="admin-row__sub">{other.auteur}</span>
+                        <LienInfo l={l} />
                       </span>
-                      <button type="button" className="ctrl-btn" onClick={() => onRemoveLink(l.a, l.b)} aria-label={`Retirer le lien avec ${other.titre}`}>
-                        ×
+                      <button
+                        type="button"
+                        className="ctrl-btn ctrl-btn--text"
+                        onClick={() => onRemoveLink(l.a, l.b)}
+                        aria-label={`${l.auto ? "Casser" : "Retirer"} le lien avec ${other.titre}`}
+                      >
+                        {l.auto ? "Casser" : "Retirer"}
                       </button>
                     </li>
                   );
                 })}
               </ul>
+              {casses.length > 0 && (
+                <ul className="admin-links__list">
+                  {casses.map((l) => {
+                    const other = byId.get(l.a === id ? l.b : l.a);
+                    if (!other) return null;
+                    return (
+                      <li key={`x${other.id}`} className="admin-links__item admin-links__item--off">
+                        <span className="admin-row__cover" />
+                        <span className="admin-links__body">
+                          <strong>{other.titre}</strong>
+                          <span className="admin-row__sub">Lien automatique cassé</span>
+                        </span>
+                        <button type="button" className="ctrl-btn ctrl-btn--text" onClick={() => onRestoreLink(l.a, l.b)}>
+                          Rétablir
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
               <label className="admin-field admin-field--full">
-                <span>Relier à…</span>
+                <span>Relier à la main…</span>
                 <input className="admin-input" type="search" value={linkQuery} onChange={(e) => setLinkQuery(e.target.value)} placeholder="Chercher une œuvre" />
               </label>
               {candidates.length > 0 && (
@@ -430,8 +560,7 @@ function Editor({
                         }}
                       >
                         <span className="lien__cover">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          {o.cover ? <img src={o.cover} alt="" loading="lazy" /> : null}
+                          <Pochette o={o} />
                         </span>
                         <span className="lien__text">
                           <span className="lien__title">+ {o.titre}</span>
@@ -447,5 +576,15 @@ function Editor({
         </section>
       </div>
     </div>
+  );
+}
+
+/** Petit résumé d'un lien : automatique (score, sous-genres communs) ou manuel. */
+function LienInfo({ l }: { l: Lien }) {
+  return (
+    <span className="admin-lien-info">
+      {l.auto ? `Auto · score ${l.score}` : "Manuel"}
+      {l.communs?.length ? ` · ${l.communs.join(", ")}` : ""}
+    </span>
   );
 }

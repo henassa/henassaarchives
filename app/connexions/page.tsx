@@ -21,7 +21,7 @@ export default function ConnexionsPage() {
           <h1 className="echo-title__main">Connexions</h1>
         </div>
         <p className="section-intro">
-          Les œuvres qui nous ont marqué, et ce qui les relie.
+          Chaque œuvre en cache d&apos;autres. Passe sur une pochette pour voir à quoi elle est reliée, clique dessus pour tirer le fil.
         </p>
         <Explorer oeuvres={oeuvres} liens={liens} />
       </main>

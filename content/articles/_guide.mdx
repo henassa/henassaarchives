@@ -1,0 +1,95 @@
+---
+# GUIDE DE MISE EN FORME
+# Ce fichier n'est pas publié (il commence par « _ »).
+# Pour le voir : npm run dev, puis http://localhost:3000/articles/_guide
+# Ouvre ce fichier à côté pour voir comment chaque effet s'écrit.
+
+title: "Guide de mise en forme"
+display: "Mise|en forme"
+echo: "Style"
+dek: "Tout ce qu'on peut faire dans un article, avec un exemple de chaque."
+date: 2026-10-01
+categorie: "Guide"
+auteur: "Henassa"
+couleur: "#FF4D3D"
+---
+
+<Lettrine>
+
+Ce premier paragraphe commence par une **lettrine gothique** : il suffit de l'entourer avec `<Lettrine>` et `</Lettrine>`, en laissant une ligne vide après la balise d'ouverture et avant la balise de fermeture. Tout le reste de ce guide montre un effet par section, et le fichier `_guide.mdx` montre comment l'écrire.
+
+</Lettrine>
+
+## Le texte de base
+
+Du **gras** avec deux étoiles de chaque côté, de l'*italique* avec une étoile, du ***gras italique*** avec trois, et du ~~barré~~ avec deux vagues. Un [lien](https://henassa.fr) s'écrit entre crochets puis parenthèses. Pour écrire une vraie étoile sans faire d'italique, on met une barre devant : diamond\*.
+
+Dans une phrase, on peut aussi <Surligne>surligner au marqueur</Surligne>, écrire un mot en <Gothique>gothique</Gothique>, mettre un passage <Couleur>dans la couleur de l'article</Couleur> (ou <Couleur couleur="#3D7BFF">dans une autre couleur</Couleur>), ou poser une petite <Etiquette>étiquette</Etiquette>.
+
+<Intertitre echo="Slime">Un intertitre avec écho</Intertitre>
+
+L'intertitre ci-dessus affiche un mot gothique en écho derrière, comme les titres du site. Le mot de l'écho se choisit avec `echo="..."`. Sans écho, il reprend le premier mot du titre. Un intertitre simple, sans écho, s'écrit toujours avec `## Mon intertitre`.
+
+<Grand>
+
+Un paragraphe en grand, pour une phrase qu'on veut faire ressortir sans en faire une citation.
+
+</Grand>
+
+<Citation>Une citation simple, centrée, en grand, dans la couleur de l'article.</Citation>
+
+<Citation auteur="Young Thug" echo="Slime">Une citation avec son auteur en dessous et un mot gothique en écho derrière.</Citation>
+
+<Encadre titre="Un encadré">
+
+Pour une parenthèse, du contexte, une fiche technique. On peut y mettre du **gras**, des listes :
+
+- Sortie : 2015
+- Label : 300 Entertainment
+- Durée : 52 minutes
+
+</Encadre>
+
+<Chiffre valeur="1995">l'année où tout a basculé</Chiffre>
+
+<Separateur />
+
+## Images
+
+Une image seule, avec légende :
+
+<Image src="/images/oeuvres/nas-illmatic.jpg" alt="Pochette d'Illmatic" legende="Une légende sous l'image" />
+
+Une image plus large que le texte, avec `large` :
+
+<Image large src="/images/oeuvres/nas-illmatic.jpg" alt="Pochette d'Illmatic" />
+
+Plusieurs images côte à côte :
+
+<Galerie legende="Une légende pour toute la galerie">
+  <Image src="/images/oeuvres/nas-illmatic.jpg" alt="Illmatic" />
+  <Image src="/images/oeuvres/big-l-lifestylez-ov-da-poor-and-dangerous.jpg" alt="Lifestylez" />
+</Galerie>
+
+## Faire écouter un morceau
+
+Un bouton qui lance le morceau dans le lecteur du site, qui continue de jouer pendant qu'on lit :
+
+<Ecouter titre="Halftime" auteur="Nas" media="https://www.youtube.com/watch?v=MqdQNvPpUIk" />
+
+## Listes, tableaux, citations simples
+
+1. Une liste numérotée
+2. Avec des puces de la couleur de l'article
+3. Comme ça
+
+> Une citation « classique », plus discrète, avec un chevron en début de ligne.
+
+| Album | Année | Sous-genre |
+|---|---|---|
+| Illmatic | 1994 | Boom Bap |
+| Barter 6 | 2015 | Trap |
+
+---
+
+Une ligne de trois tirets fait un trait de séparation simple, comme juste au-dessus.

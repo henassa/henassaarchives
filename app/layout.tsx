@@ -3,6 +3,8 @@ import "@fontsource/anton/400.css";
 import "@fontsource/archivo/400.css";
 import "@fontsource/archivo/600.css";
 import "@fontsource/archivo/800.css";
+import "@fontsource/archivo/600-italic.css";
+import "@fontsource/archivo/800-italic.css";
 import "@fontsource/dm-serif-display/400-italic.css";
 import "@fontsource/unifrakturmaguntia/400.css";
 import "./globals.css";
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
     default: "HENASSA",
     template: "HENASSA",
   },
-  description: "Média indépendant.",
+  description: "Articles, connexions entre les œuvres et playlist du mois.",
 };
 
 // L'écran d'arrivée ne se joue qu'une fois par visite : ce petit script

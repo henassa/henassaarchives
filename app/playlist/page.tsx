@@ -3,7 +3,7 @@ import { Lines, flat } from "@/components/Lines";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { mdxComponents } from "@/components/mdx";
+import { mdxComponents, mdxOptions } from "@/components/mdx";
 import { Tracklist } from "@/components/Tracklist";
 import { formatDate } from "@/lib/articles";
 import { getPlaylist } from "@/lib/playlist";
@@ -68,7 +68,7 @@ export default function PlaylistPage() {
 
             {p.content.trim() && (
               <div className="prose">
-                <MDXRemote source={p.content} components={mdxComponents} />
+                <MDXRemote source={p.content} components={mdxComponents} options={mdxOptions} />
               </div>
             )}
           </>
