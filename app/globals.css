@@ -2975,12 +2975,16 @@ button.track__link.is-current {
   z-index: 70;
   right: 16px;
   bottom: 16px;
-  width: min(380px, calc(100vw - 32px));
+  width: min(460px, calc(100vw - 32px));
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas:
-    "info ctrl"
-    "media media";
+    "pochette info ctrl"
+    "video video video"
+    "note note note"
+    "barre barre barre"
+    "vol vol vol";
+  align-items: center;
   gap: 10px;
   padding: 10px;
   background: var(--bg);
@@ -2992,39 +2996,117 @@ button.track__link.is-current {
 /* Quand la fiche d'une œuvre est ouverte, le lecteur se place à sa gauche */
 body:has(.panneau:not([hidden])) .lecteur {
   right: calc(min(460px, 100vw) + 16px);
+  /* à côté de la fiche, il ne dépasse jamais à gauche de l'écran */
+  max-width: calc(100vw - min(460px, 100vw) - 32px);
 }
 
-.lecteur__media {
-  grid-area: media;
-  aspect-ratio: 16 / 9;
+.lecteur__pochette {
+  grid-area: pochette;
+  width: 64px;
+  aspect-ratio: 1;
   background: var(--panel);
+  border-bottom: 4px solid var(--type);
   overflow: hidden;
 }
 
-.lecteur__media iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
-}
-
-.lecteur__media img {
+.lecteur__pochette img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.lecteur--audio .lecteur__media {
-  aspect-ratio: 1;
-  width: 120px;
+/* La vidéo YouTube joue en coulisses : minuscule et invisible tant qu'on ne la demande pas */
+.lecteur__video {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  height: 2px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lecteur__video.is-visible {
+  grid-area: video;
+  position: static;
+  width: auto;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  opacity: 1;
+  pointer-events: auto;
+  background: var(--panel);
+}
+
+.lecteur__video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* cachée : la vidéo garde une vraie taille, sinon YouTube peut refuser de la lancer */
+.lecteur__video:not(.is-visible) iframe {
+  width: 320px;
+  height: 180px;
+}
+
+.lecteur__note {
+  grid-area: note;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--type);
+}
+
+/* Lecture, temps écoulé, barre de temps, durée, bouton Vidéo */
+.lecteur__barre {
+  grid-area: barre;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lecteur__play--grand {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  cursor: pointer;
+}
+
+.lecteur__play--grand:hover {
+  filter: brightness(1.15);
+}
+
+.lecteur__temps {
+  flex: none;
+  min-width: 34px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.lecteur__curseur:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.lecteur__voir.is-on {
+  background: var(--type);
+  border-color: var(--type);
+  color: var(--bg);
 }
 
 .lecteur__fallback {
   display: grid;
   place-items: center;
   height: 100%;
-  font-size: 28px;
+  font-size: 24px;
   color: var(--type);
 }
 
@@ -3080,7 +3162,7 @@ a.lecteur__title:hover {
 .lecteur__ctrl {
   grid-area: ctrl;
   display: flex;
-  align-items: flex-start;
+  align-self: start;
   gap: 6px;
 }
 
@@ -3110,24 +3192,109 @@ body:has(.panneau:not([hidden])) .lecteur__fiche {
   font-size: 13px !important;
 }
 
-/* Réduit : une barre compacte, la vidéo devient une petite vignette */
-.lecteur.is-min {
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas: "media info ctrl";
+/* Volume du lecteur : un bouton muet et un curseur, sous la vidéo */
+.lecteur__vol {
+  grid-area: vol;
+  display: flex;
   align-items: center;
-  width: min(420px, calc(100vw - 32px));
+  gap: 10px;
 }
 
-.lecteur.is-min .lecteur__media {
-  width: 80px;
+.lecteur__muet {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 2px solid var(--fg);
+  background: var(--bg);
+  color: var(--fg);
+  cursor: pointer;
 }
 
-.lecteur--audio.is-min .lecteur__media {
-  width: 54px;
+.lecteur__muet:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.lecteur__curseur {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.lecteur__curseur::-webkit-slider-runnable-track {
+  height: 6px;
+  background: linear-gradient(to right, var(--type) var(--v), #3a3a3a var(--v));
+}
+
+.lecteur__curseur::-moz-range-track {
+  height: 6px;
+  background: #3a3a3a;
+}
+
+.lecteur__curseur::-moz-range-progress {
+  height: 6px;
+  background: var(--type);
+}
+
+.lecteur__curseur::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 22px;
+  margin-top: -8px;
+  border: 0;
+  border-radius: 0;
+  background: var(--fg);
+}
+
+.lecteur__curseur::-moz-range-thumb {
+  width: 16px;
+  height: 22px;
+  border: 0;
+  border-radius: 0;
+  background: var(--fg);
+}
+
+.lecteur__curseur:focus-visible {
+  outline: 2px solid var(--type);
+  outline-offset: 2px;
+}
+
+.lecteur__volnum {
+  flex: none;
+  width: 30px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Réduit : une seule ligne (pochette, titre, lecture, boutons) */
+.lecteur.is-min {
+  grid-template-areas: "pochette info ctrl";
+}
+
+.lecteur.is-min .lecteur__pochette {
+  width: 48px;
 }
 
 .lecteur.is-min .lecteur__ctrl {
-  align-items: center;
+  align-self: center;
+}
+
+.lecteur.is-min .lecteur__barre,
+.lecteur.is-min .lecteur__vol,
+.lecteur.is-min .lecteur__note {
+  display: none;
 }
 
 @media (max-width: 700px) {
@@ -3143,6 +3310,14 @@ body:has(.panneau:not([hidden])) .lecteur__fiche {
     right: 8px;
     top: 8px;
     bottom: auto;
+    max-width: none;
+  }
+}
+
+/* Écran tactile : le volume se règle avec les boutons du téléphone */
+@media (pointer: coarse) {
+  .lecteur__vol {
+    display: none;
   }
 }
 
