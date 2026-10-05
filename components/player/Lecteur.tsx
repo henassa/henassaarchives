@@ -30,6 +30,9 @@ export type Piste = {
   slug?: string;
   /** false = chargé en pause. */
   autoplay?: boolean;
+  /** Pour ne jouer qu'un passage (YouTube) : début et fin, en secondes. */
+  debut?: number;
+  fin?: number;
 };
 
 type PlayerCtx = {
@@ -117,7 +120,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   const play = useCallback((p: Piste) => {
     const cur = pisteRef.current;
-    if (cur && cur.media && cur.media === p.media) {
+    if (cur && cur.media && cur.media === p.media && cur.debut === p.debut && cur.fin === p.fin) {
       // Même morceau (déjà chargé, éventuellement en pause) : on relance
       command("playVideo");
       audioRef.current?.play().catch(() => {});
@@ -285,9 +288,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
           {yt && (
             <div className={`lecteur__video${video && !min ? " is-visible" : ""}`}>
               <iframe
-                key={yt}
+                key={`${yt}-${piste.debut ?? ""}-${piste.fin ?? ""}`}
                 ref={iframeRef}
-                src={`https://www.youtube-nocookie.com/embed/${yt}?autoplay=${autoplay ? 1 : 0}&rel=0&modestbranding=1&enablejsapi=1&playsinline=1`}
+                src={`https://www.youtube-nocookie.com/embed/${yt}?autoplay=${autoplay ? 1 : 0}&rel=0&modestbranding=1&enablejsapi=1&playsinline=1${piste.debut !== undefined ? `&start=${piste.debut}` : ""}${piste.fin !== undefined ? `&end=${piste.fin}` : ""}`}
                 title={`Vidéo : ${piste.titre}`}
                 allow="autoplay; encrypted-media; picture-in-picture"
                 allowFullScreen
@@ -393,7 +396,7 @@ function minutes(sec: number) {
 /** Bouton « Écouter » réutilisable (fiche d'œuvre, tracklist...). */
 export function PlayButton({ piste, className = "", compact = false }: { piste: Piste; className?: string; compact?: boolean }) {
   const { piste: cur, playing, play, toggle } = usePlayer();
-  const current = !!cur?.media && cur.media === piste.media;
+  const current = !!cur?.media && cur.media === piste.media && cur.debut === piste.debut && cur.fin === piste.fin;
   const label = current ? (playing ? "Pause" : "Reprendre") : "Écouter";
   return (
     <button
