@@ -4417,8 +4417,509 @@
         "Yacht Rock"
       ],
       "media": "https://www.youtube.com/watch?v=CnKd3V-VpDs"
+    },
+    {
+      "id": "majida-el-roumi-khedni-habibi",
+      "titre": "Khedni Habibi",
+      "auteur": "Majida El Roumi",
+      "annee": 1980,
+      "type": "album",
+      "genre": "Arabic Music",
+      "sousGenres": [
+        "Al-Jadīd",
+        "Mūsīqā lubnāniyya",
+        "Arabic Jazz"
+      ],
+      "media": "https://www.youtube.com/watch?v=D450gaz-Xqo"
+    },
+    {
+      "id": "erykah-badu-baduizm",
+      "titre": "Baduizm",
+      "auteur": "Erykah Badu",
+      "annee": 1997,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Vocal Jazz",
+        "Trip Hop",
+        "Acid Jazz"
+      ],
+      "media": "https://www.youtube.com/watch?v=TW28iWV7nxE"
+    },
+    {
+      "id": "sade-promise",
+      "titre": "Promise",
+      "auteur": "Sade",
+      "annee": 1985,
+      "type": "album",
+      "genre": "Soul",
+      "sousGenres": [
+        "Sophisti-Pop",
+        "Smooth Soul",
+        "Smooth Jazz",
+        "Jazz Pop",
+        "Progressive Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=RcejfvTXusM"
+    },
+    {
+      "id": "sade-diamond-life",
+      "titre": "Diamond Life",
+      "auteur": "Sade",
+      "annee": 1984,
+      "type": "album",
+      "genre": "Soul",
+      "sousGenres": [
+        "Sophisti-Pop",
+        "Smooth Soul",
+        "Smooth Jazz",
+        "Jazz Pop"
+      ],
+      "media": "https://www.youtube.com/watch?v=OPgmQc3OkFs"
+    },
+    {
+      "id": "milton-nascimento-milagre-dos-peixes",
+      "titre": "Milagre dos peixes",
+      "auteur": "Milton Nascimento",
+      "annee": 1973,
+      "type": "album",
+      "genre": "Brazilian Music",
+      "sousGenres": [
+        "MPB",
+        "Avant-Folk",
+        "Jazz Fusion",
+        "Psychedelic Folk",
+        "Spiritual Jazz",
+        "Brazilian Folk Music",
+        "Clube da esquina"
+      ],
+      "media": "https://www.youtube.com/watch?v=_HAfK7BITrM"
+    },
+    {
+      "id": "gil-scott-heron-pieces-of-a-man",
+      "titre": "Pieces of a Man",
+      "auteur": "Gil Scott-Heron",
+      "annee": 1971,
+      "type": "album",
+      "genre": "Soul",
+      "sousGenres": [
+        "Progressive Soul",
+        "Jazz-Funk",
+        "Soul Jazz",
+        "Singer-Songwriter",
+        "Vocal Jazz"
+      ],
+      "media": "https://www.youtube.com/watch?v=DuaugaX8N2U"
+    },
+    {
+      "id": "miles-davis-in-a-silent-way",
+      "titre": "In a Silent Way",
+      "auteur": "Miles Davis",
+      "annee": 1969,
+      "type": "album",
+      "genre": "Jazz",
+      "sousGenres": [
+        "Jazz Fusion",
+        "Modal Jazz",
+        "Avant-Garde Jazz",
+        "Ambient",
+        "Cool Jazz"
+      ],
+      "media": "https://www.youtube.com/watch?v=8bdBONxS-Es"
+    },
+    {
+      "id": "pharaoah-sanders-karma",
+      "titre": "Karma",
+      "auteur": "Pharoah Sanders",
+      "annee": 1969,
+      "type": "album",
+      "genre": "Jazz",
+      "sousGenres": [
+        "Spiritual Jazz",
+        "Avant-Garde Jazz",
+        "Free Jazz",
+        "Soul Jazz",
+        "The New Thing",
+        "Yodeling"
+      ],
+      "media": "https://www.youtube.com/watch?v=ViweO33oo2Y"
+    },
+    {
+      "id": "john-coltrane-a-love-supreme",
+      "titre": "A Love Supreme",
+      "auteur": "John Coltrane",
+      "annee": 1965,
+      "type": "album",
+      "genre": "Jazz",
+      "sousGenres": [
+        "Spiritual Jazz",
+        "Avant-Garde Jazz",
+        "Modal Jazz",
+        "Post-Bop",
+        "The New Thing"
+      ],
+      "media": "https://www.youtube.com/watch?v=TMvbUKqWYEs"
+    },
+    {
+      "id": "charlotte-dos-santos-cleo",
+      "titre": "Cleo",
+      "auteur": "Charlotte Dos Santos",
+      "annee": 2017,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Art Pop",
+        "Soul Jazz",
+        "Sophisti-Pop",
+        "Smooth Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=mAoAQJPpvn0"
+    },
+    {
+      "id": "massive-attack-blue-lines",
+      "titre": "Massive Attack",
+      "auteur": "Blue Lines",
+      "annee": 1991,
+      "type": "album",
+      "genre": "Trip Hop",
+      "sousGenres": [
+        "Dub",
+        "Soul",
+        "UK Hip Hop",
+        "Bristol Sound",
+        "Hip Hop",
+        "UK Street Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=YVrMBBR5QW8"
+    },
+    {
+      "id": "prodigy-the-fat-of-the-land",
+      "titre": "The Fat of the Land",
+      "auteur": "Prodigy",
+      "annee": 1997,
+      "type": "album",
+      "genre": "Breakbeat",
+      "sousGenres": [
+        "Big Beat",
+        "Hip Hop",
+        "Breakbeat Hardcore",
+        "Acid Breaks",
+        "Industrial Rock",
+        "Psybreaks",
+        "UK Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=WwgAUyjtgIQ"
+    },
+    {
+      "id": "floetry-floetic",
+      "titre": "Floetic",
+      "auteur": "Floetry",
+      "annee": 2002,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Boom Bap",
+        "Hip Hop Soul",
+        "Smooth Soul",
+        "UK Hip Hop",
+        "Hip Hop",
+        "Jazz Rap",
+        "Spoken Word"
+      ],
+      "media": "https://www.youtube.com/watch?v=luuqF4bM_hw"
+    },
+    {
+      "id": "eskiboy-da-2nd-phaze",
+      "titre": "Da 2nd Phaze",
+      "auteur": "Eskiboy",
+      "annee": 2006,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "UK Hip Hop",
+        "Grime",
+        "Road Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=zi3nS0zAr8o"
+    },
+    {
+      "id": "kelis-wanderland",
+      "titre": "Wanderland",
+      "auteur": "Kelis",
+      "annee": 2001,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Hip Hop Soul",
+        "Neo-Soul",
+        "Pop Rap",
+        "Synth Funk"
+      ],
+      "media": "https://www.youtube.com/watch?v=dwcd8uuYtBg"
+    },
+    {
+      "id": "pharrell-williams-in-my-mind",
+      "titre": "In My Mind",
+      "auteur": "Pharrell Williams",
+      "annee": 2006,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Contemporary R&B",
+        "Neo-Soul",
+        "Synth Funk",
+        "Bounce"
+      ],
+      "media": "https://www.youtube.com/watch?v=N8c9k76DSP0"
+    },
+    {
+      "id": "destiny-s-child-destiny-fulfilled",
+      "titre": "Destiny Fulfilled",
+      "auteur": "Destiny's Child",
+      "annee": 2004,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Pop Soul",
+        "Hip Hop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=vUYy08XS9cI"
+    },
+     {
+      "id": "jill-scott-beautifully-human-words-and-sounds-vol-2",
+      "titre": "Beautifully Human: Words and Sounds Vol. 2",
+      "auteur": "Jill Scott",
+      "annee": 2004,
+      "type": "album",
+      "genre": "Neo-Soul",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Vocal Jazz"
+      ],
+      "media": "https://www.youtube.com/watch?v=m8BcjF1RPHc"
+    },
+     {
+      "id": "usher-confessions",
+      "titre": "Confessions",
+      "auteur": "Usher",
+      "annee": 2004,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary Christian Music",
+        "Neo-Soul",
+        "Hip Hop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=aiSLYMluvCg"
+    },
+    {
+      "id": "the-neptunes-clones",
+      "titre": "Clones",
+      "auteur": "The Neptunes",
+      "annee": 2003,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Contemporary R&B",
+        "Pop Rock",
+        "Experimental Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=rAgzJKbcyeU"
+    },
+    {
+      "id": "mary-j-blige-no-more-drama",
+      "titre": "No More Drama",
+      "auteur": "Mary J. Blige",
+      "annee": 2001,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Hip Hop Soul",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=a2qW2cl5MAk"
+    },
+    {
+      "id": "craig-david-born-to-do-it",
+      "titre": "Born to Do It",
+      "auteur": "Craig David",
+      "annee": 2000,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "2-Step",
+        "Hip Hop Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=aZ_Z5Fu23Mg"
+    },
+    {
+      "id": "big-moe-city-of-syrup",
+      "titre": "City Of Syrup",
+      "auteur": "Big Moe",
+      "annee": 2000,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Pop Rap",
+        "Houston Sound",
+        "Contemporary R&B",
+        "Hip Hop Soul",
+        "Chopped and Screwed",
+        "G-Funk",
+        "Southern Hip Hop",
+        "Gangsta Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=KoYWqcn2NY4"
+    },
+    {
+      "id": "teedra-moses-complex-simplicity",
+      "titre": "Complex Simplicity",
+      "auteur": "Teedra Moses",
+      "annee": 2004,
+      "type": "album",
+      "genre": "R&B",
+      "sousGenres": [
+        "Contemporary R&B",
+        "Synth Funk",
+        "Hip Hop Soul",
+        "Neo-Soul"
+      ],
+      "media": "https://www.youtube.com/watch?v=d6prUrwJfvw"
+    },
+    {
+      "id": "lil-jon-the-east-side-boyz-kings-of-crunk",
+      "titre": "Kings of Crunk",
+      "auteur": "Lil Jon & The East Side Boyz",
+      "annee": 2002,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "Crunk",
+        "Dirty South",
+        "Southern Hip Hop",
+        "Contemporary R&B",
+        "Gangsta Rap",
+        "Pop Rap",
+        "Atlanta Bass"
+      ],
+      "media": "https://www.youtube.com/watch?v=d6prUrwJfvw"
+    },
+    {
+      "id": "nubi-scarlattitude",
+      "titre": "Scarlatitude",
+      "auteur": "Nubi",
+      "annee": 2006,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop",
+        "Gangsta Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=Bj-rdA-B93k"
+    },
+    {
+      "id": "nessbeal-rois-sans-couronne",
+      "titre": "Rois sans couronne",
+      "auteur": "Nessbeal",
+      "annee": 2008,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop",
+        "Pop Rap",
+        "Contemporary R&B"
+      ],
+      "media": "https://www.youtube.com/watch?v=JHxsfMh0zgk"
+    },
+    {
+      "id": "la-fouine-aller-retour",
+      "titre": "Aller retour",
+      "auteur": "La Fouine",
+      "annee": 2007,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Pop Rap",
+        "Crunk"
+      ],
+      "media": "https://www.youtube.com/watch?v=RhTmU9U8W3E"
+    },
+    {
+      "id": "rohff-le-code-de-l-horreur",
+      "titre": "Le code de l'horreur",
+      "auteur": "Rohff",
+      "annee": 2008,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop",
+        "Gangsta Rap",
+        "Pop Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=5cBJyaN_eV0"
+    },
+    {
+      "id": "casey-tragedie-d-une-trajectoire",
+      "titre": "Tragédie d'une trajectoire",
+      "auteur": "Casey",
+      "annee": 2006,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=5hgy0Zwae-M"
     }
   ]
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

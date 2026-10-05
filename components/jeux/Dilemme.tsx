@@ -16,7 +16,7 @@ import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
 export type ItemDuel = { cle: string; titre: string; auteur: string; annee?: number; type: TypeOeuvre; genre?: string; sousGenres?: string[]; cover?: string; media?: string };
 
 /** Tailles de tournoi proposées (celles qui dépassent le nombre d'œuvres sont grisées). */
-const TAILLES = [8, 16, 32, 64, 128, 256];
+export const TAILLES = [8, 16, 32, 64, 128, 256];
 
 type Partie = {
   /** Œuvres encore en lice dans ce tour, dans l'ordre des duels. */
@@ -29,7 +29,7 @@ type Partie = {
   sorties: { cle: string; tour: number }[];
 };
 
-function melanger<T>(a: T[]): T[] {
+export function melanger<T>(a: T[]): T[] {
   const r = [...a];
   for (let i = r.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -38,7 +38,7 @@ function melanger<T>(a: T[]): T[] {
   return r;
 }
 
-function nomDuTour(n: number) {
+export function nomDuTour(n: number) {
   if (n === 2) return "Finale";
   if (n === 4) return "Demi-finales";
   if (n === 8) return "Quarts de finale";

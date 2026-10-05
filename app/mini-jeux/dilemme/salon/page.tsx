@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { Dilemme } from "@/components/jeux/Dilemme";
+import { DilemmeSalon } from "@/components/jeux/DilemmeSalon";
 import { isPlayable } from "@/lib/media";
 import { readConnexions } from "@/lib/oeuvres";
 import { SECTIONS } from "@/lib/sections";
 
 export const metadata: Metadata = {
-  title: "Dilemme",
-  description: "Deux œuvres, un seul choix. De duel en duel jusqu'à la finale.",
+  title: "Dilemme à plusieurs",
+  description: "Le Dilemme en ligne : crée un salon, invite tes potes, et votez duel après duel.",
 };
 
-export default function DilemmePage() {
+export default function DilemmeSalonPage() {
   const { oeuvres } = readConnexions();
   const items = oeuvres.map((o) => ({
     cle: o.slug ?? String(o.id),
@@ -34,14 +33,9 @@ export default function DilemmePage() {
           <h1 className="echo-title__main">Dilemme</h1>
         </div>
         <p className="section-intro">
-          Deux œuvres, un seul choix. De duel en duel, jusqu&apos;à ce qu&apos;il n&apos;en reste qu&apos;une.
+          À plusieurs, en ligne : tout le monde vote sur le même duel, et l&apos;œuvre qui a le plus de voix continue.
         </p>
-        <p className="sl-invite">
-          <Link href="/mini-jeux/dilemme/salon" className="sl-invite__lien">
-            Jouer à plusieurs, en ligne →
-          </Link>
-        </p>
-        <Dilemme oeuvres={items} />
+        <DilemmeSalon oeuvres={items} />
       </main>
       <Footer />
     </div>
