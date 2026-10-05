@@ -54,9 +54,21 @@ type Etat = {
   gagnant?: string;
   egalite?: boolean;
 };
-type Message = { t: "bonjour"; nom: string } | { t: "vote"; cle: string } | { t: "signe" } | { t: "depart" } | { t: "etat"; etat: Etat; toi: string } | { t: "refus"; raison: string };
+type Message = { t: "bonjour"; nom: string } | { t: "vote"; cle: string } | { t: "signe" } | { t: "depart" } | { t: "nom"; nom: string } | { t: "etat"; etat: Etat; toi: string } | { t: "refus"; raison: string };
 
 const etatVide = (): Etat => ({ phase: "salon", joueurs: [], taille: 16, etiquette: "", tour: [], suite: [], duel: 0, sorties: [], ontVote: [], votes: {} });
+
+/** Un pseudo propre : 16 caractères au plus, et un numéro s'il est déjà pris dans le salon. */
+function nomLibre(voulu: string, autres: Joueur[], defaut: string) {
+  const base = voulu.trim().replace(/\s+/g, " ").slice(0, 16) || defaut;
+  const pris = new Set(autres.map((j) => j.nom.toLowerCase()));
+  if (!pris.has(base.toLowerCase())) return base;
+  for (let n = 2; n < 99; n++) {
+    const essai = `${base.slice(0, 13)} ${n}`;
+    if (!pris.has(essai.toLowerCase())) return essai;
+  }
+  return base;
+}
 
 function nouveauCode() {
   let c = "";
@@ -183,6 +195,21 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
     [clore, diffuser]
   );
 
+  /** Change le pseudo d'un joueur (hôte ou invité), en évitant les doublons. */
+  const renommer = useCallback(
+    (id: string, voulu: string) => {
+      const h = H.current;
+      const autres = h.etat.joueurs.filter((j) => j.id !== id);
+      const actuel = h.etat.joueurs.find((j) => j.id === id);
+      if (!actuel) return;
+      const nouveau = nomLibre(voulu, autres, actuel.nom);
+      if (nouveau === actuel.nom) return;
+      h.etat = { ...h.etat, joueurs: h.etat.joueurs.map((j) => (j.id === id ? { ...j, nom: nouveau } : j)) };
+      diffuser();
+    },
+    [diffuser]
+  );
+
   const retirerJoueur = useCallback(
     (id: string) => {
       const h = H.current;
@@ -232,10 +259,12 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
               return;
             }
             h.conns.set(conn.peer, conn);
-            const nomInvite = String(m.nom ?? "").trim().slice(0, 16) || "Invité";
-            h.etat = { ...h.etat, joueurs: [...h.etat.joueurs.filter((j) => j.id !== conn.peer), { id: conn.peer, nom: nomInvite }] };
+            const autres = h.etat.joueurs.filter((j) => j.id !== conn.peer);
+            const nomInvite = nomLibre(String(m.nom ?? ""), autres, `Invité ${autres.length}`);
+            h.etat = { ...h.etat, joueurs: [...autres, { id: conn.peer, nom: nomInvite }] };
             diffuser();
-          } else if (m?.t === "vote") recevoirVote(conn.peer, String(m.cle));
+          } else if (m?.t === "nom") renommer(conn.peer, String(m.nom ?? ""));
+          else if (m?.t === "vote") recevoirVote(conn.peer, String(m.cle));
         });
         conn.on("close", () => retirerJoueur(conn.peer));
         conn.on("error", () => retirerJoueur(conn.peer));
@@ -384,6 +413,23 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
   const numeroDuel = etat.sorties.length;
   useEffect(() => setMonVote(""), [numeroDuel, etat.phase === "salon"]);
 
+  /** Pseudo en cours de modification dans le salon ("" = pas en train de modifier). */
+  const [edition, setEdition] = useState<string | null>(null);
+  const validerPseudo = () => {
+    const voulu = (edition ?? "").trim();
+    setEdition(null);
+    if (!voulu) return;
+    setNom(voulu);
+    try {
+      localStorage.setItem(PSEUDO_STOCK, voulu.slice(0, 16));
+    } catch {}
+    if (role === "hote") renommer(HOTE, voulu);
+    else
+      try {
+        versHote.current?.send({ t: "nom", nom: voulu } satisfies Message);
+      } catch {}
+  };
+
   const lien = typeof window !== "undefined" && code ? `${window.location.origin}${window.location.pathname}?code=${code}` : "";
   const copierLien = async () => {
     try {
@@ -414,10 +460,11 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
       <div className="dilemme salon">
         <div className="dl-bloc">
           <h2 className="dl-h">Ton pseudo</h2>
-          <label className="search sl-champ">
+          <label className="sl-champ">
             <span className="visually-hidden">Ton pseudo</span>
             <input id="sl-pseudo" value={nom} maxLength={16} autoComplete="off" placeholder="Comment on t'appelle ?" onChange={(e) => setNom(e.target.value)} />
           </label>
+          <p className="dl-note">C&apos;est le nom que les autres verront à côté de tes votes. Tu pourras le changer dans le salon.</p>
         </div>
         <div className="sl-choix">
           <div className="sl-carte">
@@ -430,7 +477,7 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
           <div className="sl-carte">
             <h2 className="dl-h">Rejoindre</h2>
             <p className="dl-note">Entre le code que l&apos;on t&apos;a donné.</p>
-            <label className="search sl-champ sl-champ--code">
+            <label className="sl-champ sl-champ--code">
               <span className="visually-hidden">Code du salon</span>
               <input
                 id="sl-code"
@@ -459,13 +506,36 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
 
   const listeJoueurs = (
     <ul className="sl-joueurs" aria-label="Joueurs">
-      {etat.joueurs.map((j) => (
-        <li key={j.id} className={`${etat.phase === "duel" && etat.ontVote.includes(j.id) ? "a-vote" : ""}${j.id === moi ? " est-moi" : ""}`}>
-          {etat.phase === "duel" && <span aria-hidden="true">{etat.ontVote.includes(j.id) ? "✓" : "…"}</span>}
-          {j.nom}
-          {j.id === HOTE && <em>hôte</em>}
-        </li>
-      ))}
+      {etat.joueurs.map((j) => {
+        const aVote = etat.phase === "duel" && etat.ontVote.includes(j.id);
+        return (
+          <li key={j.id} className={`${aVote ? "a-vote" : ""}${j.id === moi ? " est-moi" : ""}`}>
+            {etat.phase === "duel" && <span aria-hidden="true">{aVote ? "✓" : "…"}</span>}
+            {j.id === moi && edition !== null ? (
+              <input
+                className="sl-renommer"
+                value={edition}
+                maxLength={16}
+                autoFocus
+                aria-label="Ton pseudo"
+                onChange={(e) => setEdition(e.target.value)}
+                onBlur={validerPseudo}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") validerPseudo();
+                  if (e.key === "Escape") setEdition(null);
+                }}
+              />
+            ) : j.id === moi ? (
+              <button type="button" className="sl-moi" onClick={() => setEdition(j.nom)} title="Changer mon pseudo">
+                {j.nom} <span aria-hidden="true">✎</span>
+              </button>
+            ) : (
+              j.nom
+            )}
+            {j.id === HOTE && <em>hôte</em>}
+          </li>
+        );
+      })}
     </ul>
   );
   const bandeau = (
@@ -606,7 +676,18 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
             {o.annee ? ` · ${o.annee}` : ""}
           </span>
         </button>
-        {resultat ? <p className="sl-voix">{voix.length ? voix.map((j) => j.nom).join(", ") : "Aucune voix"}</p> : o.media && <PlayButton compact piste={{ titre: o.titre, auteur: o.auteur, cover: o.cover, media: o.media, slug: o.cle }} className="dl-carte__ecouter" />}
+        {resultat ? (
+          <ul className="sl-voix" aria-label={`Ont voté pour ${o.titre}`}>
+            {voix.map((j, k) => (
+              <li key={j.id} className={j.id === moi ? "est-moi" : ""} style={{ ["--k" as string]: k }}>
+                {j.nom}
+              </li>
+            ))}
+            {voix.length === 0 && <li className="sl-voix__vide">Aucune voix</li>}
+          </ul>
+        ) : (
+          o.media && <PlayButton compact piste={{ titre: o.titre, auteur: o.auteur, cover: o.cover, media: o.media, slug: o.cle }} className="dl-carte__ecouter" />
+        )}
       </div>
     );
   };
@@ -622,7 +703,7 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
         <i style={{ width: `${(faits / Math.max(1, total)) * 100}%` }} />
       </div>
       {a && b && (
-        <div className="dl-duel" key={numeroDuel}>
+        <div className={`dl-duel${resultat ? " est-resultat" : ""}`} key={numeroDuel}>
           {carte(a, "gauche")}
           <span className="dl-vs" aria-hidden="true">
             vs

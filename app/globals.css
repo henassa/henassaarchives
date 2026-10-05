@@ -6090,12 +6090,35 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
   gap: 24px;
 }
 
+.sl-champ {
+  display: block;
+}
+
 .sl-champ input {
   width: min(360px, 100%);
+  height: 48px;
+  padding: 0 12px;
+  border: 3px solid var(--fg);
+  border-radius: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.sl-champ input:focus {
+  outline: 0;
+  border-color: var(--accent);
+}
+
+.sl-champ input::placeholder {
+  color: var(--faint);
 }
 
 .sl-champ--code input {
   width: 180px;
+  height: 60px;
   font-family: var(--font-display);
   font-size: 34px;
   letter-spacing: 8px;
@@ -6212,7 +6235,41 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
   font-weight: 800;
 }
 
-/* mon vote, puis le résultat du duel */
+/* mon pseudo, modifiable d'un clic */
+.sl-moi {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
+.sl-moi span {
+  opacity: 0.6;
+  font-size: 12px;
+}
+
+.sl-moi:hover span {
+  opacity: 1;
+}
+
+.sl-renommer {
+  width: 140px;
+  padding: 0 4px;
+  border: 0;
+  border-bottom: 2px solid var(--accent);
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+}
+
+.sl-renommer:focus {
+  outline: 0;
+}
+
+/* mon vote pendant le duel */
 .salon .dl-carte.est-mon-vote .dl-carte__cover {
   outline: 6px solid var(--accent);
   outline-offset: -6px;
@@ -6226,16 +6283,88 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
   cursor: default;
 }
 
-.salon .dl-carte.est-perdante {
-  opacity: 0.35;
-  transition: opacity 0.3s;
+/* ---- Résultat d'un duel : la gagnante passe devant, la perdante s'efface ---- */
+.salon .dl-carte {
+  position: relative;
+  transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.2, 1.15), opacity 0.45s, filter 0.45s;
+}
+
+.salon .dl-carte.est-gagnante {
+  z-index: 2;
+  animation: sl-gagne 0.75s cubic-bezier(0.2, 0.9, 0.2, 1.2) both;
+}
+
+.salon .dl-carte--gauche.est-gagnante {
+  --pousse: 9%;
+  --penche: -2deg;
+}
+
+.salon .dl-carte--droite.est-gagnante {
+  --pousse: -9%;
+  --penche: 2deg;
+}
+
+@keyframes sl-gagne {
+  0% {
+    transform: none;
+  }
+  45% {
+    transform: translateX(var(--pousse)) scale(1.13) rotate(var(--penche));
+  }
+  100% {
+    transform: translateX(calc(var(--pousse) * 0.55)) scale(1.07) rotate(calc(var(--penche) * 0.4));
+  }
 }
 
 .salon .dl-carte.est-gagnante .dl-carte__cover {
   outline: 6px solid var(--accent);
   outline-offset: -6px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.75), 0 0 0 3px var(--bg);
 }
 
+.salon .dl-carte.est-perdante {
+  z-index: 1;
+  animation: sl-perd 0.6s 0.1s ease both;
+}
+
+.salon .dl-carte--gauche.est-perdante {
+  --recule: -4%;
+  --tombe: -3deg;
+}
+
+.salon .dl-carte--droite.est-perdante {
+  --recule: 4%;
+  --tombe: 3deg;
+}
+
+@keyframes sl-perd {
+  to {
+    transform: translate(var(--recule), 14px) scale(0.86) rotate(var(--tombe));
+  }
+}
+
+/* la pochette perdante s'éteint, mais les noms de ceux qui ont voté pour elle restent bien lisibles */
+.salon .dl-carte.est-perdante .dl-carte__choix {
+  animation: sl-eteint 0.5s 0.15s ease both;
+}
+
+@keyframes sl-eteint {
+  to {
+    opacity: 0.35;
+    filter: grayscale(1);
+  }
+}
+
+.dl-duel.est-resultat {
+  margin-bottom: 26px;
+}
+
+.dl-duel.est-resultat .dl-vs {
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+/* le nombre de voix, en gros sur la pochette */
 .sl-score {
   position: absolute;
   right: 10px;
@@ -6248,13 +6377,84 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
   font-size: clamp(34px, 6vw, 56px);
   line-height: 1.1;
   text-align: center;
+  animation: sl-pop 0.4s 0.25s cubic-bezier(0.2, 0.9, 0.2, 1.4) both;
 }
 
+.salon .est-perdante .sl-score {
+  background: var(--fg);
+}
+
+@keyframes sl-pop {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* qui a voté pour quoi : une pastille par joueur, sous chaque pochette */
 .sl-voix {
-  margin: 8px 0 0;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 34px;
+}
+
+.sl-voix li {
+  padding: 5px 11px;
+  background: var(--fg);
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  animation: sl-voix 0.35s calc(0.55s + var(--k, 0) * 0.09s) cubic-bezier(0.2, 0.9, 0.2, 1.3) both;
+}
+
+.salon .est-gagnante .sl-voix li {
+  background: var(--accent);
+}
+
+.sl-voix li.est-moi {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.sl-voix li.est-moi::after {
+  content: " (toi)";
+  font-weight: 600;
+}
+
+.sl-voix .sl-voix__vide {
+  padding-left: 0;
+  background: none !important;
+  color: var(--muted);
   font-size: 13px;
   font-weight: 600;
-  color: var(--muted);
+}
+
+@keyframes sl-voix {
+  from {
+    transform: translateY(8px) scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .salon .dl-carte.est-gagnante,
+  .salon .dl-carte.est-perdante,
+  .sl-score,
+  .sl-voix li {
+    animation-duration: 0.01s;
+    animation-delay: 0s;
+  }
 }
 
 @media (max-width: 700px) {
