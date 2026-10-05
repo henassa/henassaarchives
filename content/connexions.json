@@ -3552,7 +3552,7 @@
         "Pop Rap",
         "Neo-Psychedelia"
       ],
-      "media": "https://www.youtube.com/watch?v=DCbmd9aF9e4"
+      "media": "https://www.youtube.com/watch?v=9zLuPi_MMMw"
     },
     {
       "id": "jpegmafia-veteran",
@@ -4383,6 +4383,40 @@
         "Gangsta Rap"
       ],
       "media": "https://www.youtube.com/watch?v=k3XdDLPcyjQ"
+    },
+    {
+      "id": "james-brown-the-payback",
+      "titre": "The Payback",
+      "auteur": "James Brown",
+      "annee": 1973,
+      "type": "album",
+      "genre": "Funk",
+      "sousGenres": [
+        "Deep Funk",
+        "Soul",
+        "Progressive Soul",
+        "Jazz-Funk"
+      ],
+      "media": "https://www.youtube.com/watch?v=D7ks03zsg1o"
+    },
+    {
+      "id": "masayoshi-takanaka-seychelles",
+      "titre": "Seychelles",
+      "auteur": "Masayoshi Takanaka",
+      "annee": 1976,
+      "type": "album",
+      "genre": "Jazz",
+      "sousGenres": [
+        "Jazz Fusion",
+        "City Pop",
+        "Jazz-Funk",
+        "Latin Jazz",
+        "Disco",
+        "Jazz-Rock",
+        "New Music",
+        "Yacht Rock"
+      ],
+      "media": "https://www.youtube.com/watch?v=CnKd3V-VpDs"
     }
   ]
 }

@@ -7,19 +7,26 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { mdxComponents, mdxOptions } from "@/components/mdx";
 import { Tag } from "@/components/Tag";
-import { formatDate, getAllArticles, getArticle } from "@/lib/articles";
+import { formatDate, getArticle, getTousLesArticles } from "@/lib/articles";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return getAllArticles().map((a) => ({ slug: a.slug }));
+  // les brouillons ont leur page aussi, mais à une adresse secrète
+  return getTousLesArticles().map((a) => ({ slug: a.adresse }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const article = getArticle(slug);
   if (!article) return {};
-  return { title: article.title, description: article.dek, authors: article.auteur ? [{ name: article.auteur }] : undefined };
+  return {
+    title: article.title,
+    description: article.dek,
+    authors: article.auteur ? [{ name: article.auteur }] : undefined,
+    // un brouillon ne doit pas apparaître dans Google
+    robots: article.brouillon ? { index: false, follow: false } : undefined,
+  };
 }
 
 export default async function ArticlePage({ params }: Props) {
@@ -28,8 +35,31 @@ export default async function ArticlePage({ params }: Props) {
   if (!article) notFound();
 
   return (
-    <div className="page">
+    <div className={`page${article.fond ? " page--fond" : ""}`}>
+      {article.fond && (
+        // Image de fond : fixe derrière le texte, avec un voile noir et un grain
+        <div
+          className={`article-fond${article.fondGrain ? " article-fond--grain" : ""}`}
+          aria-hidden="true"
+          style={{ ["--fond" as string]: `url("${article.fond}")`, ["--voile" as string]: article.fondVoile }}
+        />
+      )}
       <Header active="articles" compact />
+
+      {article.brouillon && (
+        <p className="brouillon" role="note">
+          <strong>Brouillon</strong>
+          <span>
+            Cet article n&apos;est pas publié. Il n&apos;apparaît nulle part sur le site : seules les personnes qui ont ce lien peuvent le lire.
+            {slug !== article.adresse && (
+              <>
+                {" "}
+                Lien à partager une fois en ligne : <code>/articles/{article.adresse}</code>
+              </>
+            )}
+          </span>
+        </p>
+      )}
 
       <article className="article" style={{ ["--accent" as string]: article.couleur }}>
         <header className="article__head">

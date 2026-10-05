@@ -64,6 +64,10 @@ Une image plus large que le texte, avec `large` :
 
 <Image large src="/images/oeuvres/nas-illmatic.jpg" alt="Pochette d'Illmatic" />
 
+Une image réduite et centrée, avec `petite` (idéal pour une image carrée, une pochette, un portrait) :
+
+<Image petite src="/images/oeuvres/nas-illmatic.jpg" alt="Pochette d'Illmatic" legende="Une image carrée, en petit" />
+
 Plusieurs images côte à côte :
 
 <Galerie legende="Une légende pour toute la galerie">
@@ -76,6 +80,10 @@ Plusieurs images côte à côte :
 Un bouton qui lance le morceau dans le lecteur du site, qui continue de jouer pendant qu'on lit :
 
 <Ecouter titre="Halftime" auteur="Nas" media="https://www.youtube.com/watch?v=MqdQNvPpUIk" />
+
+Pour ne faire écouter qu'un passage, ajoute `debut` et `fin` (en minutes:secondes) :
+
+<Ecouter titre="Halftime" auteur="Nas" media="https://www.youtube.com/watch?v=MqdQNvPpUIk" debut="0:45" fin="1:15" />
 
 ## Listes, tableaux, citations simples
 
@@ -93,3 +101,64 @@ Un bouton qui lance le morceau dans le lecteur du site, qui continue de jouer pe
 ---
 
 Une ligne de trois tirets fait un trait de séparation simple, comme juste au-dessus.
+
+## Blocs d'atelier : gothique, presse, archives
+
+Une ouverture de chapitre, avec un grand chiffre gothique (romain ou non) :
+
+<Chapitre numero="II" titre="Le chemin inverse" />
+
+Des paroles : les retours à la ligne sont gardés tels quels. `media` ajoute un bouton d'écoute.
+
+<Paroles artiste="Nom de l'artiste" morceau="Titre du morceau" annee="1997" media="https://www.youtube.com/watch?v=MqdQNvPpUIk">
+Première ligne des paroles,
+deuxième ligne des paroles,
+troisième ligne, et ainsi de suite.
+</Paroles>
+
+Une frise de dates :
+
+<Chronologie>
+  <Date an="1983">Sortie du film, mal reçu par la critique.</Date>
+  <Date an="1997">Le rap français commence à le citer.</Date>
+  <Date an="2015">Une nouvelle génération le redécouvre.</Date>
+</Chronologie>
+
+Un face-à-face, avec le « vs » gothique au milieu :
+
+<Duel>
+  <Cote titre="Tony">
+    Il veut tout, tout de suite, et il le dit.
+  </Cote>
+  <Cote titre="Sosa">
+    Il a déjà tout, et il ne dit rien.
+  </Cote>
+</Duel>
+
+Une entrée de dictionnaire, pour poser un mot :
+
+<Definition mot="Slime" prononciation="slaïm" nature="nom masculin">
+Frère choisi, allié de toujours. Par extension, la langue que l'on parle entre soi.
+</Definition>
+
+<Marge>Une note en marge, comme une glose : elle se pose à droite du texte sur grand écran, et reste dans le texte sur téléphone.</Marge>
+
+Une note en marge se place juste avant le paragraphe qu'elle commente. Sur un écran large, elle sort de la colonne et vient se ranger à côté, sans couper la lecture.
+
+Un séparateur orné, avec la lettre gothique de ton choix (`lettre="S"`) :
+
+<Ornement />
+
+Un tampon penché (`cote="gauche"`, `"centre"` ou `"droite"`) :
+
+<Tampon>Classique</Tampon>
+
+Une manchette de journal, pour une phrase qui doit claquer :
+
+<Manchette surtitre="Dernière minute">Le film appartient aux rappeurs</Manchette>
+
+Un hommage :
+
+<Epitaphe nom="Prénom Nom" echo="Nom" dates="1990 — 2026">Repose en paix</Epitaphe>
+
+Et dans le texte, un passage <Censure>caviardé qui se lit au survol</Censure>, pour jouer avec ce qu'on cache.

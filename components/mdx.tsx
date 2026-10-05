@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import remarkGfm from "remark-gfm";
-import { isPlayable } from "@/lib/media";
+import { isPlayable, secondes } from "@/lib/media";
 import { PlayButton } from "@/components/player/Lecteur";
 
 /*
@@ -85,10 +85,10 @@ function Separateur() {
   );
 }
 
-/** Image seule, avec légende facultative. */
-function Figure({ src, alt, legende, large }: { src: string; alt: string; legende?: string; large?: boolean }) {
+/** Image seule, avec légende facultative. « large » déborde du texte, « petite » la réduit et la centre. */
+function Figure({ src, alt, legende, large, petite }: { src: string; alt: string; legende?: string; large?: boolean; petite?: boolean }) {
   return (
-    <figure className={`figure${large ? " figure--large" : ""}`}>
+    <figure className={`figure${large ? " figure--large" : ""}${petite ? " figure--petite" : ""}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={alt} loading="lazy" />
       {legende && <figcaption>{legende}</figcaption>}
@@ -107,7 +107,7 @@ function Galerie({ children, legende }: Enfants & { legende?: string }) {
 }
 
 /** Bouton « Écouter » : lance le morceau dans le lecteur du site (YouTube ou fichier audio). */
-function Ecouter({ titre, auteur, media }: { titre: string; auteur?: string; media: string }) {
+function Ecouter({ titre, auteur, media, debut, fin }: { titre: string; auteur?: string; media: string; debut?: string | number; fin?: string | number }) {
   if (!isPlayable(media)) {
     return (
       <a className="player__link" href={media} target="_blank" rel="noopener noreferrer">
@@ -117,7 +117,7 @@ function Ecouter({ titre, auteur, media }: { titre: string; auteur?: string; med
   }
   return (
     <div className="ecouter">
-      <PlayButton piste={{ titre, auteur, media }} />
+      <PlayButton piste={{ titre, auteur, media, debut: secondes(debut), fin: secondes(fin) }} />
       <span className="ecouter__info">
         <span className="ecouter__titre">{titre}</span>
         {auteur && <span className="ecouter__auteur">{auteur}</span>}
@@ -126,7 +126,153 @@ function Ecouter({ titre, auteur, media }: { titre: string; auteur?: string; med
   );
 }
 
+/* ---------- Blocs « d'atelier » : gothique, presse, archives ---------- */
+
+/** Ouverture de chapitre : un grand chiffre gothique (I, II, 3...), puis le titre. */
+function Chapitre({ numero, titre, children }: Enfants & { numero: string | number; titre?: string }) {
+  return (
+    <header className="chapitre">
+      <span className="chapitre__numero" aria-hidden="true">
+        {numero}
+      </span>
+      <span className="chapitre__label">Chapitre {numero}</span>
+      <h2 className="chapitre__titre">{titre ?? children}</h2>
+    </header>
+  );
+}
+
+/**
+ * Paroles d'un morceau : chaque retour à la ligne du fichier est gardé.
+ * Crédit dessous (artiste, morceau, année) et bouton d'écoute si « media » est donné.
+ */
+function Paroles({ children, artiste, morceau, annee, media, debut, fin }: Enfants & { artiste?: string; morceau?: string; annee?: string | number; media?: string; debut?: string | number; fin?: string | number }) {
+  const credit = [artiste, morceau ? `« ${morceau} »` : "", annee].filter(Boolean).join(" · ");
+  return (
+    <figure className="paroles">
+      <span className="paroles__guillemet" aria-hidden="true">
+        «
+      </span>
+      <blockquote className="paroles__texte">{children}</blockquote>
+      {(credit || media) && (
+        <figcaption className="paroles__credit">
+          {media && isPlayable(media) && <PlayButton compact piste={{ titre: morceau ?? "Extrait", auteur: artiste, media, debut: secondes(debut), fin: secondes(fin) }} />}
+          <span>{credit}</span>
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
+/** Frise : mettre des <Date an="1983">…</Date> à l'intérieur. */
+function Chronologie({ children }: Enfants) {
+  return <ol className="chronologie">{children}</ol>;
+}
+function DateFrise({ an, children }: Enfants & { an: string | number }) {
+  return (
+    <li className="chronologie__date">
+      <span className="chronologie__an">{an}</span>
+      <div className="chronologie__texte">{children}</div>
+    </li>
+  );
+}
+
+/** Face-à-face : deux <Cote titre="…">…</Cote> séparés par un « vs » gothique. */
+function Duel({ children }: Enfants) {
+  return (
+    <div className="duel">
+      {children}
+      <span className="duel__vs" aria-hidden="true">
+        vs
+      </span>
+    </div>
+  );
+}
+function Cote({ titre, children }: Enfants & { titre: string }) {
+  return (
+    <div className="duel__cote">
+      <p className="duel__titre">{titre}</p>
+      <div className="duel__texte">{children}</div>
+    </div>
+  );
+}
+
+/** Entrée de dictionnaire : le mot en gothique, sa nature, sa prononciation, puis la définition. */
+function Definition({ mot, nature, prononciation, children }: Enfants & { mot: string; nature?: string; prononciation?: string }) {
+  return (
+    <aside className="definition">
+      <p className="definition__tete">
+        <dfn className="definition__mot">{mot}</dfn>
+        {prononciation && <span className="definition__pron">[{prononciation}]</span>}
+        {nature && <span className="definition__nature">{nature}</span>}
+      </p>
+      <div className="definition__texte">{children}</div>
+    </aside>
+  );
+}
+
+/** Note en marge, comme une glose de manuscrit (dans le texte sur petit écran). */
+function Marge({ children }: Enfants) {
+  return <aside className="marge">{children}</aside>;
+}
+
+/** Séparateur orné : une lettre gothique entre deux traits (H par défaut). */
+function Ornement({ lettre = "H" }: { lettre?: string }) {
+  return (
+    <div className="ornement" role="separator">
+      <i />
+      <span aria-hidden="true">{lettre}</span>
+      <i />
+    </div>
+  );
+}
+
+/** Tampon penché, comme un coup d'encre : « Classique », « Coup de cœur »... */
+function Tampon({ children, cote = "droite" }: Enfants & { cote?: "gauche" | "centre" | "droite" }) {
+  return (
+    <div className={`tampon tampon--${cote}`}>
+      <span>{children}</span>
+    </div>
+  );
+}
+
+/** Hommage : le nom en grand avec son écho gothique, les années, puis une phrase. */
+function Epitaphe({ nom, echo, dates, children }: Enfants & { nom: string; echo?: string; dates?: string }) {
+  return (
+    <div className="epitaphe">
+      <div className="epitaphe__nom">
+        <span className="epitaphe__echo" aria-hidden="true">
+          {echo ?? nom.split(/\s+/).pop()}
+        </span>
+        <strong>{nom}</strong>
+      </div>
+      {dates && <p className="epitaphe__dates">{dates}</p>}
+      <i className="epitaphe__trait" />
+      {children && <div className="epitaphe__texte">{children}</div>}
+    </div>
+  );
+}
+
+/** Manchette de journal : une bande blanche, le texte en très gros dessus. */
+function Manchette({ children, surtitre }: Enfants & { surtitre?: string }) {
+  return (
+    <div className="manchette">
+      {surtitre && <span className="manchette__surtitre">{surtitre}</span>}
+      <p className="manchette__texte">{children}</p>
+    </div>
+  );
+}
+
 /* ---------- Dans le texte ---------- */
+
+/** Passage caviardé : une barre noire qui se lève au survol ou au toucher. */
+function Censure({ children }: Enfants) {
+  return (
+    <span className="censure" tabIndex={0} title="Survole ou touche pour lire">
+      {children}
+    </span>
+  );
+}
+
 
 /** Surligné au marqueur, dans la couleur de l'article. */
 function Surligne({ children }: Enfants) {
@@ -167,6 +313,19 @@ export const mdxComponents = {
   Gothique,
   Couleur,
   Etiquette,
+  Chapitre,
+  Paroles,
+  Chronologie,
+  Date: DateFrise,
+  Duel,
+  Cote,
+  Definition,
+  Marge,
+  Ornement,
+  Tampon,
+  Epitaphe,
+  Manchette,
+  Censure,
 };
 
 /** Options Markdown : barré (~~texte~~), tableaux, liens automatiques. */

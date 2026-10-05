@@ -789,8 +789,8 @@ a.tag.tag--outline:hover {
 }
 
 .citation {
-  margin: 48px 0 !important;
-  width: min(900px, calc(100vw - 2 * var(--gutter)));
+  margin: 32px 0 !important;
+  width: min(760px, calc(100vw - 2 * var(--gutter)));
   position: relative;
   left: 50%;
   transform: translateX(-50%);
@@ -809,28 +809,28 @@ a.tag.tag--outline:hover {
 .citation__texte {
   position: relative;
   margin: 0;
-  font-size: clamp(30px, 4vw, 48px);
-  line-height: 1.05;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.1;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
 }
 
 /* Écho gothique derrière la citation */
 .citation__echo {
   font-family: var(--font-gothic);
-  font-size: clamp(110px, 16vw, 220px);
+  font-size: clamp(80px, 11vw, 140px);
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: 2px var(--accent);
-  opacity: 0.45;
+  opacity: 0.22;
   white-space: nowrap;
   pointer-events: none;
 }
 
 .citation__auteur {
   grid-row: 2;
-  margin-top: 14px;
-  font-size: 14px;
+  margin-top: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -850,7 +850,7 @@ a.tag.tag--outline:hover {
 
 /* Intertitre avec écho gothique */
 .intertitre {
-  margin-top: 56px !important;
+  margin-top: 44px !important;
   display: grid;
   align-items: center;
   justify-items: start;
@@ -863,7 +863,7 @@ a.tag.tag--outline:hover {
 
 .intertitre__echo {
   font-family: var(--font-gothic);
-  font-size: clamp(96px, 13vw, 150px);
+  font-size: clamp(76px, 10vw, 112px);
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: 2px var(--accent);
@@ -877,7 +877,7 @@ a.tag.tag--outline:hover {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(36px, 5vw, 56px);
+  font-size: clamp(30px, 4vw, 44px);
   line-height: 0.95;
   text-transform: uppercase;
   -webkit-text-stroke: 3px var(--bg);
@@ -901,8 +901,8 @@ a.tag.tag--outline:hover {
 
 /* Paragraphe en grand */
 .grand {
-  font-size: clamp(24px, 3vw, 32px);
-  line-height: 1.2;
+  font-size: clamp(22px, 2.4vw, 26px);
+  line-height: 1.25;
   font-weight: 800;
   letter-spacing: -0.03em;
 }
@@ -913,8 +913,8 @@ a.tag.tag--outline:hover {
 
 /* Encadré */
 .encadre {
-  margin: 40px 0 !important;
-  padding: 20px 22px;
+  margin: 30px 0 !important;
+  padding: 16px 20px;
   border: 3px solid var(--fg);
   border-top: 10px solid var(--accent);
   background: var(--panel);
@@ -940,7 +940,7 @@ a.tag.tag--outline:hover {
 
 /* Chiffre géant */
 .chiffre {
-  margin: 40px 0 !important;
+  margin: 30px 0 !important;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -950,7 +950,7 @@ a.tag.tag--outline:hover {
 
 .chiffre__valeur {
   font-family: var(--font-display);
-  font-size: clamp(96px, 16vw, 180px);
+  font-size: clamp(80px, 12vw, 130px);
   line-height: 0.85;
   color: var(--accent);
 }
@@ -965,7 +965,7 @@ a.tag.tag--outline:hover {
 
 /* Séparateur */
 .separateur {
-  margin: 56px 0 !important;
+  margin: 40px 0 !important;
   display: flex;
   justify-content: center;
   gap: 8px;
@@ -5495,4 +5495,565 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
     position: static;
     order: -1;
   }
+}
+
+/* ============================================================
+   Articles : blocs « d'atelier » (gothique, presse, archives)
+   ============================================================ */
+
+/* Ouverture de chapitre */
+.chapitre {
+  margin: 52px 0 4px !important;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.chapitre__numero {
+  font-family: var(--font-gothic);
+  font-size: clamp(110px, 16vw, 170px);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 3px var(--accent);
+}
+
+.chapitre__label {
+  margin-top: 18px;
+  padding: 4px 10px;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.chapitre__titre {
+  margin: 14px 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(32px, 4.4vw, 48px);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+/* Paroles d'un morceau */
+.paroles {
+  position: relative;
+  margin: 28px 0 !important;
+  padding: 2px 0 2px 22px;
+  border-left: 4px solid var(--accent);
+}
+
+/* plus de grand guillemet : la barre de couleur et l'italique suffisent */
+.paroles__guillemet {
+  display: none;
+}
+
+.paroles__texte {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(19px, 2.1vw, 22px);
+  line-height: 1.35;
+  white-space: pre-line;
+}
+
+.paroles__texte > * {
+  margin: 0;
+}
+
+.paroles__texte > * + * {
+  margin-top: 16px;
+}
+
+.paroles__credit {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Frise chronologique */
+.chronologie {
+  margin: 30px 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  border-left: 3px solid var(--fg);
+}
+
+.chronologie__date {
+  position: relative;
+  padding: 0 0 18px 22px;
+  margin: 0 !important;
+}
+
+.chronologie__date::marker {
+  content: "";
+}
+
+.chronologie__date::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 8px;
+  width: 13px;
+  height: 13px;
+  background: var(--accent);
+}
+
+.chronologie__date:last-child {
+  padding-bottom: 0;
+}
+
+.chronologie__an {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.chronologie__texte {
+  margin-top: 6px;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.chronologie__texte > * {
+  margin: 0;
+}
+
+/* Face-à-face */
+.duel {
+  position: relative;
+  margin: 32px 0 !important;
+  width: min(760px, calc(100vw - 2 * var(--gutter)));
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 3px solid var(--fg);
+}
+
+.duel__cote {
+  padding: 22px 48px 24px 26px;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.duel__cote + .duel__cote {
+  padding: 22px 26px 24px 48px;
+  border-left: 3px solid var(--fg);
+  background: var(--panel);
+}
+
+.duel__titre {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.2vw, 34px);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.duel__texte > * {
+  margin: 0;
+}
+
+.duel__texte > * + * {
+  margin-top: 10px;
+}
+
+.duel__vs {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0 8px 6px;
+  background: var(--bg);
+  border: 3px solid var(--fg);
+  font-family: var(--font-gothic);
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+}
+
+/* Entrée de dictionnaire */
+.definition {
+  margin: 30px 0 !important;
+  padding: 18px 0 20px;
+  border-top: 3px solid var(--fg);
+  border-bottom: 3px solid var(--fg);
+}
+
+.definition__tete {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+}
+
+.definition__mot {
+  font-family: var(--font-gothic);
+  font-style: normal;
+  font-size: clamp(44px, 6vw, 58px);
+  line-height: 0.9;
+  color: var(--accent);
+}
+
+.definition__pron {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--muted);
+}
+
+.definition__nature {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.definition__texte {
+  margin-top: 10px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+.definition__texte > * {
+  margin: 0;
+}
+
+.definition__texte > * + * {
+  margin-top: 8px;
+}
+
+/* Note en marge */
+.marge {
+  margin: 22px 0 22px 0;
+  padding-left: 14px;
+  border-left: 3px solid var(--accent);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.marge > * {
+  margin: 0;
+}
+
+@media (min-width: 1240px) {
+  /* assez de place : la note sort du texte et se pose dans la marge de droite */
+  .marge {
+    float: right;
+    clear: right;
+    width: 220px;
+    margin: 6px -260px 12px 0 !important;
+  }
+}
+
+/* Séparateur orné */
+.ornement {
+  margin: 36px 0 !important;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.ornement i {
+  flex: 1;
+  height: 3px;
+  background: var(--fg);
+}
+
+.ornement span {
+  font-family: var(--font-gothic);
+  font-size: 46px;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--accent);
+}
+
+/* Tampon */
+.tampon {
+  margin: 28px 0 !important;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tampon--gauche {
+  justify-content: flex-start;
+}
+
+.tampon--centre {
+  justify-content: center;
+}
+
+.tampon span {
+  display: inline-block;
+  padding: 8px 16px 6px;
+  border: 4px solid var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.8vw, 26px);
+  line-height: 1;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transform: rotate(-6deg);
+  opacity: 0.9;
+}
+
+/* Hommage */
+.epitaphe {
+  margin: 44px 0 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.epitaphe__nom {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+
+.epitaphe__nom > * {
+  grid-area: 1 / 1;
+}
+
+.epitaphe__echo {
+  font-family: var(--font-gothic);
+  font-size: clamp(96px, 14vw, 150px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--fg);
+  opacity: 0.5;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.epitaphe__nom strong {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(46px, 7vw, 76px);
+  line-height: 0.92;
+  text-transform: uppercase;
+  -webkit-text-stroke: 4px var(--bg);
+  paint-order: stroke fill;
+}
+
+.epitaphe__dates {
+  margin: 14px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 38px);
+  letter-spacing: 2px;
+}
+
+.epitaphe__trait {
+  width: 96px;
+  height: 3px;
+  margin: 24px 0;
+  background: var(--fg);
+}
+
+.epitaphe__texte {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.epitaphe__texte > * {
+  margin: 0;
+}
+
+/* Manchette de journal */
+.manchette {
+  margin: 34px 0 !important;
+  position: relative;
+  transform: rotate(-1deg);
+  padding: 14px 18px 16px;
+  background: var(--fg);
+  color: var(--bg);
+  box-shadow: 6px 6px 0 var(--accent);
+}
+
+.manchette__surtitre {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 3px 8px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.manchette__texte {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.6vw, 36px);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* Passage caviardé */
+.censure {
+  background: var(--fg);
+  color: transparent;
+  padding: 0 0.15em;
+  cursor: help;
+  transition: background 0.2s, color 0.2s;
+}
+
+.censure:hover,
+.censure:focus {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: inherit;
+  outline: 0;
+}
+
+@media (max-width: 700px) {
+  .duel {
+    grid-template-columns: 1fr;
+  }
+
+  .duel__cote {
+    padding: 20px 20px 34px;
+  }
+
+  .duel__cote + .duel__cote {
+    padding: 34px 20px 20px;
+    border-left: 0;
+    border-top: 3px solid var(--fg);
+  }
+
+  .paroles {
+    padding-left: 18px;
+  }
+
+
+  .manchette {
+    padding: 16px 18px 18px;
+    box-shadow: 6px 6px 0 var(--accent);
+  }
+}
+
+/* ============================================================
+   Article : image de fond (champ « fond » en tête du fichier)
+   ============================================================ */
+
+.article-fond {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--bg) var(--fond) center / cover no-repeat;
+  pointer-events: none;
+}
+
+/* le voile noir : plus fort en bas, pour que le pied de page reste net */
+.article-fond::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(10, 10, 10, var(--voile)), rgba(10, 10, 10, calc(var(--voile) + 0.12)));
+}
+
+/* le grain, dessiné par le navigateur : il ne pèse rien dans l'image */
+.article-fond--grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+.page--fond > :not(.article-fond) {
+  position: relative;
+  z-index: 1;
+  animation: page-in 0.6s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+
+/* L'arrivée de la page fait normalement monter tout son contenu. Avec un fond fixe,
+   ce mouvement le décrochait de l'écran une demi-seconde (image énorme, puis recalée).
+   Ici la page apparaît en fondu, et seul le contenu monte : le fond ne bouge pas. */
+.page-enter:has(> .page--fond) {
+  animation-name: page-fondu;
+}
+
+@keyframes page-fondu {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* sur une photo, les blocs pleins gardent un fond presque opaque */
+.page--fond .encadre,
+.page--fond .duel__cote + .duel__cote {
+  background: rgba(26, 26, 26, 0.92);
+}
+
+/* Image réduite et centrée : pratique pour une image carrée (pochette, portrait) */
+.figure--petite {
+  max-width: 400px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Bandeau « Brouillon » en haut d'un article non publié */
+.brouillon {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto 28px;
+  padding: 10px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  border: 3px dashed var(--fg);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.brouillon strong {
+  padding: 2px 8px;
+  background: var(--fg);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.brouillon code {
+  font-size: 13px;
+  word-break: break-all;
 }
