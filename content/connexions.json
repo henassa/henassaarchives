@@ -4689,7 +4689,7 @@
       ],
       "media": "https://www.youtube.com/watch?v=vUYy08XS9cI"
     },
-     {
+    {
       "id": "jill-scott-beautifully-human-words-and-sounds-vol-2",
       "titre": "Beautifully Human: Words and Sounds Vol. 2",
       "auteur": "Jill Scott",
@@ -4702,7 +4702,7 @@
       ],
       "media": "https://www.youtube.com/watch?v=m8BcjF1RPHc"
     },
-     {
+    {
       "id": "usher-confessions",
       "titre": "Confessions",
       "auteur": "Usher",
@@ -4881,34 +4881,198 @@
         "Hardcore Hip Hop"
       ],
       "media": "https://www.youtube.com/watch?v=5hgy0Zwae-M"
+    },
+    {
+      "id": "fabe-detournement-de-son",
+      "titre": "Détournement de son",
+      "auteur": "Fabe",
+      "annee": 1998,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Boom Bap",
+        "Jazz Rap",
+        "Hardcore Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=U7S-a-s6kRw"
+    },
+    {
+      "id": "fabe-detournement-de-son",
+      "titre": "Détournement de son",
+      "auteur": "Fabe",
+      "annee": 1998,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Boom Bap",
+        "Jazz Rap",
+        "Hardcore Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=U7S-a-s6kRw"
+    },
+    {
+      "id": "oxmo-puccino-l-amour-est-mort",
+      "titre": "L'amour est mort",
+      "auteur": "Oxmo Puccino",
+      "annee": 2001,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Boom Bap",
+        "Jazz Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=vdKHKdG2lvA"
+    },
+    {
+      "id": "despo-rutti-les-sirenes-du-charbon",
+      "titre": "Les sirènes du charbon",
+      "auteur": "Despo Rutti",
+      "annee": 2006,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop",
+        "Boom Bap"
+      ],
+      "media": "https://www.youtube.com/watch?v=ZZZOu4ytamQ"
+    },
+    {
+      "id": "despo-rutti-les-sirenes-du-charbon",
+      "titre": "Les sirènes du charbon",
+      "auteur": "Despo Rutti",
+      "annee": 2006,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop",
+        "Boom Bap"
+      ],
+      "media": "https://www.youtube.com/watch?v=ZZZOu4ytamQ"
+    },
+    {
+      "id": "alpha-5-20-scarface-d-afrique",
+      "titre": "Scarface d'Afrique",
+      "auteur": "Alpha 5.20",
+      "annee": 2010,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop",
+        "Gangsta Rap",
+        "Memphis Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=SiGQVrQU9qM"
+    },
+    {
+      "id": "lalcko-l-eau-lave-mais-l-argent-rend-propre",
+      "titre": "L'eau lave mais l'argent rend propre",
+      "auteur": "Lalcko",
+      "annee": 2011,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop"
+      ],
+      "media": "https://www.youtube.com/watch?v=vTIbsU88flY"
+    },
+    {
+      "id": "pnl-le-monde-chico",
+      "titre": "Le monde Chico",
+      "auteur": "PNL",
+      "annee": 2015,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Cloud Rap",
+        "Trap"
+      ],
+      "media": "https://www.youtube.com/watch?v=ip_g9FrrYl0"
+    },
+    {
+      "id": "niro-paraplegique",
+      "titre": "Paraplégique",
+      "auteur": "Niro",
+      "annee": 2012,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Hardcore Hip Hop",
+        "Gangsta Rap",
+        "Chicago Drill"
+      ],
+      "media": "https://www.youtube.com/watch?v=3E9WV5NgmG0"
+    },
+    {
+      "id": "ateyaba-kyoto",
+      "titre": "Paraplégique",
+      "auteur": "Niro",
+      "annee": 2012,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Wonky",
+        "Cloud Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=n5wQV-7vz6o"
+    },
+    {
+      "id": "sadek-johnny-niuum-ne-meurt-jamais",
+      "titre": "Johnny Niuum ne meurt jamais",
+      "auteur": "Sadek",
+      "annee": 2015,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Chicago Drill"
+      ],
+      "media": "https://www.youtube.com/watch?v=P8btJXpWZ7s"
+    },
+    {
+      "id": "kalash-criminel-oyoki",
+      "titre": "Oyoki",
+      "auteur": "Kalash Criminel",
+      "annee": 2015,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Hardcore Hip Hop",
+        "Trap",
+        "Drill",
+        "Gangsta Rap"
+      ],
+      "media": "https://www.youtube.com/watch?v=kbTRPuNYTe0"
+    },
+    {
+      "id": "retro-x-heroes",
+      "titre": "Heroes",
+      "auteur": "Retro X",
+      "annee": 2018,
+      "type": "album",
+      "genre": "Hip Hop",
+      "sousGenres": [
+        "French Hip Hop",
+        "Trap",
+        "Cloud Rap",
+        "Tread"
+      ],
+      "media": "https://www.youtube.com/watch?v=lgtVDjU9lRQ"
     }
   ]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

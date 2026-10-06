@@ -24,7 +24,8 @@ export function Splash() {
       aria-hidden="true"
       onClick={finish}
       onAnimationEnd={(e) => {
-        if (e.animationName === "splash-out") finish();
+        // "splash-leve" : la variante jouée quand le site a une image de fond
+        if (e.target === e.currentTarget && (e.animationName === "splash-out" || e.animationName === "splash-leve")) finish();
       }}
     >
       <div className="splash__inner">

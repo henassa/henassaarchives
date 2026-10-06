@@ -6503,6 +6503,28 @@ body.a-fond .splash {
     linear-gradient(rgba(10, 10, 10, var(--voile-site)), rgba(10, 10, 10, var(--voile-site))),
     var(--fond-site) center / cover no-repeat,
     var(--bg);
+  /* Le rideau se lève sans glisser : l'image est la même que celle du site
+     derrière, elle doit donc rester immobile. Seul le titre monte. */
+  animation-name: splash-leve;
+}
+
+body.a-fond .splash__inner {
+  animation: splash-titre 0.7s 1.7s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+@keyframes splash-leve {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+@keyframes splash-titre {
+  to {
+    transform: translateY(-100vh);
+  }
 }
 
 /* ... et les cartes des mini-jeux laissent voir le fond */

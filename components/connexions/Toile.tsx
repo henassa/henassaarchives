@@ -28,13 +28,13 @@ export type ModeToile = "carte" | "orbite";
  */
 const LIENS_PAR_OEUVRE_CARTE = 0;
 /** Taille d'une pochette sur la Carte (px à zoom 1). */
-const TUILE_CARTE = 22;
+const TUILE_CARTE = 20;
 /** Écart entre pochettes dans un sous-îlot (px à zoom 1). */
-const ECART_POCHETTES = 17;
+const ECART_POCHETTES = 28;
 /** Le nom d'un genre ne s'affiche sur la Carte qu'à partir de ce nombre d'œuvres. */
-const MIN_ALBUMS_NOM_GENRE = 50;
+const MIN_ALBUMS_NOM_GENRE = 5;
 /** Écart entre deux îlots de genres différents. */
-const ECART_ILOTS = 70;
+const ECART_ILOTS = 56;
 /**
  * Carte : force qui ramène les îlots vers le centre (0 à 1).
  * Plus bas = les genres proches se collent davantage, quitte à étaler la carte.

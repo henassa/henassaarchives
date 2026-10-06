@@ -15,16 +15,16 @@ import { IMAGE_PARTAGE, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: {
-    default: "Henassa",
-    template: "%s — Henassa",
+    default: "HENASSA",
+    template: "HENASSA",
   },
-  description: "Articles, connexions entre les œuvres et playlist du mois.",
+  description: "Média indépendant.",
   // Aperçu affiché quand on partage un lien du site
   metadataBase: new URL(SITE_URL),
   openGraph: {
-    siteName: "Henassa",
-    title: "Henassa",
-    description: "Articles, connexions entre les œuvres, playlist du mois et mini-jeux.",
+    siteName: "HENASSA",
+    title: "HENASSA",
+    description: "Média indépendant.",
     locale: "fr_FR",
     type: "website",
     images: [{ url: IMAGE_PARTAGE, width: 1200, height: 630, alt: "Henassa" }],
