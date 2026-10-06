@@ -12,6 +12,8 @@ export type OeuvreJeu = {
   genre?: string;
   sousGenres: string[];
   cover?: string;
+  /** Petite copie de la pochette, pour les vignettes. */
+  mini?: string;
   /** Lien lisible (YouTube ou fichier audio), sinon absent. */
   media?: string;
   /** Clés des œuvres reliées, de la connexion la plus forte à la plus faible. */
@@ -39,6 +41,7 @@ export function oeuvresPourJeux(): OeuvreJeu[] {
     genre: o.genre,
     sousGenres: o.sousGenres ?? [],
     cover: o.cover,
+    mini: o.mini,
     media: isPlayable(o.media) ? o.media : undefined,
     liees: (voisins.get(o.id) ?? [])
       .sort((a, b) => b.score - a.score)

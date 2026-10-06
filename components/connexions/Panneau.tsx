@@ -34,8 +34,8 @@ function Ecouter({ oeuvre, couleur }: { oeuvre: Oeuvre; couleur: string }) {
   return null;
 }
 
-function Thumb({ o }: { o: Oeuvre }) {
-  return <Pochette o={o} />;
+function Thumb({ o, petite }: { o: Oeuvre; petite?: boolean }) {
+  return <Pochette o={o} petite={petite} />;
 }
 
 export function Panneau({
@@ -130,7 +130,7 @@ export function Panneau({
                 <li key={o.id} style={{ ["--type" as string]: TYPES_OEUVRE[o.type].couleur }}>
                   <button type="button" className="mini-tile" onClick={() => onSelect(o.id)} title={`${o.titre} — ${o.auteur}`}>
                     <span className="mini-tile__cover">
-                      <Thumb o={o} />
+                      <Thumb o={o} petite />
                     </span>
                     <span className="mini-tile__title">{o.titre}</span>
                   </button>

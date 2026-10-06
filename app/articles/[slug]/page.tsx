@@ -8,6 +8,7 @@ import { Header } from "@/components/Header";
 import { mdxComponents, mdxOptions } from "@/components/mdx";
 import { Tag } from "@/components/Tag";
 import { formatDate, getArticle, getTousLesArticles } from "@/lib/articles";
+import { IMAGE_PARTAGE } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -26,6 +27,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     authors: article.auteur ? [{ name: article.auteur }] : undefined,
     // un brouillon ne doit pas apparaître dans Google
     robots: article.brouillon ? { index: false, follow: false } : undefined,
+    // Aperçu de partage : le titre, le chapô et l'image de couverture de l'article
+    openGraph: {
+      type: "article",
+      siteName: "Henassa",
+      locale: "fr_FR",
+      title: article.title,
+      description: article.dek,
+      url: `/articles/${article.adresse}`,
+      publishedTime: article.date,
+      authors: article.auteur ? [article.auteur] : undefined,
+      images: [{ url: article.cover ?? IMAGE_PARTAGE, alt: article.coverAlt ?? article.title }],
+    },
+    twitter: { card: "summary_large_image", title: article.title, description: article.dek, images: [article.cover ?? IMAGE_PARTAGE] },
   };
 }
 

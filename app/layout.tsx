@@ -10,13 +10,26 @@ import "@fontsource/unifrakturmaguntia/400.css";
 import "./globals.css";
 import { Splash } from "@/components/Splash";
 import { PlayerProvider } from "@/components/player/Lecteur";
+import { FOND_SITE } from "@/lib/fond";
+import { IMAGE_PARTAGE, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: {
-    default: "HENASSA",
-    template: "HENASSA",
+    default: "Henassa",
+    template: "%s — Henassa",
   },
   description: "Articles, connexions entre les œuvres et playlist du mois.",
+  // Aperçu affiché quand on partage un lien du site
+  metadataBase: new URL(SITE_URL),
+  openGraph: {
+    siteName: "Henassa",
+    title: "Henassa",
+    description: "Articles, connexions entre les œuvres, playlist du mois et mini-jeux.",
+    locale: "fr_FR",
+    type: "website",
+    images: [{ url: IMAGE_PARTAGE, width: 1200, height: 630, alt: "Henassa" }],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 // L'écran d'arrivée ne se joue qu'une fois par visite : ce petit script
@@ -29,7 +42,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: splashScript }} />
       </head>
-      <body>
+      <body
+        className={FOND_SITE.image ? "a-fond" : undefined}
+        style={FOND_SITE.image ? { ["--fond-site" as string]: `url("${FOND_SITE.image}")`, ["--voile-site" as string]: Math.min(1, Math.max(0, FOND_SITE.voile)) } : undefined}
+      >
+        {FOND_SITE.image && (
+          // Image de fond du site (réglages : lib/fond.ts)
+          <div
+            className={`site-fond${FOND_SITE.grain ? " site-fond--grain" : ""}`}
+            aria-hidden="true"
+            style={{ ["--fond" as string]: `url("${FOND_SITE.image}")`, ["--voile" as string]: Math.min(1, Math.max(0, FOND_SITE.voile)) }}
+          />
+        )}
         <Splash />
         <PlayerProvider>{children}</PlayerProvider>
       </body>

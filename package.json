@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "miniatures": "node scripts/miniatures.mjs",
+    "predev": "node scripts/miniatures.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/miniatures.mjs",
     "build": "next build",
     "start": "next start"
   },
@@ -13,6 +16,7 @@
     "@fontsource/dm-serif-display": "^5.2.0",
     "@fontsource/unifrakturmaguntia": "^5.2.0",
     "gray-matter": "^4.0.3",
+    "html-to-image": "^1.11.13",
     "next": "^16.0.0",
     "next-mdx-remote": "^6.0.0",
     "peerjs": "^1.5.5",

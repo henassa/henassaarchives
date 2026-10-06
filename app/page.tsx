@@ -82,7 +82,7 @@ export default function HomePage() {
               {vitrine.map((o) => (
                 <li key={o.id} style={{ ["--type" as string]: TYPES_OEUVRE[o.type].couleur }}>
                   <Link href={`/connexions?oeuvre=${o.slug ?? o.id}`} className="vitrine__item" title={`${o.titre} — ${o.auteur}`}>
-                    <Pochette o={o} alt={`${o.titre} — ${o.auteur}`} />
+                    <Pochette o={o} alt={`${o.titre} — ${o.auteur}`} petite />
                   </Link>
                 </li>
               ))}

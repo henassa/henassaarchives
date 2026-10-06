@@ -13,7 +13,7 @@ import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
  * hasard), puis on tranche duel après duel jusqu'à la finale.
  */
 
-export type ItemDuel = { cle: string; titre: string; auteur: string; annee?: number; type: TypeOeuvre; genre?: string; sousGenres?: string[]; cover?: string; media?: string };
+export type ItemDuel = { cle: string; titre: string; auteur: string; annee?: number; type: TypeOeuvre; genre?: string; sousGenres?: string[]; cover?: string; mini?: string; media?: string };
 
 /** Tailles de tournoi proposées (celles qui dépassent le nombre d'œuvres sont grisées). */
 export const TAILLES = [8, 16, 32, 64, 128, 256];
@@ -253,7 +253,7 @@ export function Dilemme({ oeuvres }: { oeuvres: ItemDuel[] }) {
             {[...finaliste, ...demis].map((o, i) => (
               <li key={o.cle}>
                 <div className="dl-podium__cover">
-                  <Pochette o={o} alt="" />
+                  <Pochette o={o} alt="" petite />
                 </div>
                 <span className="dl-podium__rang">{i < finaliste.length ? "Finaliste" : "Demi-finale"}</span>
                 <span className="dl-podium__titre">{o.titre}</span>

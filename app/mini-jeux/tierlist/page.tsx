@@ -22,6 +22,7 @@ export default function TierlistPage() {
     sousGenres: o.sousGenres ?? [],
     annee: o.annee,
     cover: o.cover,
+    mini: o.mini,
   }));
   return (
     <div className="page">

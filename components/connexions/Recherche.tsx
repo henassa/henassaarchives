@@ -178,7 +178,7 @@ export function Recherche({
             >
               {s.sorte === "oeuvre" && (
                 <span className="recherche__pochette">
-                  <Pochette o={s.oeuvre} />
+                  <Pochette o={s.oeuvre} petite />
                 </span>
               )}
               <span className="recherche__texte">

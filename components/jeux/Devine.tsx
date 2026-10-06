@@ -151,7 +151,7 @@ export function Devine({ oeuvres }: { oeuvres: OeuvreJeu[] }) {
               return o ? (
                 <li key={c} title={`${o.titre} — ${o.auteur}`}>
                   <span className="dv-liees__cover">
-                    <Pochette o={o} alt="" />
+                    <Pochette o={o} alt="" petite />
                   </span>
                   <span className="dv-liees__titre">{o.titre}</span>
                 </li>

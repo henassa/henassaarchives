@@ -41,7 +41,7 @@ export const REGLAGES = {
    * Nombre max de liens automatiques par œuvre. null = illimité :
    * seul le score décide. Mets un nombre (ex. 5) pour limiter.
    */
-  maxParOeuvre: null as number | null,
+  maxParOeuvre: 20 as number | null,
 };
 
 export type OeuvreTags = {

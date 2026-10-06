@@ -234,7 +234,7 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
           setChoisi((c) => (c === o.cle ? null : o.cle));
         }}
       >
-        <Pochette o={o} />
+        <Pochette o={o} petite />
       </button>
     </li>
   );
@@ -465,7 +465,7 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
 
       {fantome && glisse && (
         <div className="tl-fantome" style={{ left: glisse.x, top: glisse.y }} aria-hidden="true">
-          <Pochette o={fantome} lazy={false} />
+          <Pochette o={fantome} lazy={false} petite />
         </div>
       )}
     </div>

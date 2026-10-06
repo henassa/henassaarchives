@@ -631,7 +631,7 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
             o ? (
               <li key={o.cle}>
                 <div className="dl-podium__cover">
-                  <Pochette o={o} alt="" />
+                  <Pochette o={o} alt="" petite />
                 </div>
                 <span className="dl-podium__rang">{finale ? "Finaliste" : "Demi-finale"}</span>
                 <span className="dl-podium__titre">{o.titre}</span>

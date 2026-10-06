@@ -44,6 +44,8 @@ export type Oeuvre = {
   genre?: string;
   sousGenres?: string[];
   cover?: string;
+  /** Petite copie de la pochette (fabriquée par scripts/miniatures.mjs), si elle existe. */
+  mini?: string;
   /** Lien YouTube, fichier audio (/audio/x.mp3) ou n'importe quelle URL. */
   media?: string;
   description?: string;
@@ -129,6 +131,23 @@ function pochettesPresentes(): Map<string, string> {
   return m;
 }
 
+/**
+ * Miniature d'une pochette : public/images/oeuvres/mini/<nom>.webp.
+ * Absente (script pas lancé, image ailleurs que dans le dossier) = undefined,
+ * et le site affiche la grande pochette.
+ */
+function miniaturesPresentes(): Set<string> {
+  const d = path.join(DOSSIER_POCHETTES, "mini");
+  return new Set(fs.existsSync(d) ? fs.readdirSync(d) : []);
+}
+
+function miniDe(cover: string | undefined, minis: Set<string>): string | undefined {
+  const m = cover?.match(/^\/images\/oeuvres\/([^/]+)\.[a-z0-9]+$/i);
+  if (!m) return undefined;
+  const f = `${m[1]}.webp`;
+  return minis.has(f) ? `/images/oeuvres/mini/${f}` : undefined;
+}
+
 function pochetteAuto(slug: string, presentes: Map<string, string>): string | undefined {
   const f = presentes.get(slug);
   return f ? `/images/oeuvres/${f}` : undefined;
@@ -143,10 +162,13 @@ export function readBrut(): ConnexionsBrut {
   // avec l'identifiant écrit dans le fichier.
   const byKey = new Map<string, number>();
   const presentes = pochettesPresentes();
+  const minis = miniaturesPresentes();
   const oeuvres: Oeuvre[] = rawOeuvres.map((r, i) => {
     const id = i + 1;
     const slug = str(r.id) ?? slugify(String(r.titre ?? `oeuvre-${id}`));
     byKey.set(slug, id);
+    // « cover » écrit dans le fichier = prioritaire ; sinon l'image qui porte le nom de l'id
+    const cover = str(r.cover) ?? pochetteAuto(slug, presentes);
     return {
       id,
       slug,
@@ -157,8 +179,8 @@ export function readBrut(): ConnexionsBrut {
       genre: str(r.genre),
       // Accepte aussi les variantes d'écriture du champ
       sousGenres: liste(r.sousGenres ?? r["sous-genres"] ?? r["sous-genre"] ?? r.sousGenre),
-      // « cover » écrit dans le fichier = prioritaire ; sinon l'image qui porte le nom de l'id
-      cover: str(r.cover) ?? pochetteAuto(slug, presentes),
+      cover,
+      mini: miniDe(cover, minis),
       // Un lien pas encore rempli (watch?v=) est ignoré : pas de bouton cassé
       media: mediaRempli(str(r.media)),
       description: str(r.description),

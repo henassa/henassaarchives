@@ -54,7 +54,7 @@ export function Mosaique({
               onClick={() => onSelect(o.id)}
               aria-label={`${o.titre} — ${o.auteur}${nb ? `, ${nb} connexion${nb > 1 ? "s" : ""}` : ""}`}
             >
-              <Pochette o={o} />
+              <Pochette o={o} petite />
               <span className="tile__label" aria-hidden="true">
                 <span className="tile__title">{o.titre}</span>
                 <span className="tile__author">{o.auteur}</span>

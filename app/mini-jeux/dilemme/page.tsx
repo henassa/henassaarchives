@@ -23,6 +23,7 @@ export default function DilemmePage() {
     genre: o.genre,
     sousGenres: o.sousGenres ?? [],
     cover: o.cover,
+    mini: o.mini,
     media: isPlayable(o.media) ? o.media : undefined,
   }));
   return (
