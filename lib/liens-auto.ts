@@ -36,7 +36,7 @@ export const REGLAGES = {
 
   // --- Seuil ---
   /** Score minimum pour créer un lien. Monte-le pour moins de liens, baisse-le pour plus. */
-  seuil: 17,
+  seuil: 20,
   /**
    * Nombre max de liens automatiques par œuvre. null = illimité :
    * seul le score décide. Mets un nombre (ex. 5) pour limiter.
