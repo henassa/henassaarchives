@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Dilemme } from "@/components/jeux/Dilemme";
-import { isPlayable } from "@/lib/media";
 import { readConnexions } from "@/lib/oeuvres";
 import { SECTIONS } from "@/lib/sections";
 
@@ -22,9 +21,9 @@ export default function DilemmePage() {
     type: o.type,
     genre: o.genre,
     sousGenres: o.sousGenres ?? [],
+    parents: o.parents,
     cover: o.cover,
     mini: o.mini,
-    media: isPlayable(o.media) ? o.media : undefined,
   }));
   return (
     <div className="page">

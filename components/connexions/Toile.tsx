@@ -9,7 +9,7 @@ import { initiales } from "./utils";
 /*
  * La Toile, en deux vues, dessinées sur un canvas.
  *
- * CARTE : un îlot par genre, découpé en sous-îlots selon le 1er sous-genre.
+ * CARTE : une sphère par grande famille RYM, découpée en groupes selon le 1er sous-genre.
  *   Pour rester lisible, on ne trace que les liens les plus forts de chaque
  *   œuvre (LIENS_PAR_OEUVRE_CARTE). Survoler une œuvre allume tous ses liens.
  *   En couleur : les liens qui relient deux genres différents (les « ponts »).
@@ -30,11 +30,11 @@ const LIENS_PAR_OEUVRE_CARTE = 0;
 /** Taille d'une pochette sur la Carte (px à zoom 1). */
 const TUILE_CARTE = 20;
 /** Écart entre pochettes dans un sous-îlot (px à zoom 1). */
-const ECART_POCHETTES = 28;
+const ECART_POCHETTES = 30;
 /** Le nom d'un genre ne s'affiche sur la Carte qu'à partir de ce nombre d'œuvres. */
 const MIN_ALBUMS_NOM_GENRE = 5;
 /** Écart entre deux îlots de genres différents. */
-const ECART_ILOTS = 56;
+const ECART_ILOTS = 10;
 /**
  * Carte : force qui ramène les îlots vers le centre (0 à 1).
  * Plus bas = les genres proches se collent davantage, quitte à étaler la carte.
@@ -103,7 +103,7 @@ function affinitesGenres(genres: Map<string, Map<string, Oeuvre[]>>) {
     for (const list of m.values())
       for (const o of list) {
         n++;
-        for (const t of new Set([g, ...(o.sousGenres ?? [])].map(normTag))) if (t) p.set(t, (p.get(t) ?? 0) + 1);
+        for (const t of new Set([g, ...(o.sousGenres ?? []), ...(o.parents ?? [])].map(normTag))) if (t) p.set(t, (p.get(t) ?? 0) + 1);
       }
     let norme = 0;
     for (const [t, v] of p) {
@@ -169,8 +169,10 @@ function packerParAffinite(items: Ilot[], pad: number, aff: (a: string, b: strin
 function construireCarte(oeuvres: Oeuvre[]) {
   const genres = new Map<string, Map<string, Oeuvre[]>>();
   for (const o of oeuvres) {
-    const g = o.genre?.trim() || "Sans genre";
-    const sg = o.sousGenres?.[0]?.trim() || g;
+    // une sphère par grande famille RYM (Hip Hop, Electronic...), jamais par sous-genre
+    const g = o.racine?.trim() || o.genre?.trim() || "Sans genre";
+    // premier sous-genre différent du genre (un album tagué « Hip Hop » a aussi « Hip Hop » comme famille)
+    const sg = o.sousGenres?.find((t) => t.trim() && normTag(t) !== normTag(g))?.trim() || g;
     if (!genres.has(g)) genres.set(g, new Map());
     const m = genres.get(g)!;
     if (!m.has(sg)) m.set(sg, []);
@@ -731,12 +733,18 @@ export function Toile({
     const nb = adj.get(id)?.length ?? 0;
     el("toile-info__score", `${nb} connexion${nb > 1 ? "s" : ""}`);
     const chips = el("toile-info__chips", "");
-    for (const t of [o.genre, ...(o.sousGenres ?? [])].filter((x): x is string => !!x)) {
+    // sans doublon : le genre peut aussi être un des sous-genres
+    // puis les genres secondaires et scènes, en plus discret
+    const vus = new Set<string>();
+    const unique = (x?: string): x is string => !!x && !vus.has(normTag(x)) && !!vus.add(normTag(x));
+    const puce = (t: string, secondaire: boolean) => {
       const c = document.createElement("span");
-      c.className = `toile-info__chip${communs.has(t.toLowerCase()) ? " is-commun" : ""}`;
+      c.className = `toile-info__chip${secondaire ? " is-secondaire" : ""}${communs.has(t.toLowerCase()) ? " is-commun" : ""}`;
       c.textContent = t;
       chips.appendChild(c);
-    }
+    };
+    for (const t of [o.genre, ...(o.sousGenres ?? [])].filter(unique)) puce(t, false);
+    for (const t of (o.secondaires ?? []).filter(unique)) puce(t, true);
     tip.hidden = false;
     const r = tip.getBoundingClientRect();
     let x = px + 16, y = py + 16;

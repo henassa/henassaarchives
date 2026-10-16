@@ -2,37 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import type { Oeuvre } from "@/lib/oeuvres";
-import { isPlayable } from "@/lib/media";
-import { PlayButton, usePlayer } from "@/components/player/Lecteur";
 import { TYPES_OEUVRE } from "@/lib/sections";
 import { Pochette } from "./Pochette";
 import type { Voisin } from "./utils";
-
-function Ecouter({ oeuvre, couleur }: { oeuvre: Oeuvre; couleur: string }) {
-  const media = oeuvre.media;
-  if (isPlayable(media)) {
-    return (
-      <PlayButton
-        piste={{
-          titre: oeuvre.titre,
-          auteur: oeuvre.auteur,
-          cover: oeuvre.cover,
-          media: media!,
-          couleur,
-          slug: oeuvre.slug ?? String(oeuvre.id),
-        }}
-      />
-    );
-  }
-  if (media) {
-    return (
-      <a className="player__link" href={media} target="_blank" rel="noopener noreferrer">
-        Écouter / voir →
-      </a>
-    );
-  }
-  return null;
-}
 
 function Thumb({ o, petite }: { o: Oeuvre; petite?: boolean }) {
   return <Pochette o={o} petite={petite} />;
@@ -52,22 +24,6 @@ export function Panneau({
   onSelect: (id: number) => void;
 }) {
   const type = TYPES_OEUVRE[oeuvre.type];
-  const player = usePlayer();
-  const slug = oeuvre.slug ?? String(oeuvre.id);
-  // « Réduire » range la fiche dans le lecteur en bas à droite.
-  // Possible si le lecteur est libre, ou s'il contient déjà cette œuvre.
-  const peutReduire = !player.piste || player.piste.slug === slug;
-  const reduire = () => {
-    player.dock({
-      titre: oeuvre.titre,
-      auteur: oeuvre.auteur,
-      cover: oeuvre.cover,
-      media: isPlayable(oeuvre.media) ? oeuvre.media : undefined,
-      couleur: type.couleur,
-      slug,
-    });
-    onClose();
-  };
   const bodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -88,11 +44,6 @@ export function Panneau({
           {type.label}
         </span>
         <div className="panneau__actions">
-          {peutReduire && (
-            <button type="button" className="ctrl-btn ctrl-btn--text" onClick={reduire}>
-              Réduire
-            </button>
-          )}
           <button type="button" className="ctrl-btn" onClick={onClose} aria-label="Fermer la fiche">
             ×
           </button>
@@ -115,8 +66,6 @@ export function Panneau({
             )}
           </div>
         </div>
-
-        <Ecouter oeuvre={oeuvre} couleur={type.couleur} />
 
         {oeuvre.description && <p className="panneau__desc">{oeuvre.description}</p>}
 

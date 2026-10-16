@@ -9,22 +9,21 @@ import "@fontsource/dm-serif-display/400-italic.css";
 import "@fontsource/unifrakturmaguntia/400.css";
 import "./globals.css";
 import { Splash } from "@/components/Splash";
-import { PlayerProvider } from "@/components/player/Lecteur";
 import { FOND_SITE } from "@/lib/fond";
 import { IMAGE_PARTAGE, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: {
-    default: "HENASSA",
-    template: "HENASSA",
+    default: "Henassa",
+    template: "%s — Henassa",
   },
-  description: "Média indépendant.",
+  description: "Articles, connexions entre les œuvres et playlist du mois.",
   // Aperçu affiché quand on partage un lien du site
   metadataBase: new URL(SITE_URL),
   openGraph: {
-    siteName: "HENASSA",
-    title: "HENASSA",
-    description: "Média indépendant.",
+    siteName: "Henassa",
+    title: "Henassa",
+    description: "Articles, connexions entre les œuvres, playlist du mois et mini-jeux.",
     locale: "fr_FR",
     type: "website",
     images: [{ url: IMAGE_PARTAGE, width: 1200, height: 630, alt: "Henassa" }],
@@ -55,7 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         )}
         <Splash />
-        <PlayerProvider>{children}</PlayerProvider>
+        {children}
       </body>
     </html>
   );

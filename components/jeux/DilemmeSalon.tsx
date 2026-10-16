@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DataConnection, Peer, PeerOptions } from "peerjs";
 import { Pochette } from "@/components/connexions/Pochette";
-import { PlayButton } from "@/components/player/Lecteur";
 import { TYPES_OEUVRE } from "@/lib/sections";
 import { TAILLES, melanger, nomDuTour, type ItemDuel } from "./Dilemme";
 import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
@@ -623,7 +622,6 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
               {vainqueur.auteur}
               {vainqueur.annee ? ` · ${vainqueur.annee}` : ""}
             </p>
-            {vainqueur.media && <PlayButton piste={{ titre: vainqueur.titre, auteur: vainqueur.auteur, cover: vainqueur.cover, media: vainqueur.media, slug: vainqueur.cle }} />}
           </div>
         )}
         <ul className="dl-podium">
@@ -676,7 +674,7 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
             {o.annee ? ` · ${o.annee}` : ""}
           </span>
         </button>
-        {resultat ? (
+        {resultat && (
           <ul className="sl-voix" aria-label={`Ont voté pour ${o.titre}`}>
             {voix.map((j, k) => (
               <li key={j.id} className={j.id === moi ? "est-moi" : ""} style={{ ["--k" as string]: k }}>
@@ -685,8 +683,6 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
             ))}
             {voix.length === 0 && <li className="sl-voix__vide">Aucune voix</li>}
           </ul>
-        ) : (
-          o.media && <PlayButton compact piste={{ titre: o.titre, auteur: o.auteur, cover: o.cover, media: o.media, slug: o.cle }} className="dl-carte__ecouter" />
         )}
       </div>
     );

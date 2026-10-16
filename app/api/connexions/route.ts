@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readAdmin, writeConnexions, type ConnexionsBrut } from "@/lib/oeuvres";
+import { readAdmin, sourceEstTableur, writeConnexions, type ConnexionsBrut } from "@/lib/oeuvres";
 import { isTypeOeuvre } from "@/lib/sections";
 
 export const dynamic = "force-dynamic";
@@ -15,12 +15,17 @@ function devOnly() {
 export async function GET() {
   const blocked = devOnly();
   if (blocked) return blocked;
-  return NextResponse.json(readAdmin());
+  return NextResponse.json({ ...readAdmin(), tableur: sourceEstTableur() });
 }
 
 export async function PUT(request: Request) {
   const blocked = devOnly();
   if (blocked) return blocked;
+
+  // Le site lit le tableur : écrire dans connexions.json ne servirait à rien
+  if (sourceEstTableur()) {
+    return NextResponse.json({ error: "tes œuvres sont dans content/oeuvres.xlsx, modifie-les dans le tableur." }, { status: 409 });
+  }
 
   const body = (await request.json()) as ConnexionsBrut;
   if (!Array.isArray(body?.oeuvres) || !Array.isArray(body?.liens)) {
@@ -36,7 +41,7 @@ export async function PUT(request: Request) {
     oeuvres: body.oeuvres.map((o) => {
       const out: Record<string, unknown> = { id: o.id, slug: o.slug, titre: o.titre.trim(), auteur: o.auteur.trim(), type: o.type };
       if (o.annee) out.annee = Number(o.annee);
-      for (const k of ["genre", "cover", "media", "description"] as const) {
+      for (const k of ["genre", "cover", "description"] as const) {
         const v = o[k]?.toString().trim();
         if (v) out[k] = v;
       }

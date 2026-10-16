@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pochette } from "@/components/connexions/Pochette";
 import { initiales } from "@/components/connexions/utils";
-import { PlayButton } from "@/components/player/Lecteur";
 import { TYPES_OEUVRE, type TypeOeuvre } from "@/lib/sections";
 import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
 
@@ -13,7 +12,7 @@ import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
  * hasard), puis on tranche duel après duel jusqu'à la finale.
  */
 
-export type ItemDuel = { cle: string; titre: string; auteur: string; annee?: number; type: TypeOeuvre; genre?: string; sousGenres?: string[]; cover?: string; mini?: string; media?: string };
+export type ItemDuel = { cle: string; titre: string; auteur: string; annee?: number; type: TypeOeuvre; genre?: string; sousGenres?: string[]; parents?: string[]; cover?: string; mini?: string };
 
 /** Tailles de tournoi proposées (celles qui dépassent le nombre d'œuvres sont grisées). */
 export const TAILLES = [8, 16, 32, 64, 128, 256];
@@ -246,7 +245,6 @@ export function Dilemme({ oeuvres }: { oeuvres: ItemDuel[] }) {
             {vainqueur.auteur}
             {vainqueur.annee ? ` · ${vainqueur.annee}` : ""}
           </p>
-          {vainqueur.media && <PlayButton piste={{ titre: vainqueur.titre, auteur: vainqueur.auteur, cover: vainqueur.cover, media: vainqueur.media, slug: vainqueur.cle }} />}
         </div>
         {(finaliste.length > 0 || demis.length > 0) && (
           <ul className="dl-podium">
@@ -293,7 +291,6 @@ export function Dilemme({ oeuvres }: { oeuvres: ItemDuel[] }) {
           {o.annee ? ` · ${o.annee}` : ""}
         </span>
       </button>
-      {o.media && <PlayButton compact piste={{ titre: o.titre, auteur: o.auteur, cover: o.cover, media: o.media, slug: o.cle }} className="dl-carte__ecouter" />}
     </div>
   );
 

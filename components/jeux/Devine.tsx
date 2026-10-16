@@ -1,28 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { OeuvreJeu } from "@/lib/jeux";
-import { isAudioFile, youtubeId } from "@/lib/media";
 import { Pochette } from "@/components/connexions/Pochette";
-import { PlayButton, usePlayer } from "@/components/player/Lecteur";
 import { SECTIONS, TYPES_OEUVRE } from "@/lib/sections";
 import { ChoixPartie, Mosaique, copier, ecrire, jourLisible, lire, useOeuvreATrouver } from "./commun";
 
 /*
  * Devine l'œuvre : un indice de plus à chaque essai raté.
  * Ordre des indices : genre, sous-genres, œuvres reliées, année,
- * pochette en mosaïque, extrait sonore. (Pas l'artiste : trop facile.)
+ * pochette en mosaïque. (Pas l'artiste : trop facile.)
  * Les indices qui n'existent pas pour une œuvre sont simplement sautés.
  */
 
-/** Durée de l'extrait sonore (secondes) et moment du morceau où il commence. */
-const DUREE_EXTRAIT = 15;
-const DEBUT_EXTRAIT = 45;
 /** Netteté de la pochette quand l'indice arrive, puis aux essais suivants. */
 const NETTETE_POCHETTE = [9, 14, 22];
 
-type Indice = "genre" | "sousGenres" | "liees" | "annee" | "pochette" | "extrait";
+type Indice = "genre" | "sousGenres" | "liees" | "annee" | "pochette";
 type Sauvegarde = { essais: string[] };
 
 function norm(s: string) {
@@ -33,53 +28,6 @@ function norm(s: string) {
 const jouable = (o: OeuvreJeu) => !!o.genre;
 
 /** Extrait sonore sans rien montrer : lecteur caché, coupé au bout de quelques secondes. */
-function Extrait({ media }: { media: string }) {
-  const [joue, setJoue] = useState(false);
-  const audio = useRef<HTMLAudioElement | null>(null);
-  const minuteur = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const player = usePlayer();
-  const yt = youtubeId(media);
-
-  const arreter = () => {
-    if (minuteur.current) clearTimeout(minuteur.current);
-    audio.current?.pause();
-    setJoue(false);
-  };
-  useEffect(() => arreter, []); // coupe le son si on quitte la page ou change d'œuvre
-
-  const lancer = () => {
-    if (joue) return arreter();
-    // le lecteur du site se met en pause pour ne pas couvrir l'extrait
-    if (player.playing) player.toggle();
-    if (!yt && isAudioFile(media)) {
-      const a = audio.current ?? new Audio(media);
-      audio.current = a;
-      a.currentTime = 0;
-      void a.play();
-    }
-    setJoue(true);
-    minuteur.current = setTimeout(arreter, DUREE_EXTRAIT * 1000);
-  };
-
-  return (
-    <div className="dv-extrait">
-      <button type="button" className={`play-btn${joue ? " is-current" : ""}`} onClick={lancer}>
-        <span aria-hidden="true">{joue ? "❚❚" : "▶"}</span> {joue ? "Arrêter l'extrait" : `Écouter ${DUREE_EXTRAIT} secondes`}
-      </button>
-      {joue && yt && (
-        // La vidéo YouTube joue hors de l'écran : on n'entend que le son, sans titre ni image
-        <iframe
-          className="dv-extrait__cache"
-          src={`https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&start=${DEBUT_EXTRAIT}&controls=0&playsinline=1`}
-          allow="autoplay; encrypted-media"
-          title="Extrait sonore"
-          tabIndex={-1}
-          aria-hidden="true"
-        />
-      )}
-    </div>
-  );
-}
 
 export function Devine({ oeuvres }: { oeuvres: OeuvreJeu[] }) {
   const j = useOeuvreATrouver(oeuvres, jouable, 2);
@@ -99,7 +47,6 @@ export function Devine({ oeuvres }: { oeuvres: OeuvreJeu[] }) {
     if (cible.liees.length) l.push("liees");
     if (cible.annee) l.push("annee");
     if (cible.cover) l.push("pochette");
-    if (cible.media) l.push("extrait");
     return l;
   }, [cible]);
 
@@ -138,7 +85,7 @@ export function Devine({ oeuvres }: { oeuvres: OeuvreJeu[] }) {
       case "sousGenres":
         return (
           <span className="dv-chips">
-            {cible.sousGenres.map((s) => (
+            {cible.sousGenres.filter((s) => s !== cible.genre).map((s) => (
               <span key={s}>{s}</span>
             ))}
           </span>
@@ -166,11 +113,9 @@ export function Devine({ oeuvres }: { oeuvres: OeuvreJeu[] }) {
         const depuis = Math.max(0, visibles - 1 - rang);
         return <Mosaique o={cible} cases={fini ? 0 : NETTETE_POCHETTE[Math.min(depuis, NETTETE_POCHETTE.length - 1)]!} className="dv-pochette" />;
       }
-      case "extrait":
-        return <Extrait key={cible.cle} media={cible.media!} />;
     }
   };
-  const NOMS: Record<Indice, string> = { genre: "Genre", sousGenres: "Sous-genres", liees: "Œuvres reliées", annee: "Année", pochette: "Pochette", extrait: "Extrait" };
+  const NOMS: Record<Indice, string> = { genre: "Genre", sousGenres: "Sous-genres", liees: "Œuvres reliées", annee: "Année", pochette: "Pochette" };
 
   const partage = () => {
     const carres = indices.map((_, k) => (gagne && k === essais.length - 1 ? "🟩" : k < essais.length ? "🟥" : "⬛")).join("");
@@ -206,7 +151,6 @@ export function Devine({ oeuvres }: { oeuvres: OeuvreJeu[] }) {
                   {cible.annee ? ` · ${cible.annee}` : ""}
                 </p>
                 <div className="mj-fin__actions">
-                  {cible.media && <PlayButton piste={{ titre: cible.titre, auteur: cible.auteur, cover: cible.cover, media: cible.media, slug: cible.cle }} />}
                   <Link className="ctrl-btn ctrl-btn--text mj-lien" href={`${SECTIONS.connexions.href}?oeuvre=${cible.cle}`}>
                     Voir sa fiche
                   </Link>

@@ -1,10 +1,50 @@
 import fs from "node:fs";
 import path from "node:path";
-import { assemblerLiens, calculerCandidats, type LienAuto } from "./liens-auto";
-import { mediaRempli } from "./media";
+import { assemblerLiens, calculerCandidats, normTag, REGLAGES, type LienAuto } from "./liens-auto";
+import { affinitesRacines, ancetres, creerFamilles, nomAffiche, nomRym, profondeur, type Familles } from "./familles";
 import { isTypeOeuvre, type TypeOeuvre } from "./sections";
+import { enListe, enTexte, lireTableur, type Cellule } from "./tableur";
 
 export const CONNEXIONS_FILE = path.join(process.cwd(), "content", "connexions.json");
+/**
+ * Le tableur, s'il existe, remplace connexions.json : c'est lui que le site lit.
+ * Onglets : « Œuvres » (une ligne par œuvre) et « Familles » (qui descend de qui).
+ */
+export const TABLEUR_FILE = path.join(process.cwd(), "content", "oeuvres.xlsx");
+/**
+ * Liste de référence des genres (tirée de RateYourMusic) : « Terme <tab> Parents ».
+ * L'onglet Familles du tableur passe devant : une ligne là-bas remplace celle d'ici.
+ */
+export const GENRES_FILE = path.join(process.cwd(), "content", "genres-rym.tsv");
+
+let cacheGenres: { mtime: number; lignes: [string, string[]][]; tous: Set<string> } | null = null;
+function lireReference() {
+  if (!fs.existsSync(GENRES_FILE)) {
+    prevenir("content/genres-rym.tsv introuvable : sans la liste des genres RYM, les sphères de la carte et les familles ne peuvent pas être calculées.");
+    return { lignes: [] as [string, string[]][], tous: new Set<string>() };
+  }
+  const mtime = fs.statSync(GENRES_FILE).mtimeMs;
+  if (cacheGenres?.mtime !== mtime) {
+    const lignes = fs
+      .readFileSync(GENRES_FILE, "utf8")
+      .split(/\r?\n/)
+      .slice(1)
+      .map((l) => l.split("\t"))
+      .map(([t, p]) => [(t ?? "").trim(), (p ?? "").split(",").map((x) => x.trim()).filter(Boolean)] as [string, string[]]);
+    // tous les noms connus, même ceux sans parent (grandes familles comme Hip Hop)
+    const tous = new Set(lignes.flatMap(([t, p]) => [t, ...p]).map(normTag).filter(Boolean));
+    cacheGenres = { mtime, lignes: lignes.filter(([t, p]) => t && p.length), tous };
+  }
+  return cacheGenres;
+}
+const genresDeReference = () => lireReference().lignes;
+
+/** Familles finales : la liste de référence, puis tes lignes de l'onglet Familles par-dessus. */
+function familles(aToi: [string, string[]][] = []): Familles {
+  const m = creerFamilles(genresDeReference());
+  for (const [t, p] of creerFamilles(aToi)) m.set(t, p); // ta ligne remplace celle de la référence
+  return m;
+}
 
 /*
  * Format du fichier content/connexions.json :
@@ -43,11 +83,31 @@ export type Oeuvre = {
   type: TypeOeuvre;
   genre?: string;
   sousGenres?: string[];
+  /**
+   * Genres « parents » ajoutés en coulisse d'après l'onglet Familles
+   * (Chicago Drill → Drill, Trap...). Servent aux liens, filtres et à la
+   * recherche ; ne s'affichent pas dans la fiche.
+   */
+  parents?: string[];
+  /** Grande famille RYM (Hip Hop, Electronic, R&B / Soul / Funk...) : la sphère de la carte. */
+  racine?: string;
+  /** Vrai si la colonne Genre était vide : le genre a été trouvé tout seul (il ne compte alors que comme famille). */
+  genreAuto?: boolean;
+  /** Penchant vers chaque grande famille, en % : [["Hip Hop", 71], ["R&B / Soul / Funk", 18]...] */
+  affinites?: [string, number][];
+  /** Genres secondaires et scènes RYM : comptent dans les connexions, pas affichés. */
+  secondaires?: string[];
+  /** Scènes RYM (West Coast Hip Hop...) : servent à comparer les régions dans les connexions. */
+  scenes?: string[];
+  /** Descripteurs RYM (dark, melancholic...) : comptent dans les connexions, pas affichés. */
+  descripteurs?: string[];
+  langues?: string[];
+  producteurs?: string[];
+  featurings?: string[];
+  labels?: string[];
   cover?: string;
   /** Petite copie de la pochette (fabriquée par scripts/miniatures.mjs), si elle existe. */
   mini?: string;
-  /** Lien YouTube, fichier audio (/audio/x.mp3) ou n'importe quelle URL. */
-  media?: string;
   description?: string;
 };
 
@@ -153,10 +213,130 @@ function pochetteAuto(slug: string, presentes: Map<string, string>): string | un
   return f ? `/images/oeuvres/${f}` : undefined;
 }
 
-export function readBrut(): ConnexionsBrut {
-  if (!fs.existsSync(CONNEXIONS_FILE)) return { oeuvres: [], liens: [], exclus: [] };
+/* ---------- Lecture du tableur ---------- */
+
+const sansAccent = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+/** En-tête de colonne → champ. On regarde le début du titre : « Sous-genres (séparés par des virgules) » marche. */
+const COLONNES: [string, string][] = [
+  ["ne pas relier", "pasDeLien"],
+  ["pas de lien", "pasDeLien"],
+  ["relier", "liens"],
+  ["liens", "liens"],
+  ["sous genre", "sousGenres"],
+  ["genres secondaires", "secondaires"],
+  ["genre secondaire", "secondaires"],
+  ["scene", "scenes"],
+  ["descripteur", "descripteurs"],
+  ["langue", "langues"],
+  ["producteur", "producteurs"],
+  ["featuring", "featurings"],
+  ["label", "labels"],
+  ["id", "id"],
+  ["identifiant", "id"],
+  ["titre", "titre"],
+  ["artiste", "auteur"],
+  ["auteur", "auteur"],
+  ["annee", "annee"],
+  ["type", "type"],
+  ["univers", "type"],
+  ["genre", "genre"],
+  ["pochette", "cover"],
+  ["cover", "cover"],
+  ["description", "description"],
+];
+function champDe(entete: string) {
+  const n = sansAccent(entete);
+  // « Sous-genres », « Genres », « Liens »... : le pluriel passe aussi
+  return COLONNES.find(([debut]) => [debut, debut + "s"].some((d) => n === d || n.startsWith(d + " ")))?.[1];
+}
+
+/** Colonnes qui contiennent une liste séparée par des virgules. */
+const LISTES = new Set(["sousGenres", "secondaires", "scenes", "descripteurs", "langues", "producteurs", "featurings", "labels", "liens", "pasDeLien"]);
+
+/** Ce qu'on accepte dans la colonne Type. */
+const TYPES_TEXTE: Record<string, TypeOeuvre> = {
+  album: "album", musique: "album", son: "album", ep: "album",
+  film: "film", cinema: "film", serie: "film",
+  jeu: "jeu", "jeu video": "jeu", jeux: "jeu",
+  livre: "livre", bd: "livre",
+  autre: "autre",
+};
+
+function onglet(onglets: Record<string, Cellule[][]>, ...noms: string[]) {
+  const k = Object.keys(onglets).find((n) => noms.includes(sansAccent(n)));
+  return k ? onglets[k]! : undefined;
+}
+
+/** Messages affichés une seule fois pendant npm run dev / build. */
+const dejaDit = new Set<string>();
+function prevenir(msg: string) {
+  if (dejaDit.has(msg)) return;
+  dejaDit.add(msg);
+  console.warn(`[oeuvres.xlsx] ${msg}`);
+}
+
+type Source = { rawOeuvres: Record<string, unknown>[]; familles: Familles };
+let cache: { mtime: number; source: Source } | null = null;
+
+function lireDepuisTableur(): Source {
+  // relu si le tableur OU la liste de référence a changé
+  const mtime = fs.statSync(TABLEUR_FILE).mtimeMs + (fs.existsSync(GENRES_FILE) ? fs.statSync(GENRES_FILE).mtimeMs / 1e6 : 0);
+  if (cache?.mtime === mtime) return cache.source;
+  const onglets = lireTableur(TABLEUR_FILE);
+
+  const lignes = onglet(onglets, "oeuvres", "œuvres") ?? Object.values(onglets)[0] ?? [];
+  const entetes = (lignes[0] ?? []).map((c) => champDe(enTexte(c)));
+  const rawOeuvres: Record<string, unknown>[] = [];
+  lignes.slice(1).forEach((ligne, i) => {
+    const r: Record<string, unknown> = {};
+    entetes.forEach((champ, col) => {
+      if (!champ) return;
+      const c = ligne[col];
+      if (LISTES.has(champ)) {
+        const l = enListe(c);
+        if (l.length) r[champ] = l;
+      } else if (enTexte(c)) r[champ] = enTexte(c);
+    });
+    if (!Object.keys(r).length) return; // ligne vide
+    const n = i + 2;
+    if (!r.titre || !r.auteur) return prevenir(`ligne ${n} ignorée : il manque le titre ou l'artiste.`);
+    const t = TYPES_TEXTE[sansAccent(String(r.type ?? ""))];
+    if (!t) prevenir(`ligne ${n} (${r.titre}) : ${r.type ? `type « ${r.type} » inconnu` : "type vide"}, rangée dans « autre ». Types possibles : album, film, jeu, livre, autre.`);
+    r.type = t ?? "autre";
+    // id vide : fabriqué depuis l'artiste et le titre (nom de la pochette : nas-illmatic.jpg)
+    if (!r.id) r.id = slugify(`${r.auteur} ${r.titre}`);
+    rawOeuvres.push(r);
+  });
+
+  const fam = onglet(onglets, "familles", "famille") ?? [];
+  const tesFamilles = familles(fam.slice(1).map((l) => [enTexte(l[0]), enListe(l[1])] as [string, string[]]).filter(([t, p]) => t && p.length));
+
+  // Rappel : termes nouveaux, absents de l'onglet Familles (ni comme terme, ni comme parent)
+  if (tesFamilles.size) {
+    const connus = new Set([...lireReference().tous, ...tesFamilles.keys(), ...[...tesFamilles.values()].flat().map(normTag)]);
+    const absents = new Set<string>();
+    for (const r of rawOeuvres) for (const t of [String(r.genre ?? ""), ...((r.sousGenres as string[]) ?? [])]) if (t && !connus.has(normTag(t))) absents.add(t);
+    if (absents.size) prevenir(`${absents.size} tag(s) qui ne sont pas des noms de genre RateYourMusic (vérifie l'orthographe, ou ajoute-les dans l'onglet Familles) : ${[...absents].sort().join(", ")}.`);
+  }
+
+  const source = { rawOeuvres, familles: tesFamilles };
+  cache = { mtime, source };
+  return source;
+}
+
+function lireSource(): Source {
+  if (fs.existsSync(TABLEUR_FILE)) return lireDepuisTableur();
+  if (!fs.existsSync(CONNEXIONS_FILE)) return { rawOeuvres: [], familles: familles() };
   const raw = JSON.parse(fs.readFileSync(CONNEXIONS_FILE, "utf8"));
-  const rawOeuvres: Record<string, unknown>[] = Array.isArray(raw.oeuvres) ? raw.oeuvres : [];
+  return { rawOeuvres: Array.isArray(raw.oeuvres) ? raw.oeuvres : [], familles: familles() };
+}
+
+/** Vrai si le site lit le tableur (l'admin passe alors en lecture seule). */
+export const sourceEstTableur = () => fs.existsSync(TABLEUR_FILE);
+
+export function readBrut(): ConnexionsBrut {
+  const { rawOeuvres, familles: fams } = lireSource();
 
   // Chaque œuvre reçoit un numéro interne ; on garde la correspondance
   // avec l'identifiant écrit dans le fichier.
@@ -165,8 +345,24 @@ export function readBrut(): ConnexionsBrut {
   const minis = miniaturesPresentes();
   const oeuvres: Oeuvre[] = rawOeuvres.map((r, i) => {
     const id = i + 1;
-    const slug = str(r.id) ?? slugify(String(r.titre ?? `oeuvre-${id}`));
+    let slug = str(r.id) ?? slugify(String(r.titre ?? `oeuvre-${id}`));
+    if (byKey.has(slug)) {
+      prevenir(`l'id « ${slug} » est utilisé deux fois, le second devient « ${slug}-${id} ».`);
+      slug = `${slug}-${id}`;
+    }
     byKey.set(slug, id);
+    // genres principaux : les seuls affichés. Secondaires et scènes : seulement pour les connexions.
+    const sousGenres = liste(r.sousGenres ?? r["sous-genres"] ?? r["sous-genre"] ?? r.sousGenre);
+    const secondaires = liste([...(liste(r.secondaires) ?? []), ...(liste(r.scenes) ?? [])].filter((t) => !(sousGenres ?? []).includes(t)));
+    // genre vide : la grande famille du premier sous-genre (Trap → Hip Hop)
+    // grande famille : calculée sur tous les genres de l'album (voir affinitesRacines dans lib/familles.ts)
+    const affinites = affinitesRacines([str(r.genre) ?? "", ...(sousGenres ?? [])].filter(Boolean), secondaires ?? [], fams);
+    const genre = str(r.genre) ?? affinites[0]?.[0];
+    // sphère de la carte : toujours une grande famille RYM, même si la colonne Genre dit autre chose
+    const racine = affinites[0]?.[0] ?? genre;
+    // genre trouvé tout seul : ce n'est qu'un ancêtre comme les autres, pas un genre écrit
+    const genreAuto = !str(r.genre);
+    const parents = ancetres([genreAuto ? "" : genre ?? "", ...(sousGenres ?? [])].filter(Boolean), fams);
     // « cover » écrit dans le fichier = prioritaire ; sinon l'image qui porte le nom de l'id
     const cover = str(r.cover) ?? pochetteAuto(slug, presentes);
     return {
@@ -176,13 +372,25 @@ export function readBrut(): ConnexionsBrut {
       auteur: String(r.auteur ?? ""),
       annee: r.annee ? Number(r.annee) : undefined,
       type: isTypeOeuvre(r.type) ? r.type : "autre",
-      genre: str(r.genre),
+      // noms affichés (« R&B / Soul / Funk » → « Groove ») : le calcul ci-dessus a utilisé les noms RYM
+      genre: genre && nomAffiche(genre),
+      genreAuto: genreAuto || undefined,
       // Accepte aussi les variantes d'écriture du champ
-      sousGenres: liste(r.sousGenres ?? r["sous-genres"] ?? r["sous-genre"] ?? r.sousGenre),
+      sousGenres: sousGenres?.map(nomAffiche),
+      parents: parents.length ? parents.map(nomAffiche) : undefined,
+      racine: racine && nomAffiche(racine),
+      affinites: affinites.length ? affinites.map(([n, p]) => [nomAffiche(n), p] as [string, number]) : undefined,
+      secondaires: secondaires?.map(nomAffiche),
+      scenes: liste(r.scenes),
+      descripteurs: liste(r.descripteurs),
+      // « English, French » ou « French / Arabic »
+      langues: liste((liste(r.langues) ?? []).flatMap((x) => x.split("/"))),
+      producteurs: liste(r.producteurs),
+      featurings: liste(r.featurings),
+      labels: liste(r.labels),
       cover,
       mini: miniDe(cover, minis),
       // Un lien pas encore rempli (watch?v=) est ignoré : pas de bouton cassé
-      media: mediaRempli(str(r.media)),
       description: str(r.description),
     };
   });
@@ -222,7 +430,13 @@ function candidats(brut: ConnexionsBrut): LienAuto[] {
   // œuvres du même type, ajouter des films ne change donc rien aux liens des albums.
   const parType = new Map<string, Oeuvre[]>();
   for (const o of brut.oeuvres) parType.set(o.type, [...(parType.get(o.type) ?? []), o]);
-  return [...parType.values()].flatMap((groupe) => calculerCandidats(groupe)).filter((l) => !exclus.has(cle(l.a, l.b)));
+  const fams = lireSource().familles;
+  const memo = new Map<string, number | undefined>();
+  const prof = (g: string) => {
+    if (!memo.has(g)) memo.set(g, profondeur(nomRym(g), fams));
+    return memo.get(g);
+  };
+  return [...parType.values()].flatMap((groupe) => calculerCandidats(groupe, REGLAGES, prof)).filter((l) => !exclus.has(cle(l.a, l.b)));
 }
 
 /** Connexions finales : automatiques + manuelles − cassées. */
@@ -232,7 +446,10 @@ export function assembler(brut: ConnexionsBrut): Lien[] {
 
 export function readConnexions(): ConnexionsData {
   const brut = readBrut();
-  return { oeuvres: brut.oeuvres, liens: assembler(brut) };
+  // Les infos qui ne servent qu'au calcul des liens ne partent pas dans les pages (moins lourd)
+  // (les genres secondaires restent : ils s'affichent au survol sur la carte)
+  const oeuvres = brut.oeuvres.map(({ descripteurs, langues, producteurs, featurings, labels, scenes, ...o }) => o);
+  return { oeuvres, liens: assembler(brut) };
 }
 
 export function readAdmin(): ConnexionsAdmin {
@@ -254,7 +471,6 @@ const MODELE = {
   genre: "Hip-Hop",
   sousGenres: ["Boom Bap", "Jazz Rap", "... : c'est ce qui crée les connexions automatiques"],
   cover: "facultatif : inutile si l'image s'appelle comme l'id (public/images/oeuvres/identifiant-unique.jpg)",
-  media: "https://www.youtube.com/watch?v=... (ou /audio/extrait.mp3)",
   description: "Une ou deux phrases, affichées dans la fiche de l'œuvre.",
   liens: ["facultatif : id d'une œuvre à relier de force"],
   pasDeLien: ["facultatif : id d'une œuvre à ne PAS relier"],
@@ -298,7 +514,6 @@ export function writeConnexions(data: ConnexionsBrut) {
       // la pochette n'est écrite que si elle ne porte pas le nom de l'id
       const auto = new RegExp(`^/images/oeuvres/${slugOf.get(o.id)}\\.(${EXTENSIONS.join("|")})$`, "i");
       if (o.cover && !auto.test(o.cover)) r.cover = o.cover;
-      if (o.media) r.media = o.media;
       if (o.description) r.description = o.description;
       const l = manuels.get(o.id);
       if (l?.length) r.liens = l.map((id) => slugOf.get(id));

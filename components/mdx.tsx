@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 import remarkGfm from "remark-gfm";
-import { isPlayable, secondes } from "@/lib/media";
-import { PlayButton } from "@/components/player/Lecteur";
 
 /*
  * Composants utilisables directement dans les fichiers .mdx.
@@ -106,23 +104,17 @@ function Galerie({ children, legende }: Enfants & { legende?: string }) {
   );
 }
 
-/** Bouton « Écouter » : lance le morceau dans le lecteur du site (YouTube ou fichier audio). */
-function Ecouter({ titre, auteur, media, debut, fin }: { titre: string; auteur?: string; media: string; debut?: string | number; fin?: string | number }) {
-  if (!isPlayable(media)) {
-    return (
-      <a className="player__link" href={media} target="_blank" rel="noopener noreferrer">
-        Écouter {titre} →
-      </a>
-    );
-  }
+/**
+ * Lien « Écouter » : ouvre le morceau ailleurs (YouTube, Spotify, Bandcamp...) dans un nouvel onglet.
+ * <Ecouter titre="Illmatic" auteur="Nas" media="https://..." />
+ */
+function Ecouter({ titre, auteur, media }: { titre: string; auteur?: string; media?: string }) {
+  if (!media) return null;
   return (
-    <div className="ecouter">
-      <PlayButton piste={{ titre, auteur, media, debut: secondes(debut), fin: secondes(fin) }} />
-      <span className="ecouter__info">
-        <span className="ecouter__titre">{titre}</span>
-        {auteur && <span className="ecouter__auteur">{auteur}</span>}
-      </span>
-    </div>
+    <a className="ecouter-lien" href={media} target="_blank" rel="noopener noreferrer">
+      Écouter {titre}
+      {auteur ? ` — ${auteur}` : ""} <span aria-hidden="true">↗</span>
+    </a>
   );
 }
 
@@ -143,9 +135,9 @@ function Chapitre({ numero, titre, children }: Enfants & { numero: string | numb
 
 /**
  * Paroles d'un morceau : chaque retour à la ligne du fichier est gardé.
- * Crédit dessous (artiste, morceau, année) et bouton d'écoute si « media » est donné.
+ * Crédit dessous (artiste, morceau, année).
  */
-function Paroles({ children, artiste, morceau, annee, media, debut, fin }: Enfants & { artiste?: string; morceau?: string; annee?: string | number; media?: string; debut?: string | number; fin?: string | number }) {
+function Paroles({ children, artiste, morceau, annee }: Enfants & { artiste?: string; morceau?: string; annee?: string | number }) {
   const credit = [artiste, morceau ? `« ${morceau} »` : "", annee].filter(Boolean).join(" · ");
   return (
     <figure className="paroles">
@@ -153,9 +145,8 @@ function Paroles({ children, artiste, morceau, annee, media, debut, fin }: Enfan
         «
       </span>
       <blockquote className="paroles__texte">{children}</blockquote>
-      {(credit || media) && (
+      {credit && (
         <figcaption className="paroles__credit">
-          {media && isPlayable(media) && <PlayButton compact piste={{ titre: morceau ?? "Extrait", auteur: artiste, media, debut: secondes(debut), fin: secondes(fin) }} />}
           <span>{credit}</span>
         </figcaption>
       )}

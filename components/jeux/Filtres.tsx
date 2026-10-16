@@ -21,7 +21,10 @@ export const nomUnivers = (t: TypeOeuvre) => UNIVERS[t] ?? TYPES_OEUVRE[t].pluri
  */
 const MIN_OEUVRES_FILTRE = 20;
 
-export type Filtrable = { type: TypeOeuvre; auteur: string; genre?: string; sousGenres?: string[]; annee?: number };
+export type Filtrable = { type: TypeOeuvre; auteur: string; genre?: string; sousGenres?: string[]; parents?: string[]; annee?: number };
+
+/** Sous-genres d'une œuvre + leurs parents (familles) : « Drill » retrouve aussi « Chicago Drill ». */
+const termes = (o: Filtrable) => [...(o.sousGenres ?? []), ...(o.parents ?? [])];
 type Choix = { type: TypeOeuvre; genre: string; sousGenre: string; de: number; a: number };
 
 const parNombre = (m: Map<string, number>) => [...m].sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0], "fr"));
@@ -48,7 +51,7 @@ export function useFiltresJeu<T extends Filtrable>(oeuvres: T[]) {
     (o: T, sauf?: keyof Choix) =>
       o.type === c.type &&
       (sauf === "genre" || !c.genre || o.genre === c.genre) &&
-      (sauf === "sousGenre" || !c.sousGenre || (o.sousGenres ?? []).includes(c.sousGenre)) &&
+      (sauf === "sousGenre" || !c.sousGenre || termes(o).includes(c.sousGenre)) &&
       (sauf === "de" || !c.de || (o.annee ?? 0) >= c.de) &&
       (sauf === "a" || !c.a || (!!o.annee && o.annee <= c.a)),
     [c]
@@ -57,7 +60,7 @@ export function useFiltresJeu<T extends Filtrable>(oeuvres: T[]) {
   const vivier = useMemo(() => oeuvres.filter((o) => passe(o)), [oeuvres, passe]);
   const assez = (l: [string, number][]) => l.filter(([, n]) => n >= MIN_OEUVRES_FILTRE);
   const genres = useMemo(() => assez(parNombre(compter(oeuvres.filter((o) => passe(o, "genre")), (o) => [o.genre]))), [oeuvres, passe]);
-  const sousGenres = useMemo(() => assez(parNombre(compter(oeuvres.filter((o) => passe(o, "sousGenre")), (o) => o.sousGenres ?? []))), [oeuvres, passe]);
+  const sousGenres = useMemo(() => assez(parNombre(compter(oeuvres.filter((o) => passe(o, "sousGenre")), (o) => termes(o)))), [oeuvres, passe]);
   // toutes les années de l'univers (pour afficher la première et la dernière)
   const annees = useMemo(() => [...new Set(oeuvres.filter((o) => o.type === c.type && o.annee).map((o) => o.annee!))].sort((x, y) => x - y), [oeuvres, c.type]);
   // « Depuis » et « Jusqu'à » : seulement les années qui laissent assez d'œuvres

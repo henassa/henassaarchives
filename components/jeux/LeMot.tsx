@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { OeuvreJeu } from "@/lib/jeux";
-import { PlayButton } from "@/components/player/Lecteur";
 import { SECTIONS, TYPES_OEUVRE } from "@/lib/sections";
 import { ChoixPartie, Mosaique, copier, ecrire, jourLisible, lire, useOeuvreATrouver } from "./commun";
 
@@ -211,7 +210,6 @@ export function LeMot({ oeuvres }: { oeuvres: OeuvreJeu[] }) {
                   {cible.annee ? ` · ${cible.annee}` : ""}
                 </p>
                 <div className="mj-fin__actions">
-                  {cible.media && <PlayButton piste={{ titre: cible.titre, auteur: cible.auteur, cover: cible.cover, media: cible.media, slug: cible.cle }} />}
                   <Link className="ctrl-btn ctrl-btn--text mj-lien" href={`${SECTIONS.connexions.href}?oeuvre=${cible.cle}`}>
                     Voir sa fiche
                   </Link>

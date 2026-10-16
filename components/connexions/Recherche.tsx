@@ -25,8 +25,9 @@ type Suggestion =
 export function correspond(o: Oeuvre, f: Filtre) {
   if (f.sorte === "artiste") return normTag(o.auteur) === f.valeur;
   if (f.sorte === "annee") return String(o.annee ?? "") === f.valeur;
-  // un genre peut être le genre principal d'une œuvre et un sous-genre d'une autre
-  return [o.genre ?? "", ...(o.sousGenres ?? [])].some((t) => normTag(t) === f.valeur);
+  // un genre peut être le genre principal d'une œuvre et un sous-genre d'une autre ;
+  // les parents comptent aussi : « Drill » trouve les œuvres taguées « Chicago Drill »
+  return [o.genre ?? "", ...(o.sousGenres ?? []), ...(o.parents ?? [])].some((t) => normTag(t) === f.valeur);
 }
 
 export function Recherche({
@@ -56,7 +57,7 @@ export function Recherche({
     const annees = new Map<string, number>();
     for (const o of oeuvres) {
       const vus = new Set<string>();
-      [o.genre ?? "", ...(o.sousGenres ?? [])].forEach((t, i) => {
+      [o.genre ?? "", ...(o.sousGenres ?? []), ...(o.parents ?? [])].forEach((t, i) => {
         const k = normTag(t);
         if (!k || vus.has(k)) return;
         vus.add(k);

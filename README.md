@@ -20,13 +20,13 @@ Pour la version de production : `npm run build` puis `npm start`.
 
 ## Connexions
 
-La page `/connexions` montre des œuvres (albums, films, jeux, livres, art...) et les liens entre elles.
+La page `/connexions` montre des œuvres (albums, films, jeux, livres...) et les liens entre elles.
 
 - **Mosaïque** : toutes les pochettes. Survoler une œuvre allume ses connexions et éteint le reste.
 - **Toile** : le graphe des liens. Glisser pour se déplacer, molette ou pincement pour zoomer, glisser une œuvre pour la déplacer.
-- **Fiche** : un clic ouvre l'œuvre sur le côté (en bas sur mobile), avec le lecteur YouTube (ou audio), la description et ses connexions en vignettes. « Réduire » la range en mini-lecteur en bas de l'écran : la musique continue pendant que tu explores.
+- **Fiche** : un clic ouvre l'œuvre sur le côté (en bas sur mobile), avec la description et ses connexions en vignettes.
 - **Filtres** par type d'œuvre et **recherche** par titre, auteur, genre ou année.
-- **Liens partageables** : l'adresse suit l'œuvre ouverte, par exemple `/connexions?oeuvre=54` ou `/connexions?vue=toile`.
+- **Liens partageables** : l'adresse suit l'œuvre ouverte, par exemple `/connexions?oeuvre=barter-6` ou `/connexions?vue=toile`.
 
 Les données partent de zéro : ajoute tes œuvres depuis l'admin.
 
@@ -34,7 +34,7 @@ Les données partent de zéro : ajoute tes œuvres depuis l'admin.
 
 En local (`npm run dev`), va sur **http://localhost:3000/admin** :
 
-- ajouter, modifier ou supprimer une œuvre (titre, auteur, type, année, genre, visuel, lien YouTube, description) ;
+- ajouter, modifier ou supprimer une œuvre (titre, auteur, type, année, genre, visuel, description) ;
 - envoyer une pochette depuis ton ordinateur : elle est copiée dans `public/images/oeuvres/` ;
 - relier deux œuvres en cherchant par nom, retirer un lien.
 
@@ -42,30 +42,31 @@ Tout est enregistré dans `content/connexions.json`. L'admin n'existe pas en lig
 
 ### Le fichier de données
 
-`content/connexions.json` peut aussi se modifier à la main :
+`content/connexions.json` se lit et se modifie facilement à la main. Chaque œuvre a un `id` lisible (en minuscules, avec des tirets) et la liste des œuvres auxquelles elle est reliée :
 
 ```json
 {
   "oeuvres": [
     {
-      "id": 1,
-      "titre": "EA Monster",
-      "auteur": "Young Nudy",
-      "annee": 2022,
+      "id": "barter-6",
+      "titre": "Barter 6",
+      "auteur": "Young Thug",
+      "annee": 2015,
       "type": "album",
       "genre": "Hip-Hop",
-      "cover": "/images/oeuvres/ea-monster.jpg",
-      "media": "https://www.youtube.com/watch?v=...",
-      "description": "Facultatif."
+      "cover": "/images/oeuvres/barter-6.jpg",
+      "description": "Facultatif.",
+      "liens": ["so-much-fun", "slime-language-2"]
     }
-  ],
-  "liens": [
-    { "a": 1, "b": 2 }
   ]
 }
 ```
 
-Types possibles : `album`, `film`, `jeu`, `livre`, `art`, `autre`.
+- Un lien ne s'écrit que d'un côté : si `barter-6` cite `so-much-fun`, les deux sont reliées. L'admin l'écrit des deux côtés pour que chaque œuvre montre toutes ses connexions.
+- Obligatoires : `id`, `titre`, `auteur`, `type`. Tout le reste est facultatif.
+- L'`id` sert aussi dans l'adresse : `/connexions?oeuvre=barter-6`.
+
+Types possibles : `album`, `film`, `jeu`, `livre`, `autre`.
 
 ---
 
@@ -121,7 +122,6 @@ Dans `lib/sections.ts` :
 | Film | jaune |
 | Jeu | bleu |
 | Livre | vert |
-| Art | rose |
 | Autre | gris |
 
 ## Où est quoi
@@ -136,7 +136,7 @@ app/
   api/                      enregistrement de l'admin (local seulement)
   globals.css               tout le style
 components/
-  connexions/               mosaïque, toile, fiche, mini-lecteur
+  connexions/               mosaïque, toile, fiche
   admin/                    interface d'admin
 content/
   articles/                 tes articles (.mdx)

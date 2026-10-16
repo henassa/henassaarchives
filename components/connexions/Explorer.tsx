@@ -6,7 +6,6 @@ import { TYPES_OEUVRE, TYPE_SLUGS, isTypeOeuvre, type TypeOeuvre } from "@/lib/s
 import { Mosaique } from "./Mosaique";
 import { Panneau } from "./Panneau";
 import { FiltresActifs, Recherche, correspond, type Filtre } from "./Recherche";
-import { OUVRIR_FICHE } from "@/components/player/Lecteur";
 import { Toile } from "./Toile";
 import { buildVoisins } from "./utils";
 
@@ -76,7 +75,7 @@ export function Explorer({ oeuvres, liens }: { oeuvres: Oeuvre[]; liens: Lien[] 
     const nb = (id: number) => voisins.get(id)?.length ?? 0;
     return duType
       .filter((o) => filtres.every((f) => correspond(o, f)))
-      .filter((o) => !q || normalize(`${o.titre} ${o.auteur} ${o.genre ?? ""} ${(o.sousGenres ?? []).join(" ")} ${o.annee ?? ""}`).includes(q))
+      .filter((o) => !q || normalize(`${o.titre} ${o.auteur} ${o.genre ?? ""} ${(o.sousGenres ?? []).join(" ")} ${(o.parents ?? []).join(" ")} ${o.annee ?? ""}`).includes(q))
       // les œuvres les plus reliées d'abord ; à égalité, par ordre alphabétique
       .sort((a, b) => nb(b.id) - nb(a.id) || a.titre.localeCompare(b.titre, "fr", { sensitivity: "base" }));
   }, [duType, filtres, query, voisins]);
@@ -124,17 +123,6 @@ export function Explorer({ oeuvres, liens }: { oeuvres: Oeuvre[]; liens: Lien[] 
   const close = useCallback(() => {
     setSelectedId(null);
   }, []);
-
-  // Bouton « Fiche » du lecteur : rouvre la fiche de l'œuvre
-  useEffect(() => {
-    const onOpen = (e: Event) => {
-      const key = (e as CustomEvent<string>).detail;
-      const found = oeuvres.find((o) => o.slug === key || String(o.id) === key);
-      if (found) ouvrir(found);
-    };
-    window.addEventListener(OUVRIR_FICHE, onOpen);
-    return () => window.removeEventListener(OUVRIR_FICHE, onOpen);
-  }, [oeuvres, ouvrir]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

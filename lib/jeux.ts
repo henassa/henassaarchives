@@ -1,4 +1,3 @@
-import { isPlayable } from "./media";
 import { readConnexions } from "./oeuvres";
 import type { TypeOeuvre } from "./sections";
 
@@ -11,11 +10,11 @@ export type OeuvreJeu = {
   type: TypeOeuvre;
   genre?: string;
   sousGenres: string[];
+  /** Genres parents ajoutés en coulisse (familles), pour les filtres. */
+  parents?: string[];
   cover?: string;
   /** Petite copie de la pochette, pour les vignettes. */
   mini?: string;
-  /** Lien lisible (YouTube ou fichier audio), sinon absent. */
-  media?: string;
   /** Clés des œuvres reliées, de la connexion la plus forte à la plus faible. */
   liees: string[];
 };
@@ -40,9 +39,9 @@ export function oeuvresPourJeux(): OeuvreJeu[] {
     type: o.type,
     genre: o.genre,
     sousGenres: o.sousGenres ?? [],
+    parents: o.parents,
     cover: o.cover,
     mini: o.mini,
-    media: isPlayable(o.media) ? o.media : undefined,
     liees: (voisins.get(o.id) ?? [])
       .sort((a, b) => b.score - a.score)
       .slice(0, NB_LIEES)

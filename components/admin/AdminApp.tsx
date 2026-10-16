@@ -14,11 +14,10 @@ type Draft = {
   genre: string;
   sousGenres: string[];
   cover: string;
-  media: string;
   description: string;
 };
 
-const EMPTY: Draft = { id: null, titre: "", auteur: "", annee: "", type: "album", genre: "", sousGenres: [], cover: "", media: "", description: "" };
+const EMPTY: Draft = { id: null, titre: "", auteur: "", annee: "", type: "album", genre: "", sousGenres: [], cover: "", description: "" };
 
 function norm(s: string) {
   return s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
@@ -29,7 +28,7 @@ function sameLink(l: Lien, a: number, b: number) {
 }
 
 export function AdminApp() {
-  const [data, setData] = useState<ConnexionsAdmin | null>(null);
+  const [data, setData] = useState<(ConnexionsAdmin & { tableur?: boolean }) | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<"oeuvres" | "liens">("oeuvres");
   const [query, setQuery] = useState("");
@@ -101,7 +100,6 @@ export function AdminApp() {
             genre: o.genre ?? "",
             sousGenres: o.sousGenres ?? [],
             cover: o.cover ?? "",
-            media: o.media ?? "",
             description: o.description ?? "",
           }
         : { ...EMPTY }
@@ -125,7 +123,6 @@ export function AdminApp() {
       genre: d.genre || undefined,
       sousGenres: d.sousGenres.length ? d.sousGenres : undefined,
       cover: d.cover || undefined,
-      media: d.media || undefined,
       description: d.description || undefined,
     };
     const oeuvresNext = d.id === null ? [...data.oeuvres, oeuvre] : data.oeuvres.map((o) => (o.id === id ? oeuvre : o));
@@ -175,6 +172,11 @@ export function AdminApp() {
 
   return (
     <main className="admin">
+      {data.tableur && (
+        <p className="admin__avis">
+          Tes œuvres sont dans <code>content/oeuvres.xlsx</code> : l&apos;admin sert juste à les consulter. Modifie le tableur puis relance <code>npm run dev</code>.
+        </p>
+      )}
       <div className="admin__head">
         <h1 className="admin__title">Admin</h1>
         <p className="admin__info">
@@ -475,10 +477,6 @@ function Editor({
               </label>
             </div>
           </div>
-          <label className="admin-field admin-field--full">
-            <span>Lien YouTube, fichier audio ou URL</span>
-            <input className="admin-input" value={draft.media} onChange={(e) => set("media", e.target.value)} placeholder="https://www.youtube.com/watch?v=…" />
-          </label>
           <label className="admin-field admin-field--full">
             <span>Description</span>
             <textarea className="admin-input" rows={3} value={draft.description} onChange={(e) => set("description", e.target.value)} />

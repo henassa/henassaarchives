@@ -767,7 +767,6 @@ a.tag.tag--outline:hover {
   margin-top: 22px;
 }
 
-
 .prose > h2 {
   margin-top: 48px;
   margin-bottom: -6px;
@@ -1047,30 +1046,6 @@ a.tag.tag--outline:hover {
 }
 
 /* Bouton Écouter */
-.ecouter {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  --type: var(--accent);
-}
-
-.ecouter__info {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-
-.ecouter__titre {
-  font-family: var(--font-display);
-  font-size: 22px;
-  text-transform: uppercase;
-}
-
-.ecouter__auteur {
-  font-size: 14px;
-  color: var(--muted);
-}
 
 /* Code (dans le guide) */
 .prose code {
@@ -1877,35 +1852,6 @@ a.tag.tag--outline:hover {
   font-size: 15px;
   line-height: 1.5;
   font-weight: 600;
-}
-
-.player--video {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border: 3px solid var(--fg);
-  background: var(--panel);
-}
-
-.player--video iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
-}
-
-.player audio {
-  width: 100%;
-}
-
-.player__link {
-  align-self: flex-start;
-  background: var(--type);
-  color: var(--bg);
-  padding: 10px 14px;
-  font-weight: 800;
-  text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .panneau__h {
@@ -2930,34 +2876,6 @@ html[data-splash="done"] .splash {
   }
 }
 
-/* ============================================================
-   Lecteur global (continue de jouer d'une page à l'autre)
-   ============================================================ */
-
-.play-btn {
-  --type: var(--fg);
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 18px;
-  border: 3px solid var(--type);
-  background: var(--type);
-  color: var(--bg);
-  font-family: var(--font-body);
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.play-btn:hover,
-.play-btn.is-current {
-  background: var(--bg);
-  color: var(--type);
-}
-
 button.track__link {
   border: 0;
   cursor: pointer;
@@ -2969,357 +2887,27 @@ button.track__link.is-current {
   background: var(--accent);
 }
 
-.lecteur {
-  --type: var(--fg);
-  position: fixed;
-  z-index: 70;
-  right: 16px;
-  bottom: 16px;
-  width: min(460px, calc(100vw - 32px));
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas:
-    "pochette info ctrl"
-    "video video video"
-    "note note note"
-    "barre barre barre"
-    "vol vol vol";
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: var(--bg);
-  border: 3px solid var(--type);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
-  animation: rise 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-
 /* Quand la fiche d'une œuvre est ouverte, le lecteur se place à sa gauche */
-body:has(.panneau:not([hidden])) .lecteur {
-  right: calc(min(460px, 100vw) + 16px);
-  /* à côté de la fiche, il ne dépasse jamais à gauche de l'écran */
-  max-width: calc(100vw - min(460px, 100vw) - 32px);
-}
-
-.lecteur__pochette {
-  grid-area: pochette;
-  width: 64px;
-  aspect-ratio: 1;
-  background: var(--panel);
-  border-bottom: 4px solid var(--type);
-  overflow: hidden;
-}
-
-.lecteur__pochette img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
 
 /* La vidéo YouTube joue en coulisses : minuscule et invisible tant qu'on ne la demande pas */
-.lecteur__video {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 2px;
-  height: 2px;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.lecteur__video.is-visible {
-  grid-area: video;
-  position: static;
-  width: auto;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  opacity: 1;
-  pointer-events: auto;
-  background: var(--panel);
-}
-
-.lecteur__video iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
-}
 
 /* cachée : la vidéo garde une vraie taille, sinon YouTube peut refuser de la lancer */
-.lecteur__video:not(.is-visible) iframe {
-  width: 320px;
-  height: 180px;
-}
-
-.lecteur__note {
-  grid-area: note;
-  margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--type);
-}
 
 /* Lecture, temps écoulé, barre de temps, durée, bouton Vidéo */
-.lecteur__barre {
-  grid-area: barre;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.lecteur__play--grand {
-  flex: none;
-  width: 44px;
-  height: 44px;
-  border: 0;
-  cursor: pointer;
-}
-
-.lecteur__play--grand:hover {
-  filter: brightness(1.15);
-}
-
-.lecteur__temps {
-  flex: none;
-  min-width: 34px;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-}
-
-.lecteur__curseur:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.lecteur__voir.is-on {
-  background: var(--type);
-  border-color: var(--type);
-  color: var(--bg);
-}
-
-.lecteur__fallback {
-  display: grid;
-  place-items: center;
-  height: 100%;
-  font-size: 24px;
-  color: var(--type);
-}
-
-.lecteur__info {
-  grid-area: info;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-}
-
-.lecteur__label {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--type);
-}
-
-.lecteur__title {
-  font-family: var(--font-display);
-  font-size: 20px;
-  line-height: 1.1;
-  text-transform: uppercase;
-  color: var(--fg);
-  text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-button.lecteur__title {
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  text-align: left;
-}
-
-button.lecteur__title:hover,
-a.lecteur__title:hover {
-  color: var(--type);
-}
-
-.lecteur__author {
-  font-size: 13px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.lecteur__ctrl {
-  grid-area: ctrl;
-  display: flex;
-  align-self: start;
-  gap: 6px;
-}
-
-.lecteur .ctrl-btn {
-  min-width: 36px;
-  height: 36px;
-  font-size: 18px;
-}
-
-.lecteur .ctrl-btn--text {
-  padding: 0 10px;
-  font-size: 12px;
-}
 
 /* Fiche déjà ouverte : pas besoin du bouton « Fiche » */
-body:has(.panneau:not([hidden])) .lecteur__fiche {
-  display: none;
-}
-
-.lecteur__label {
-  white-space: nowrap;
-}
-
-.lecteur__play {
-  background: var(--type) !important;
-  color: var(--bg);
-  font-size: 13px !important;
-}
 
 /* Volume du lecteur : un bouton muet et un curseur, sous la vidéo */
-.lecteur__vol {
-  grid-area: vol;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.lecteur__muet {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 2px solid var(--fg);
-  background: var(--bg);
-  color: var(--fg);
-  cursor: pointer;
-}
-
-.lecteur__muet:hover {
-  background: var(--fg);
-  color: var(--bg);
-}
-
-.lecteur__curseur {
-  flex: 1;
-  min-width: 0;
-  height: 36px;
-  margin: 0;
-  background: transparent;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.lecteur__curseur::-webkit-slider-runnable-track {
-  height: 6px;
-  background: linear-gradient(to right, var(--type) var(--v), #3a3a3a var(--v));
-}
-
-.lecteur__curseur::-moz-range-track {
-  height: 6px;
-  background: #3a3a3a;
-}
-
-.lecteur__curseur::-moz-range-progress {
-  height: 6px;
-  background: var(--type);
-}
-
-.lecteur__curseur::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 22px;
-  margin-top: -8px;
-  border: 0;
-  border-radius: 0;
-  background: var(--fg);
-}
-
-.lecteur__curseur::-moz-range-thumb {
-  width: 16px;
-  height: 22px;
-  border: 0;
-  border-radius: 0;
-  background: var(--fg);
-}
-
-.lecteur__curseur:focus-visible {
-  outline: 2px solid var(--type);
-  outline-offset: 2px;
-}
-
-.lecteur__volnum {
-  flex: none;
-  width: 30px;
-  text-align: right;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
 
 /* Réduit : une seule ligne (pochette, titre, lecture, boutons) */
-.lecteur.is-min {
-  grid-template-areas: "pochette info ctrl";
-}
-
-.lecteur.is-min .lecteur__pochette {
-  width: 48px;
-}
-
-.lecteur.is-min .lecteur__ctrl {
-  align-self: center;
-}
-
-.lecteur.is-min .lecteur__barre,
-.lecteur.is-min .lecteur__vol,
-.lecteur.is-min .lecteur__note {
-  display: none;
-}
 
 @media (max-width: 700px) {
-  .lecteur,
-  .lecteur.is-min {
-    right: 8px;
-    bottom: 8px;
-    width: calc(100vw - 16px);
-  }
 
   /* Sur mobile la fiche monte depuis le bas : le lecteur passe en haut */
-  body:has(.panneau:not([hidden])) .lecteur {
-    right: 8px;
-    top: 8px;
-    bottom: auto;
-    max-width: none;
-  }
+
 }
 
 /* Écran tactile : le volume se règle avec les boutons du téléphone */
-@media (pointer: coarse) {
-  .lecteur__vol {
-    display: none;
-  }
-}
 
 /* ---------- Moins d'animations si demandé ---------- */
 
@@ -4030,19 +3618,6 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
   color: var(--muted);
 }
 
-.dl-carte__ecouter {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--fg);
-  color: var(--bg);
-}
-
 .dl-actions {
   display: flex;
   flex-wrap: wrap;
@@ -4107,11 +3682,6 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
   text-transform: uppercase;
   -webkit-text-stroke: 6px var(--bg);
   paint-order: stroke fill;
-}
-
-.dl-vainqueur .play-btn {
-  align-self: center;
-  margin-top: 6px;
 }
 
 .dl-podium {
@@ -4439,7 +4009,6 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
   }
 }
 
-
 .mj-choix {
   display: flex;
   flex-wrap: wrap;
@@ -4540,11 +4109,6 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
   align-items: center;
   gap: 6px;
   margin-top: 8px;
-}
-
-.mj-fin__actions .play-btn {
-  align-self: center;
-  padding: 9px 14px;
 }
 
 .mj-lien {
@@ -4840,21 +4404,7 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
   max-width: 220px;
 }
 
-.dv-extrait {
-  position: relative;
-}
-
 /* le lecteur YouTube existe mais reste hors de l'écran */
-.dv-extrait__cache {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  width: 200px;
-  height: 120px;
-  border: 0;
-  opacity: 0;
-  pointer-events: none;
-}
 
 .dv-cote {
   display: flex;
@@ -4984,7 +4534,6 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
     animation: none;
   }
 }
-
 
 /* ============================================================
    Visuels Instagram (admin local)
@@ -5954,7 +5503,6 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
     padding-left: 18px;
   }
 
-
   .manchette {
     padding: 16px 18px 18px;
     box-shadow: 6px 6px 0 var(--accent);
@@ -6530,4 +6078,29 @@ body.a-fond .splash__inner {
 /* ... et les cartes des mini-jeux laissent voir le fond */
 body.a-fond .jeu-carte {
   background: transparent;
+}
+
+/* Admin : avis quand les œuvres viennent du tableur */
+.admin__avis {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border: 2px solid var(--fg, #fff);
+  font-size: 0.9rem;
+}
+
+/* Articles : lien « Écouter » vers une plateforme (bloc <Ecouter>) */
+.ecouter-lien {
+  display: inline-block;
+  margin: 0.5em 0;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg);
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent, var(--fg));
+}
+
+.ecouter-lien:hover {
+  opacity: 0.75;
 }
