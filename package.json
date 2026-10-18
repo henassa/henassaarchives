@@ -8,7 +8,8 @@
     "dev": "next dev",
     "prebuild": "node scripts/miniatures.mjs",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "images": "node scripts/alleger-images.mjs"
   },
   "dependencies": {
     "@fontsource/anton": "^5.2.0",

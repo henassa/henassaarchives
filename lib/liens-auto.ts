@@ -141,7 +141,7 @@ export const REGLAGES = {
    * Garde la carte lisible quand le catalogue grossit. null = illimité.
    * Les liens ajoutés à la main ne comptent pas dans ce plafond.
    */
-  maxParOeuvre: 48 as number | null,
+  maxParOeuvre: 16 as number | null,
 };
 
 export type OeuvreTags = {
