@@ -5,7 +5,7 @@ import { TYPES_OEUVRE, TYPE_SLUGS, type TypeOeuvre } from "@/lib/sections";
 
 /*
  * Filtres communs à tous les mini-jeux : univers (musique, cinéma, jeu vidéo),
- * genre, sous-genre et années.
+ * genre, sous-genre, scène et années.
  * Les listes se resserrent au fur et à mesure : choisir un genre ne laisse
  * que les sous-genres et années qui existent dans ce genre.
  */
@@ -21,11 +21,11 @@ export const nomUnivers = (t: TypeOeuvre) => UNIVERS[t] ?? TYPES_OEUVRE[t].pluri
  */
 const MIN_OEUVRES_FILTRE = 20;
 
-export type Filtrable = { type: TypeOeuvre; auteur: string; genre?: string; sousGenres?: string[]; parents?: string[]; annee?: number };
+export type Filtrable = { type: TypeOeuvre; auteur: string; genre?: string; sousGenres?: string[]; parents?: string[]; scenes?: string[]; annee?: number };
 
 /** Sous-genres d'une œuvre + leurs parents (familles) : « Drill » retrouve aussi « Chicago Drill ». */
 const termes = (o: Filtrable) => [...(o.sousGenres ?? []), ...(o.parents ?? [])];
-type Choix = { type: TypeOeuvre; genre: string; sousGenre: string; de: number; a: number };
+type Choix = { type: TypeOeuvre; genre: string; sousGenre: string; scene: string; de: number; a: number };
 
 const parNombre = (m: Map<string, number>) => [...m].sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0], "fr"));
 function compter<T>(liste: T[], cles: (o: T) => (string | undefined)[]) {
@@ -40,6 +40,7 @@ export function useFiltresJeu<T extends Filtrable>(oeuvres: T[]) {
     type: TYPE_SLUGS.find((t) => oeuvres.some((o) => o.type === t)) ?? "album",
     genre: "",
     sousGenre: "",
+    scene: "",
     de: 0,
     a: 0,
   }));
@@ -52,6 +53,7 @@ export function useFiltresJeu<T extends Filtrable>(oeuvres: T[]) {
       o.type === c.type &&
       (sauf === "genre" || !c.genre || o.genre === c.genre) &&
       (sauf === "sousGenre" || !c.sousGenre || termes(o).includes(c.sousGenre)) &&
+      (sauf === "scene" || !c.scene || (o.scenes ?? []).includes(c.scene)) &&
       (sauf === "de" || !c.de || (o.annee ?? 0) >= c.de) &&
       (sauf === "a" || !c.a || (!!o.annee && o.annee <= c.a)),
     [c]
@@ -61,6 +63,7 @@ export function useFiltresJeu<T extends Filtrable>(oeuvres: T[]) {
   const assez = (l: [string, number][]) => l.filter(([, n]) => n >= MIN_OEUVRES_FILTRE);
   const genres = useMemo(() => assez(parNombre(compter(oeuvres.filter((o) => passe(o, "genre")), (o) => [o.genre]))), [oeuvres, passe]);
   const sousGenres = useMemo(() => assez(parNombre(compter(oeuvres.filter((o) => passe(o, "sousGenre")), (o) => termes(o)))), [oeuvres, passe]);
+  const scenes = useMemo(() => assez(parNombre(compter(oeuvres.filter((o) => passe(o, "scene")), (o) => o.scenes ?? []))), [oeuvres, passe]);
   // toutes les années de l'univers (pour afficher la première et la dernière)
   const annees = useMemo(() => [...new Set(oeuvres.filter((o) => o.type === c.type && o.annee).map((o) => o.annee!))].sort((x, y) => x - y), [oeuvres, c.type]);
   // « Depuis » et « Jusqu'à » : seulement les années qui laissent assez d'œuvres
@@ -76,7 +79,7 @@ export function useFiltresJeu<T extends Filtrable>(oeuvres: T[]) {
   const regler = useCallback((patch: Partial<Choix>) => {
     setC((avant) => {
       // changer d'univers remet les autres filtres à zéro
-      if (patch.type && patch.type !== avant.type) return { type: patch.type, genre: "", sousGenre: "", de: 0, a: 0 };
+      if (patch.type && patch.type !== avant.type) return { type: patch.type, genre: "", sousGenre: "", scene: "", de: 0, a: 0 };
       const n = { ...avant, ...patch };
       if (n.de && n.a && n.de > n.a) {
         if ("de" in patch) n.a = n.de;
@@ -85,10 +88,10 @@ export function useFiltresJeu<T extends Filtrable>(oeuvres: T[]) {
       return n;
     });
   }, []);
-  const actifs = [c.genre, c.sousGenre, c.de, c.a].filter(Boolean).length;
-  const vider = useCallback(() => setC((avant) => ({ type: avant.type, genre: "", sousGenre: "", de: 0, a: 0 })), []);
+  const actifs = [c.genre, c.sousGenre, c.scene, c.de, c.a].filter(Boolean).length;
+  const vider = useCallback(() => setC((avant) => ({ type: avant.type, genre: "", sousGenre: "", scene: "", de: 0, a: 0 })), []);
 
-  return { ...c, regler, vider, actifs, univers, genres, sousGenres, annees, anneesDe, anneesA, vivier };
+  return { ...c, regler, vider, actifs, univers, genres, sousGenres, scenes, annees, anneesDe, anneesA, vivier };
 }
 
 export type FiltresJeu = ReturnType<typeof useFiltresJeu>;
@@ -200,6 +203,7 @@ export function FiltresJeuBarre({ f }: { f: FiltresJeu; id?: string }) {
       <div className="jf__listes">
         <Menu nom="Genre" valeur={f.genre} tous="Tous" options={f.genres} onChange={(v) => f.regler({ genre: v })} />
         <Menu nom="Sous-genre" valeur={f.sousGenre} tous="Tous" options={f.sousGenres} onChange={(v) => f.regler({ sousGenre: v })} />
+        {(f.scene || f.scenes.length > 0) && <Menu nom="Scène" valeur={f.scene} tous="Toutes" options={f.scenes} onChange={(v) => f.regler({ scene: v })} />}
         {f.annees.length > 1 && (
           <>
             <Menu nom="Depuis" valeur={f.de ? String(f.de) : ""} tous={String(f.annees[0])} options={ans(f.anneesDe)} onChange={(v) => f.regler({ de: Number(v) || 0 })} />

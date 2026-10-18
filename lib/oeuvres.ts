@@ -447,8 +447,8 @@ export function assembler(brut: ConnexionsBrut): Lien[] {
 export function readConnexions(): ConnexionsData {
   const brut = readBrut();
   // Les infos qui ne servent qu'au calcul des liens ne partent pas dans les pages (moins lourd)
-  // (les genres secondaires restent : ils s'affichent au survol sur la carte)
-  const oeuvres = brut.oeuvres.map(({ descripteurs, langues, producteurs, featurings, labels, scenes, ...o }) => o);
+  // (les genres secondaires restent : ils s'affichent au survol sur la carte ; les scènes servent aux filtres des jeux)
+  const oeuvres = brut.oeuvres.map(({ descripteurs, langues, producteurs, featurings, labels, ...o }) => o);
   return { oeuvres, liens: assembler(brut) };
 }
 

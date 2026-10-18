@@ -21,6 +21,7 @@ export default function DilemmeSalonPage() {
     genre: o.genre,
     sousGenres: o.sousGenres ?? [],
     parents: o.parents,
+    scenes: o.scenes,
     cover: o.cover,
     mini: o.mini,
   }));

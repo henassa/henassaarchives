@@ -12,6 +12,8 @@ export type OeuvreJeu = {
   sousGenres: string[];
   /** Genres parents ajoutés en coulisse (familles), pour les filtres. */
   parents?: string[];
+  /** Scènes / mouvements (RYM), pour les filtres. */
+  scenes?: string[];
   cover?: string;
   /** Petite copie de la pochette, pour les vignettes. */
   mini?: string;
@@ -40,6 +42,7 @@ export function oeuvresPourJeux(): OeuvreJeu[] {
     genre: o.genre,
     sousGenres: o.sousGenres ?? [],
     parents: o.parents,
+    scenes: o.scenes,
     cover: o.cover,
     mini: o.mini,
     liees: (voisins.get(o.id) ?? [])

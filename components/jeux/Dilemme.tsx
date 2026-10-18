@@ -12,7 +12,7 @@ import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
  * hasard), puis on tranche duel après duel jusqu'à la finale.
  */
 
-export type ItemDuel = { cle: string; titre: string; auteur: string; annee?: number; type: TypeOeuvre; genre?: string; sousGenres?: string[]; parents?: string[]; cover?: string; mini?: string };
+export type ItemDuel = { cle: string; titre: string; auteur: string; annee?: number; type: TypeOeuvre; genre?: string; sousGenres?: string[]; parents?: string[]; scenes?: string[]; cover?: string; mini?: string };
 
 /** Tailles de tournoi proposées (celles qui dépassent le nombre d'œuvres sont grisées). */
 export const TAILLES = [8, 16, 32, 64, 128, 256];

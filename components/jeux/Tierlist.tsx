@@ -15,7 +15,7 @@ import { FiltresJeuBarre, nomUnivers, useFiltresJeu } from "./Filtres";
  * - le classement est gardé dans le navigateur, et se télécharge en image.
  */
 
-export type ItemJeu = { cle: string; titre: string; auteur: string; type: TypeOeuvre; genre?: string; sousGenres?: string[]; parents?: string[]; annee?: number; cover?: string; mini?: string };
+export type ItemJeu = { cle: string; titre: string; auteur: string; type: TypeOeuvre; genre?: string; sousGenres?: string[]; parents?: string[]; scenes?: string[]; annee?: number; cover?: string; mini?: string };
 
 type Rang = { id: string; nom: string; items: string[] };
 type Etat = { titre: string; rangs: Rang[] };

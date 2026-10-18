@@ -21,6 +21,7 @@ export default function TierlistPage() {
     genre: o.genre,
     sousGenres: o.sousGenres ?? [],
     parents: o.parents,
+    scenes: o.scenes,
     annee: o.annee,
     cover: o.cover,
     mini: o.mini,
