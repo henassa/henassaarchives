@@ -5408,8 +5408,6 @@ html:not([data-splash="done"]) body:has(> .splash) .nav-pill:nth-child(6) {
   font-size: clamp(46px, 7vw, 76px);
   line-height: 0.92;
   text-transform: uppercase;
-  -webkit-text-stroke: 4px var(--bg);
-  paint-order: stroke fill;
 }
 
 .epitaphe__dates {
