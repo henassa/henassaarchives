@@ -14,8 +14,8 @@ import { IMAGE_PARTAGE, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: {
-    default: "Henassa",
-    template: "%s — Henassa",
+    default: "HENASSA",
+    template: "HENASSA",
   },
   description: "Articles, connexions entre les œuvres et playlist du mois.",
   // Aperçu affiché quand on partage un lien du site
