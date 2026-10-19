@@ -6983,3 +6983,434 @@ body.a-fond .jeu-carte {
     display: none;
   }
 }
+
+/* Le Parcours : difficulté et temps */
+.mot-case.is-offerte {
+  border-style: dashed;
+  border-color: #666;
+  color: #8a8a8a;
+}
+
+.pc-mot__artiste {
+  margin-top: 6px;
+  color: var(--fg);
+}
+
+.pc-mot__offert {
+  margin-top: 4px;
+}
+
+.pc-chemin__voisins button {
+  position: relative;
+}
+
+.pc-chemin__voisins button.est-proche {
+  border-color: #6fbf73;
+}
+
+.pc-chemin__proche {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 1px 6px;
+  background: #6fbf73;
+  color: #000;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   Tierlist à plusieurs (salon en ligne)
+   ============================================================ */
+
+.tls-apercu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 4px;
+}
+
+.tls-apercu li {
+  min-width: 56px;
+  padding: 6px 10px;
+  color: #0a0a0a;
+  font-family: var(--font-display);
+  font-size: 20px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.tls-scene {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.tls-oeuvre {
+  --type: var(--fg);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tls-oeuvre__cover {
+  display: block;
+  aspect-ratio: 1;
+  border: 3px solid var(--type);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.tls-oeuvre__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tls-oeuvre__cover .tile__fallback {
+  width: 100%;
+  height: 100%;
+  font-size: 72px;
+}
+
+.tls-oeuvre__titre {
+  margin: 8px 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(26px, 3.4vw, 40px);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.tls-oeuvre__auteur,
+.tls-oeuvre__genre {
+  margin: 0;
+  font-weight: 700;
+}
+
+.tls-oeuvre__genre {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.tls-vote {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tls-verdict {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 34px);
+  text-transform: uppercase;
+}
+
+.tls-ambiance {
+  padding: 2px 10px;
+  background: #ff2a1f;
+  color: #0a0a0a;
+  font-size: 0.6em;
+  animation: tls-pop 0.4s ease-out;
+}
+
+.tls-ambiance.is-unanime {
+  background: #2fd66b;
+}
+
+.tls-rangs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tls-rangs li {
+  --rang: var(--fg);
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) auto;
+  align-items: stretch;
+  min-height: 56px;
+  background: var(--panel);
+  outline: 0 solid var(--fg);
+  transition: outline-width 0.15s;
+}
+
+.tls-rangs li.est-mien {
+  outline-width: 3px;
+}
+
+.tls-rangs li.est-resultat {
+  outline: 3px solid var(--rang);
+  animation: tls-pop 0.4s ease-out;
+}
+
+.tls-rangs__nom {
+  border: 0;
+  background: var(--rang);
+  color: #0a0a0a;
+  font-family: var(--font-display);
+  font-size: 26px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tls-rangs__nom:hover:not(:disabled),
+.tls-rangs__nom:focus-visible {
+  filter: brightness(1.15);
+}
+
+.tls-rangs__nom:disabled {
+  cursor: default;
+}
+
+.tls-rangs li:not(.est-mien) .tls-rangs__nom:disabled {
+  opacity: 0.85;
+}
+
+.tls-rangs__voix {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+}
+
+.tls-pseudo,
+.tls-compte {
+  padding: 3px 8px;
+  border: 2px solid var(--rang);
+  font-size: 13px;
+  font-weight: 800;
+  animation: tls-pop 0.3s ease-out;
+}
+
+.tls-pseudo.est-moi {
+  background: var(--rang);
+  color: #0a0a0a;
+}
+
+.tls-corriger {
+  align-self: center;
+  margin-right: 8px;
+  padding: 4px 8px;
+  border: 1px solid #444;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tls-corriger:hover {
+  border-color: var(--fg);
+  color: var(--fg);
+}
+
+.tls-sous {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+}
+
+.tl-rang__nom span {
+  width: 100%;
+  padding: 8px 6px;
+  color: #0a0a0a;
+  font-family: var(--font-display);
+  font-size: 30px;
+  text-align: center;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.tls-groupe .tl-rang {
+  grid-template-columns: 120px minmax(0, 1fr);
+}
+
+.tls-groupe .tl-rang__items {
+  min-height: 72px;
+}
+
+.tls-tuile {
+  width: 64px;
+  height: 64px;
+  cursor: default;
+}
+
+.tls-tuile.est-nouvelle {
+  outline: 3px solid var(--accent);
+  animation: tls-pop 0.5s ease-out;
+}
+
+.tls-titres,
+.tls-debats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.tls-titres {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.tls-titres li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: var(--panel);
+  border-left: 4px solid var(--accent);
+}
+
+.tls-titres li.est-moi {
+  outline: 2px solid var(--accent);
+}
+
+.tls-titres__t {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tls-titres__nom {
+  font-family: var(--font-display);
+  font-size: 30px;
+  text-transform: uppercase;
+}
+
+.tls-titres__d {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tls-debats li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px;
+  background: var(--panel);
+}
+
+.tls-debats__cover {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+}
+
+.tls-debats__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tls-debats__txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+}
+
+.tls-debats__votes {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@keyframes tls-pop {
+  from {
+    transform: scale(0.92);
+    opacity: 0.4;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tls-ambiance,
+  .tls-rangs li.est-resultat,
+  .tls-pseudo,
+  .tls-compte,
+  .tls-tuile.est-nouvelle {
+    animation: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .tls-scene {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .tls-oeuvre {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: start;
+  }
+
+  .tls-oeuvre__cover {
+    grid-row: span 4;
+  }
+
+  .tls-oeuvre__titre {
+    margin: 0;
+  }
+
+  .tls-rangs li {
+    grid-template-columns: 76px minmax(0, 1fr) auto;
+    min-height: 52px;
+  }
+
+  .tls-groupe .tl-rang {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  .tl-rang__nom span {
+    font-size: 22px;
+  }
+
+  .tls-tuile {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+.tls-rangs__nom.est-long,
+.tl-rang__nom span.est-long {
+  font-size: 20px;
+}
+
+@media (max-width: 760px) {
+  .tls-rangs__nom.est-long,
+  .tl-rang__nom span.est-long {
+    font-size: 14px;
+  }
+
+  .tls-rangs__nom {
+    font-size: 22px;
+  }
+}

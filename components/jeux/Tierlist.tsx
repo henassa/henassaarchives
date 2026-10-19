@@ -27,7 +27,7 @@ type Etat = { titre: string; rangs: Rang[] };
 const DEGRADE = ["#2FD66B", "#C6E03A", "#FFC928", "#FF8A2B", "#FF2A1F"];
 
 /** Couleur du rang n° i (0 = en haut) parmi n rangs. */
-function couleurRang(i: number, n: number) {
+export function couleurRang(i: number, n: number) {
   const t = n > 1 ? (i / (n - 1)) * (DEGRADE.length - 1) : 0;
   const k = Math.min(Math.floor(t), DEGRADE.length - 2);
   const a = parseInt(DEGRADE[k]!.slice(1), 16), b = parseInt(DEGRADE[k + 1]!.slice(1), 16);
@@ -44,7 +44,7 @@ const etatDepart = (): Etat => ({
   rangs: RANGS_DEPART.map((nom, i) => ({ id: `r${i}`, nom, items: [] })),
 });
 
-function norm(s: string) {
+export function norm(s: string) {
   return s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
 
@@ -249,98 +249,7 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
   const telecharger = async () => {
     setExport("encours");
     try {
-      const L = 1200, COL = 150, T = 100, G = 6, M = 24;
-      const parLigne = Math.floor((L - COL - M - G) / (T + G));
-      const hauteurs = etat.rangs.map((r) => Math.max(1, Math.ceil(r.items.length / parLigne)) * (T + G) + G);
-      const haut = 110;
-      const H = haut + hauteurs.reduce((a, b) => a + b + 4, 0) + 70;
-      const c = document.createElement("canvas");
-      c.width = L;
-      c.height = H;
-      const x = c.getContext("2d")!;
-      await document.fonts?.ready;
-      x.fillStyle = "#0a0a0a";
-      x.fillRect(0, 0, L, H);
-      x.fillStyle = "#fff";
-      x.textBaseline = "middle";
-      x.font = "400 54px Anton, Impact, sans-serif";
-      x.fillText((etat.titre || "Ma tierlist").toUpperCase(), M, 60, L - M * 2);
-
-      const images = new Map<string, HTMLImageElement>();
-      await Promise.all(
-        etat.rangs
-          .flatMap((r) => r.items)
-          .map(
-            (cle) =>
-              new Promise<void>((ok) => {
-                const src = parCle.get(cle)?.cover;
-                if (!src) return ok();
-                const img = new Image();
-                img.onload = () => {
-                  images.set(cle, img);
-                  ok();
-                };
-                img.onerror = () => ok();
-                img.src = src;
-              })
-          )
-      );
-
-      let y = haut;
-      etat.rangs.forEach((r, i) => {
-        const h = hauteurs[i]!;
-        x.fillStyle = "#1a1a1a";
-        x.fillRect(M, y, L - M * 2, h);
-        x.fillStyle = couleurRang(i, etat.rangs.length);
-        x.fillRect(M, y, COL, h);
-        x.fillStyle = "#0a0a0a";
-        x.textAlign = "center";
-        let fs = 46;
-        x.font = `400 ${fs}px Anton, Impact, sans-serif`;
-        while (fs > 16 && x.measureText(r.nom.toUpperCase()).width > COL - 16) x.font = `400 ${--fs}px Anton, Impact, sans-serif`;
-        x.fillText(r.nom.toUpperCase(), M + COL / 2, y + h / 2 + 2);
-        r.items.forEach((cle, k) => {
-          const o = parCle.get(cle);
-          if (!o) return;
-          const tx = M + COL + G + (k % parLigne) * (T + G);
-          const ty = y + G + Math.floor(k / parLigne) * (T + G);
-          const img = images.get(cle);
-          if (img) {
-            const s = Math.min(img.naturalWidth, img.naturalHeight);
-            x.drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, tx, ty, T, T);
-          } else {
-            x.fillStyle = "#2a2a2a";
-            x.fillRect(tx, ty, T, T);
-            x.fillStyle = TYPES_OEUVRE[o.type].couleur;
-            x.fillRect(tx, ty, T, 6);
-            x.fillStyle = "#fff";
-            x.font = "400 40px Anton, Impact, sans-serif";
-            x.fillText(initiales(o), tx + T / 2, ty + T / 2 + 3);
-          }
-        });
-        x.textAlign = "left";
-        y += h + 4;
-      });
-      // Signature
-      x.textAlign = "right";
-      x.font = "44px UnifrakturMaguntia, serif";
-      x.lineWidth = 1.2;
-      x.strokeStyle = "#FF4D3D";
-      x.strokeText("Henassa", L - M, H - 34);
-      x.font = "400 34px Anton, Impact, sans-serif";
-      x.lineWidth = 6;
-      x.strokeStyle = "#0a0a0a";
-      x.strokeText("HENASSA", L - M - 8, H - 32);
-      x.fillStyle = "#fff";
-      x.fillText("HENASSA", L - M - 8, H - 32);
-
-      const blob = await new Promise<Blob | null>((ok) => c.toBlob(ok, "image/png"));
-      if (!blob) throw new Error("image vide");
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `${norm(etat.titre || "tierlist").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "tierlist"}.png`;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      await enregistrerImage(await imageTierlist(etat.titre, etat.rangs, parCle), etat.titre);
       setExport("");
     } catch {
       setExport("erreur");
@@ -480,4 +389,110 @@ function FragmentMarque({ montrer, children }: { montrer: boolean; children: Rea
       {children}
     </>
   );
+}
+
+/** Dessine une tierlist en image (PNG), avec la signature Henassa. */
+export async function imageTierlist(titre: string, rangs: { nom: string; items: string[] }[], parCle: Map<string, ItemJeu>, sousTitre = "") {
+  const L = 1200, COL = 150, T = 100, G = 6, M = 24;
+  const parLigne = Math.floor((L - COL - M - G) / (T + G));
+  const hauteurs = rangs.map((r) => Math.max(1, Math.ceil(r.items.length / parLigne)) * (T + G) + G);
+  const haut = sousTitre ? 140 : 110;
+  const H = haut + hauteurs.reduce((a, b) => a + b + 4, 0) + 70;
+  const c = document.createElement("canvas");
+  c.width = L;
+  c.height = H;
+  const x = c.getContext("2d")!;
+  await document.fonts?.ready;
+  x.fillStyle = "#0a0a0a";
+  x.fillRect(0, 0, L, H);
+  x.fillStyle = "#fff";
+  x.textBaseline = "middle";
+  x.font = "400 54px Anton, Impact, sans-serif";
+  x.fillText((titre || "Ma tierlist").toUpperCase(), M, 60, L - M * 2);
+  if (sousTitre) {
+    x.fillStyle = "#9a9a9a";
+    x.font = "700 20px Archivo, Arial, sans-serif";
+    x.fillText(sousTitre, M, 108, L - M * 2);
+  }
+
+  const images = new Map<string, HTMLImageElement>();
+  await Promise.all(
+    rangs
+      .flatMap((r) => r.items)
+      .map(
+        (cle) =>
+          new Promise<void>((ok) => {
+            const src = parCle.get(cle)?.cover;
+            if (!src) return ok();
+            const img = new Image();
+            img.onload = () => {
+              images.set(cle, img);
+              ok();
+            };
+            img.onerror = () => ok();
+            img.src = src;
+          })
+      )
+  );
+
+  let y = haut;
+  rangs.forEach((r, i) => {
+    const h = hauteurs[i]!;
+    x.fillStyle = "#1a1a1a";
+    x.fillRect(M, y, L - M * 2, h);
+    x.fillStyle = couleurRang(i, rangs.length);
+    x.fillRect(M, y, COL, h);
+    x.fillStyle = "#0a0a0a";
+    x.textAlign = "center";
+    let fs = 46;
+    x.font = `400 ${fs}px Anton, Impact, sans-serif`;
+    while (fs > 16 && x.measureText(r.nom.toUpperCase()).width > COL - 16) x.font = `400 ${--fs}px Anton, Impact, sans-serif`;
+    x.fillText(r.nom.toUpperCase(), M + COL / 2, y + h / 2 + 2);
+    r.items.forEach((cle, k) => {
+      const o = parCle.get(cle);
+      if (!o) return;
+      const tx = M + COL + G + (k % parLigne) * (T + G);
+      const ty = y + G + Math.floor(k / parLigne) * (T + G);
+      const img = images.get(cle);
+      if (img) {
+        const s = Math.min(img.naturalWidth, img.naturalHeight);
+        x.drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, tx, ty, T, T);
+      } else {
+        x.fillStyle = "#2a2a2a";
+        x.fillRect(tx, ty, T, T);
+        x.fillStyle = TYPES_OEUVRE[o.type].couleur;
+        x.fillRect(tx, ty, T, 6);
+        x.fillStyle = "#fff";
+        x.font = "400 40px Anton, Impact, sans-serif";
+        x.fillText(initiales(o), tx + T / 2, ty + T / 2 + 3);
+      }
+    });
+    x.textAlign = "left";
+    y += h + 4;
+  });
+  // Signature
+  x.textAlign = "right";
+  x.font = "44px UnifrakturMaguntia, serif";
+  x.lineWidth = 1.2;
+  x.strokeStyle = "#FF4D3D";
+  x.strokeText("Henassa", L - M, H - 34);
+  x.font = "400 34px Anton, Impact, sans-serif";
+  x.lineWidth = 6;
+  x.strokeStyle = "#0a0a0a";
+  x.strokeText("HENASSA", L - M - 8, H - 32);
+  x.fillStyle = "#fff";
+  x.fillText("HENASSA", L - M - 8, H - 32);
+
+  const blob = await new Promise<Blob | null>((ok) => c.toBlob(ok, "image/png"));
+  if (!blob) throw new Error("image vide");
+  return blob;
+}
+
+/** Fait télécharger l'image, avec un nom de fichier tiré du titre. */
+export function enregistrerImage(blob: Blob, titre: string) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${norm(titre || "tierlist").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "tierlist"}.png`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }

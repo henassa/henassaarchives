@@ -6,8 +6,8 @@ import type { DonneesParcours } from "@/lib/jeux";
 import type { TypeOeuvre } from "@/lib/sections";
 import { HOTE, LONGUEUR_CODE, useSalon, type Joueur } from "@/components/jeux/useSalon";
 import { Epreuve } from "./Epreuves";
-import { EnteteManche, PanneauReglages, useOutilsParcours, useReglages } from "./Parcours";
-import { infoEpreuve, pastille, pointsAvecTemps, SCORE_MAX, type Manche, type Resultat } from "./moteur";
+import { EnteteManche, PanneauReglages, Temps, useOutilsParcours, useReglages } from "./Parcours";
+import { NIVEAUX, dureeManche, infoEpreuve, pastille, pointsAvecTemps, SCORE_MAX, type Manche, type Niveau, type Resultat } from "./moteur";
 
 /*
  * Le Parcours à plusieurs, en ligne : tout le monde joue la même manche en même temps,
@@ -20,11 +20,6 @@ const MAX_JOUEURS = 12;
 const PAUSE_BILAN = 9000;
 /** Marge laissée aux retardataires après la fin du temps (millisecondes). */
 const MARGE_RESEAU = 3000;
-const TEMPS = [
-  { nom: "Normal", k: 1 },
-  { nom: "Large", k: 1.5 },
-  { nom: "Serré", k: 0.7 },
-];
 
 type Rendu = { pts: number; score: number; resume: string };
 type Etat = {
@@ -34,6 +29,9 @@ type Etat = {
   indice: number;
   /** Durée de la manche en cours, en secondes. */
   duree: number;
+  /** Réglages de la partie, choisis par l'hôte. */
+  niveau: Niveau;
+  tempsBase: number;
   /** Change à chaque manche : sert à ignorer un résultat arrivé en retard. */
   jeton: number;
   type: TypeOeuvre;
@@ -44,12 +42,11 @@ type Etat = {
 };
 type MessageJeu = { t: "fini"; jeton: number; score: number; resume: string; restant: number };
 
-const etatVide = (): Etat => ({ joueurs: [], phase: "salon", manches: [], indice: 0, duree: 60, jeton: 0, type: "album", rendus: {}, totaux: {} });
+const etatVide = (): Etat => ({ joueurs: [], phase: "salon", manches: [], indice: 0, duree: 60, niveau: "normal", tempsBase: 60, jeton: 0, type: "album", rendus: {}, totaux: {} });
 
 export function ParcoursSalon({ d }: { d: DonneesParcours }) {
   const { g, parCle } = useOutilsParcours(d);
   const r = useReglages(d, g);
-  const [temps, setTemps] = useState(0);
   const minuteur = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /* ---------- Côté hôte : l'arbitre ---------- */
@@ -67,14 +64,10 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
     minuteur.current = null;
   };
 
-  const ouvrirManche = useCallback(
-    (e: Etat, indice: number): Etat => {
-      const m = e.manches[indice]!;
-      const duree = Math.round(infoEpreuve(m.e).duree * TEMPS[temps]!.k);
-      return { ...e, phase: "manche", indice, duree, jeton: e.jeton + 1, rendus: {} };
-    },
-    [temps]
-  );
+  const ouvrirManche = useCallback((e: Etat, indice: number): Etat => {
+    const m = e.manches[indice]!;
+    return { ...e, phase: "manche", indice, duree: dureeManche(m.e, e.tempsBase), jeton: e.jeton + 1, rendus: {} };
+  }, []);
 
   /** Fin de la manche : ceux qui n'ont rien rendu marquent 0, puis le classement. */
   const clore = useCallback(() => {
@@ -127,7 +120,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
     if (!manches.length) return;
     arreterMinuteur();
     const e = lire();
-    const base: Etat = { ...e, manches, type: r.f.type, totaux: Object.fromEntries(e.joueurs.map((j) => [j.id, { nom: j.nom, pts: 0, pastilles: "" }])), jeton: e.jeton };
+    const base: Etat = { ...e, manches, type: r.f.type, niveau: r.niveau, tempsBase: r.temps || 60, totaux: Object.fromEntries(e.joueurs.map((j) => [j.id, { nom: j.nom, pts: 0, pastilles: "" }])), jeton: e.jeton };
     const n = ouvrirManche(base, 0);
     ecrire(n);
     minuteur.current = setTimeout(clore, n.duree * 1000 + MARGE_RESEAU);
@@ -172,6 +165,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
 
   const restant = e.phase === "manche" && debut ? Math.max(0, e.duree - (maintenant - debut) / 1000) : 0;
   const tempsEcoule = e.phase === "bilan" || (e.phase === "manche" && !!debut && restant <= 0);
+  const progres = e.phase === "manche" && debut ? Math.min(1, (maintenant - debut) / 1000 / Math.max(1, e.duree)) : e.phase === "bilan" ? 1 : 0;
 
   const rendre = useCallback(
     (res: Resultat, reste: number) => {
@@ -310,27 +304,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
         </div>
         {s.estHote && (
           <>
-            <PanneauReglages
-              r={r}
-              id="pcs"
-              extra={
-                <>
-                  <h2 className="dl-h pc-sous-titre">Temps par manche</h2>
-                  <div className="filters" role="group" aria-label="Temps par manche">
-                    {TEMPS.map((t, i) => (
-                      <button key={t.nom} type="button" className={`filter${temps === i ? " is-on" : ""}`} aria-pressed={temps === i} onClick={() => setTemps(i)}>
-                        {t.nom}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="dl-note">
-                    {r.actives.length
-                      ? `Environ ${Math.round((r.nombre * r.actives.reduce((t, x) => t + infoEpreuve(x).duree, 0) * TEMPS[temps]!.k) / r.actives.length / 60)} minutes de jeu au maximum.`
-                      : "Choisis au moins une épreuve."}
-                  </p>
-                </>
-              }
-            />
+            <PanneauReglages r={r} id="pcs" extra={<p className="dl-note">Plus on répond vite, plus on gagne de points : jusqu&apos;à un quart en plus.</p>} />
             <button type="button" className="dl-lancer" onClick={lancer} disabled={!r.actives.length}>
               Lancer la partie →
             </button>
@@ -362,7 +336,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
           ))}
         </ol>
         <p className="dl-note dl-note--centre">
-          {e.manches.length} manches · {e.manches.map((x) => infoEpreuve(x.e).nom).join(", ")}
+          {e.manches.length} manches en {NIVEAUX.find((n) => n.id === e.niveau)?.nom.toLowerCase() ?? "normal"} · {e.manches.map((x) => infoEpreuve(x.e).nom).join(", ")}
         </p>
         {s.estHote ? (
           <div className="dl-actions">
@@ -396,14 +370,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
             m={m}
             i={e.indice}
             n={e.manches.length}
-            droite={
-              !bilan && (
-                <span className={`pc-temps${restant <= 10 ? " is-court" : ""}`}>
-                  {" · "}
-                  {Math.ceil(restant)} s
-                </span>
-              )
-            }
+            droite={!bilan && <Temps restant={restant} />}
           />
           {bilan && (
             <div className="pc-bilan-manche" role="status">
@@ -431,7 +398,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
           {manquante ? (
             <p className="tl-message">Cette manche utilise des œuvres que ta page ne connaît pas : recharge la page pour avoir la dernière version du site.</p>
           ) : (
-            <Epreuve key={e.jeton} m={m} d={d} g={g} parCle={parCle} univers={univers} finir={finir} partiel={partiel} tempsEcoule={tempsEcoule} />
+            <Epreuve key={e.jeton} m={m} d={d} g={g} parCle={parCle} univers={univers} finir={finir} partiel={partiel} tempsEcoule={tempsEcoule} niveau={e.niveau ?? "normal"} progres={progres} />
           )}
           {!bilan && rendu && (
             <p className="sl-etat" role="status">

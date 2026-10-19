@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Tierlist } from "@/components/jeux/Tierlist";
@@ -36,6 +37,11 @@ export default function TierlistPage() {
         </div>
         <p className="section-intro">
           Glisse les œuvres dans les rangs. Sur téléphone : touche une œuvre, puis le rang où la poser.
+        </p>
+        <p className="sl-invite">
+          <Link href="/mini-jeux/tierlist/salon" className="sl-invite__lien">
+            Jouer à plusieurs, en ligne →
+          </Link>
         </p>
         <Tierlist oeuvres={items} />
       </main>

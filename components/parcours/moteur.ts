@@ -10,15 +10,53 @@ import type { DonneesParcours, OeuvreParcours } from "@/lib/jeux";
 
 export type Epreuve = "mot" | "devine" | "chrono" | "chemin" | "grille" | "credits";
 
-export const EPREUVES: { id: Epreuve; nom: string; echo: string; consigne: string; duree: number }[] = [
-  { id: "mot", nom: "Le mot", echo: "Mot", consigne: "Trouve le titre lettre par lettre. La pochette se dévoile à chaque essai.", duree: 100 },
-  { id: "devine", nom: "Devine l'œuvre", echo: "Devine", consigne: "Un indice de plus à chaque essai raté : genre, sous-genres, connexions, année, pochette.", duree: 80 },
-  { id: "chrono", nom: "Chronologie", echo: "Chrono", consigne: "Remets ces œuvres dans l'ordre de sortie, de la plus ancienne à la plus récente.", duree: 50 },
-  { id: "chemin", nom: "Le chemin", echo: "Chemin", consigne: "Va de la première œuvre à la seconde en passant par les connexions de la Toile, en le moins d'étapes possible.", duree: 100 },
-  { id: "grille", nom: "La grille", echo: "Grille", consigne: "Une œuvre par case, qui coche la ligne et la colonne. Chaque œuvre ne sert qu'une fois.", duree: 140 },
-  { id: "credits", nom: "Les crédits", echo: "Crédits", consigne: "Retrouve l'œuvre à partir de ses producteurs, de ses invités et de son label.", duree: 80 },
+export const EPREUVES: { id: Epreuve; nom: string; echo: string; consigne: string }[] = [
+  { id: "mot", nom: "Le mot", echo: "Mot", consigne: "Trouve le titre. La pochette se dévoile au fil du temps et à chaque essai." },
+  { id: "devine", nom: "Devine l'œuvre", echo: "Devine", consigne: "Les indices s'ouvrent au fil du temps et à chaque essai raté : genre, sous-genres, connexions, année, pochette." },
+  { id: "chrono", nom: "Chronologie", echo: "Chrono", consigne: "Remets ces œuvres dans l'ordre de sortie, de la plus ancienne à la plus récente." },
+  { id: "chemin", nom: "Le chemin", echo: "Chemin", consigne: "Va de la première œuvre à la seconde en passant par les connexions de la Toile, en le moins d'étapes possible." },
+  { id: "grille", nom: "La grille", echo: "Grille", consigne: "Une œuvre par case, qui coche la ligne et la colonne. Chaque œuvre ne sert qu'une fois." },
+  { id: "credits", nom: "Les crédits", echo: "Crédits", consigne: "Retrouve l'œuvre à partir de ses producteurs, de ses invités et de son label." },
 ];
 export const infoEpreuve = (e: Epreuve) => EPREUVES.find((x) => x.id === e)!;
+
+/* ---------- Difficulté et temps ---------- */
+
+export type Niveau = "facile" | "normal" | "difficile";
+export const NIVEAUX: { id: Niveau; nom: string; resume: string }[] = [
+  { id: "facile", nom: "Facile", resume: "Des indices qui arrivent vite, des lettres offertes, des chemins courts, des cases larges." },
+  { id: "normal", nom: "Normal", resume: "Les indices arrivent aussi avec le temps, quelques lettres offertes en cours de manche." },
+  { id: "difficile", nom: "Difficile", resume: "Un indice seulement à chaque erreur, rien d'offert, plus d'œuvres à classer." },
+];
+
+/** Ce que change la difficulté, épreuve par épreuve. */
+export const REGLES = {
+  facile: {
+    mot: { essais: 8, lettresMax: 0.5, lettresDes: 0.15, nettete: [6, 44], netteteJusqua: 0.7, artiste: 0 },
+    indices: { auDepart: 2, parTemps: true, essaisEnPlus: 2 },
+    chrono: { nombre: 4, ecart: 5 },
+    chemin: { distances: [[2], [3]], marge: 10, aideDes: 0 },
+    grille: { reponsesMin: 5, essais: 15, comptes: true },
+  },
+  normal: {
+    mot: { essais: 6, lettresMax: 0.3, lettresDes: 0.35, nettete: [5, 28], netteteJusqua: 1, artiste: 0.5 },
+    indices: { auDepart: 1, parTemps: true, essaisEnPlus: 1 },
+    chrono: { nombre: 5, ecart: 2 },
+    chemin: { distances: [[3], [2]], marge: 8, aideDes: 0.5 },
+    grille: { reponsesMin: 3, essais: 12, comptes: false },
+  },
+  difficile: {
+    mot: { essais: 6, lettresMax: 0, lettresDes: 1, nettete: [0, 0], netteteJusqua: 1, artiste: -1 },
+    indices: { auDepart: 1, parTemps: false, essaisEnPlus: 0 },
+    chrono: { nombre: 6, ecart: 1 },
+    chemin: { distances: [[3, 4], [2]], marge: 5, aideDes: -1 },
+    grille: { reponsesMin: 2, essais: 10, comptes: false },
+  },
+} as const;
+
+/** Temps proposés pour une manche (secondes). La grille a moitié plus de temps : il y a neuf cases. */
+export const TEMPS_MANCHE = [45, 60, 90];
+export const dureeManche = (e: Epreuve, base: number) => (e === "grille" ? Math.round(base * 1.5) : base);
 
 /** Un critère de « La grille ». */
 export type Critere = { k: "terme" | "scene" | "decennie"; v: string };
@@ -34,7 +72,7 @@ export type Manche =
 export type Resultat = { score: number; resume: string };
 export const SCORE_MAX = 1000;
 
-/* ---------- Hasard : reproductible pour le défi du jour ---------- */
+/* ---------- Hasard (reproductible si besoin) ---------- */
 
 export type Hasard = () => number;
 /** Un tirage qui donne toujours la même suite pour la même graine. */
@@ -156,6 +194,7 @@ export function distancesDepuis(g: Graphe, depart: number) {
 /* ---------- Le tirage des manches ---------- */
 
 export type Contexte = {
+  niveau: Niveau;
   d: DonneesParcours;
   g: Graphe;
   /** Les œuvres qui passent les filtres choisis. */
@@ -175,15 +214,15 @@ function cibleParmi(ctx: Contexte, ok: (o: OeuvreParcours) => boolean) {
 }
 
 function tirerChrono(ctx: Contexte): Manche | null {
-  // 5 œuvres d'années toutes différentes, pas trop collées pour rester faisable
+  // des œuvres d'années toutes différentes, plus ou moins espacées selon la difficulté
+  const { nombre, ecart } = REGLES[ctx.niveau].chrono;
   const parAnnee = new Map<number, OeuvreParcours[]>();
   for (const o of ctx.vivier) if (o.annee && !ctx.deja.has(o.cle)) parAnnee.set(o.annee, [...(parAnnee.get(o.annee) ?? []), o]);
   const annees = [...parAnnee.keys()];
-  if (annees.length < 5) return null;
-  for (let essai = 0; essai < 60; essai++) {
-    const choix = melangerAvec(annees, ctx.r).slice(0, 5).sort((a, b) => a - b);
-    // au moins un an d'écart partout
-    if (choix.some((a, i) => i > 0 && a - choix[i - 1]! < 1)) continue;
+  if (annees.length < nombre) return null;
+  for (let essai = 0; essai < 120; essai++) {
+    const choix = melangerAvec(annees, ctx.r).slice(0, nombre).sort((a, b) => a - b);
+    if (choix.some((a, i) => i > 0 && a - choix[i - 1]! < ecart)) continue;
     const oeuvres = choix.map((a) => unParmi(parAnnee.get(a)!, ctx.r));
     oeuvres.forEach((o) => ctx.deja.add(o.cle));
     let ordre = melangerAvec(oeuvres.map((o) => o.cle), ctx.r);
@@ -201,8 +240,8 @@ function tirerChemin(ctx: Contexte): Manche | null {
     const i = ctx.g.index.get(o.cle);
     if (i === undefined || ctx.g.voisins[i]!.length < 2) continue;
     const dist = distancesDepuis(ctx.g, i);
-    // une arrivée à 3 ou 4 étapes (sinon 2), elle aussi dans les filtres
-    for (const voulu of [[3, 4], [2]]) {
+    // une arrivée plus ou moins loin selon la difficulté, elle aussi dans les filtres
+    for (const voulu of REGLES[ctx.niveau].chemin.distances as readonly (readonly number[])[]) {
       const loin = [...dist].filter(([n, k]) => voulu.includes(k) && dansVivier.has(ctx.d.oeuvres[n]!.cle) && !ctx.deja.has(ctx.d.oeuvres[n]!.cle));
       if (loin.length) {
         const [n, k] = unParmi(loin, ctx.r);
@@ -251,13 +290,15 @@ function tirerGrille(ctx: Contexte): Manche | null {
     return { n, inclus: n >= Math.min(A.size, B.size) * 0.85 };
   };
   const distincts = (l: Critere[]) => l.every((a, i) => l.every((b, j) => j <= i || !communs(a, b).inclus));
+  // chaque case doit avoir assez de réponses possibles (plus en facile)
+  const min = REGLES[ctx.niveau].grille.reponsesMin;
   const va = (l: Critere, c: Critere) => {
     const x = communs(l, c);
-    return x.n >= 2 && !x.inclus;
+    return x.n >= min && !x.inclus;
   };
   // les lignes parmi les critères les plus présents, puis les colonnes qui marchent avec les trois
   const frequents = genres.sort((a, b) => ensemble.get(cle(b))!.size - ensemble.get(cle(a))!.size).slice(0, 40);
-  for (let essai = 0; essai < 300; essai++) {
+  for (let essai = 0; essai < 400; essai++) {
     const lignes = melangerAvec(frequents, ctx.r).slice(0, 3);
     if (lignes.length < 3) return null;
     if (!distincts(lignes)) continue;
@@ -278,7 +319,9 @@ function tirerGrille(ctx: Contexte): Manche | null {
 export function tirerManche(e: Epreuve, ctx: Contexte): Manche | null {
   switch (e) {
     case "mot": {
-      const c = cibleParmi(ctx, jouableMot);
+      // en facile, des titres plus courts
+      const max = ctx.niveau === "facile" ? 14 : ctx.niveau === "normal" ? 16 : 18;
+      const c = cibleParmi(ctx, (o) => jouableMot(o) && lettresDe(o.titre).length <= max);
       return c ? { e, cible: c } : null;
     }
     case "devine": {
@@ -299,10 +342,10 @@ export function tirerManche(e: Epreuve, ctx: Contexte): Manche | null {
 }
 
 /** Les épreuves possibles avec ce vivier (essai à blanc, sans rien retenir). */
-export function epreuvesPossibles(d: DonneesParcours, g: Graphe, vivier: OeuvreParcours[]) {
+export function epreuvesPossibles(d: DonneesParcours, g: Graphe, vivier: OeuvreParcours[], niveau: Niveau) {
   const ok = new Set<Epreuve>();
   for (const { id } of EPREUVES) {
-    const ctx: Contexte = { d, g, vivier, r: hasardGraine(`essai-${id}-${vivier.length}`), deja: new Set() };
+    const ctx: Contexte = { niveau, d, g, vivier, r: hasardGraine(`essai-${id}-${vivier.length}-${niveau}`), deja: new Set() };
     if (tirerManche(id, ctx)) ok.add(id);
   }
   return ok;
@@ -312,8 +355,8 @@ export function epreuvesPossibles(d: DonneesParcours, g: Graphe, vivier: OeuvreP
  * Tire toute une partie : les épreuves choisies, mélangées et répétées jusqu'au
  * nombre de manches voulu (pour que la même ne revienne pas deux fois de suite).
  */
-export function tirerPartie(d: DonneesParcours, g: Graphe, vivier: OeuvreParcours[], epreuves: Epreuve[], nombre: number, r: Hasard, ordreFixe = false) {
-  const ctx: Contexte = { d, g, vivier, r, deja: new Set() };
+export function tirerPartie(d: DonneesParcours, g: Graphe, vivier: OeuvreParcours[], epreuves: Epreuve[], nombre: number, r: Hasard, niveau: Niveau = "normal", ordreFixe = false) {
+  const ctx: Contexte = { niveau, d, g, vivier, r, deja: new Set() };
   const manches: Manche[] = [];
   let serie: Epreuve[] = [];
   let ratees = 0;

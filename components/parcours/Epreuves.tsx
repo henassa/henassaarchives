@@ -7,8 +7,11 @@ import { TYPES_OEUVRE } from "@/lib/sections";
 import { Mosaique } from "@/components/jeux/commun";
 import {
   SCORE_MAX,
+  REGLES,
   creditsDe,
+  distancesDepuis,
   estLettre,
+  hasardGraine,
   nomCritere,
   normaliserTitre,
   reponsesCase,
@@ -16,6 +19,7 @@ import {
   sansAccents,
   type Graphe,
   type Manche,
+  type Niveau,
   type Resultat,
 } from "./moteur";
 
@@ -24,6 +28,8 @@ import {
  * montre la réponse à la fin et renvoie un score sur 1000 avec « finir ».
  * « tempsEcoule » (multijoueur) : on arrête tout et on montre la réponse ;
  * « partiel » garde à jour ce que vaut la manche si le temps s'arrête là.
+ * « progres » (de 0 à 1) : la part du temps de la manche déjà passée. Selon le niveau,
+ * les indices, les lettres et la pochette se dévoilent avec lui.
  */
 
 export type PropsEpreuve<M extends Manche = Manche> = {
@@ -36,7 +42,12 @@ export type PropsEpreuve<M extends Manche = Manche> = {
   finir: (r: Resultat) => void;
   partiel?: React.MutableRefObject<Resultat>;
   tempsEcoule?: boolean;
+  niveau: Niveau;
+  progres: number;
 };
+
+/** De 0 à 1 : où en est « p » entre « de » et « a ». */
+const entre = (p: number, de: number, a: number) => Math.max(0, Math.min(1, a <= de ? (p >= de ? 1 : 0) : (p - de) / (a - de)));
 
 /* ---------- Petits morceaux communs ---------- */
 
@@ -137,7 +148,6 @@ function useFinUnique(finir: (r: Resultat) => void) {
 
 /* ---------- Le mot ---------- */
 
-const ESSAIS_MOT = 6;
 const NETTETE_MOT = [5, 8, 12, 18, 28, 44];
 const CLAVIER = ["AZERTYUIOP", "QSDFGHJKLM", "WXCVBN"];
 const CHIFFRES = "1234567890";
@@ -162,8 +172,10 @@ function evaluer(essai: string[], reponse: string[]): EtatLettre[] {
   return res;
 }
 
-export function EpreuveMot({ m, parCle, finir, partiel, tempsEcoule }: PropsEpreuve<Extract<Manche, { e: "mot" }>>) {
+export function EpreuveMot({ m, parCle, finir, partiel, tempsEcoule, niveau, progres }: PropsEpreuve<Extract<Manche, { e: "mot" }>>) {
   const cible = parCle.get(m.cible)!;
+  const R = REGLES[niveau].mot;
+  const ESSAIS_MOT = R.essais;
   const fin = useFinUnique(finir);
   const [essais, setEssais] = useState<string[]>([]);
   const [saisie, setSaisie] = useState("");
@@ -179,11 +191,32 @@ export function EpreuveMot({ m, parCle, finir, partiel, tempsEcoule }: PropsEpre
     if (partiel) partiel.current = { score: 0, resume: "Pas trouvé à temps" };
   });
 
+  // les lettres offertes au fil du temps : toujours les mêmes pour un titre donné, dans le désordre
+  const ordreOffert = useMemo(() => {
+    const r = hasardGraine(`mot-${cible.cle}`);
+    const l = reponse.map((_, i) => i);
+    for (let i = l.length - 1; i > 0; i--) {
+      const j = Math.floor(r() * (i + 1));
+      [l[i], l[j]] = [l[j]!, l[i]!];
+    }
+    return l;
+  }, [cible, reponse]);
+  const maxOffertes = Math.floor(reponse.length * R.lettresMax);
+  const nbOffertes = arrete ? 0 : Math.ceil(maxOffertes * entre(progres, R.lettresDes, 0.95));
+  const offertes = useMemo(() => new Set(ordreOffert.slice(0, nbOffertes)), [ordreOffert, nbOffertes]);
+  const offertesAuGain = useRef(0);
+  if (!arrete) offertesAuGain.current = nbOffertes;
+  const artiste = R.artiste >= 0 && progres >= R.artiste;
+
   useEffect(() => {
     if (!fini) return;
     const n = essais.length;
-    fin(gagne ? { score: Math.round((SCORE_MAX * (ESSAIS_MOT + 1 - n)) / ESSAIS_MOT), resume: `Trouvé en ${n} essai${n > 1 ? "s" : ""}` } : { score: 0, resume: "Pas trouvé" });
-  }, [fini, gagne, essais.length, fin]);
+    const k = offertesAuGain.current;
+    // chaque lettre offerte enlève un peu de points (la moitié au plus si tout était offert)
+    const base = (SCORE_MAX * (ESSAIS_MOT + 1 - n)) / ESSAIS_MOT;
+    const score = Math.round(base * (1 - (0.5 * k) / Math.max(1, reponse.length)));
+    fin(gagne ? { score, resume: `Trouvé en ${n} essai${n > 1 ? "s" : ""}${k ? `, ${k} lettre${k > 1 ? "s" : ""} offerte${k > 1 ? "s" : ""}` : ""}` } : { score: 0, resume: "Pas trouvé" });
+  }, [fini, gagne, essais.length, fin, ESSAIS_MOT, reponse.length]);
 
   const touches = useMemo(() => {
     const t = new Map<string, EtatLettre>();
@@ -232,6 +265,7 @@ export function EpreuveMot({ m, parCle, finir, partiel, tempsEcoule }: PropsEpre
   }, [taper, arrete]);
 
   const ligne = (lettres: string[], etats: EtatLettre[] | null, active: boolean, cle: string) => {
+    const aides = active ? offertes : null;
     let k = 0;
     const mots: React.ReactNode[][] = [[]];
     modele.forEach((c, i) => {
@@ -239,9 +273,10 @@ export function EpreuveMot({ m, parCle, finir, partiel, tempsEcoule }: PropsEpre
       if (!estLettre(c)) return void mots[mots.length - 1]!.push(<span key={i} className="mot-fixe">{c}</span>);
       const idx = k++;
       const l = lettres[idx] ?? "";
+      const offerte = !l && !!aides?.has(idx);
       mots[mots.length - 1]!.push(
-        <span key={i} className={`mot-case${etats ? ` is-${etats[idx]}` : ""}${l && !etats ? " is-remplie" : ""}${active && idx === lettres.length ? " is-curseur" : ""}`}>
-          {l}
+        <span key={i} className={`mot-case${etats ? ` is-${etats[idx]}` : ""}${l && !etats ? " is-remplie" : ""}${offerte ? " is-offerte" : ""}${active && idx === lettres.length ? " is-curseur" : ""}`}>
+          {l || (offerte ? reponse[idx] : "")}
         </span>
       );
     });
@@ -256,7 +291,10 @@ export function EpreuveMot({ m, parCle, finir, partiel, tempsEcoule }: PropsEpre
     );
   };
 
-  const nettete = arrete ? 0 : NETTETE_MOT[Math.min(essais.length, NETTETE_MOT.length - 1)]!;
+  // la pochette s'éclaircit à chaque essai et, sauf en difficile, avec le temps
+  const parEssais = NETTETE_MOT[Math.min(Math.floor((essais.length * NETTETE_MOT.length) / ESSAIS_MOT), NETTETE_MOT.length - 1)]!;
+  const parTemps = R.nettete[0] ? Math.round(R.nettete[0] + (R.nettete[1] - R.nettete[0]) * entre(progres, 0, R.netteteJusqua)) : 0;
+  const nettete = arrete ? 0 : Math.max(parEssais, parTemps);
   return (
     <div className="mot-jeu">
       <div className="mot-gauche">
@@ -264,6 +302,12 @@ export function EpreuveMot({ m, parCle, finir, partiel, tempsEcoule }: PropsEpre
         <p className="mj-indice">
           {TYPES_OEUVRE[cible.type].label} · {reponse.length} lettres{modele.includes(" ") ? ` · ${modele.join("").split(" ").length} mots` : ""}
         </p>
+        {!arrete && artiste && <p className="mj-indice pc-mot__artiste">De {cible.auteur}</p>}
+        {!arrete && nbOffertes > 0 && (
+          <p className="mj-note pc-mot__offert" role="status">
+            {nbOffertes} lettre{nbOffertes > 1 ? "s" : ""} offerte{nbOffertes > 1 ? "s" : ""}, en gris
+          </p>
+        )}
       </div>
       <div className="mot-droite">
         <div className="mot-grille" aria-label="Essais">
@@ -319,14 +363,25 @@ export function EpreuveMot({ m, parCle, finir, partiel, tempsEcoule }: PropsEpre
 
 type Indice = { nom: string; contenu: (rang: number, visibles: number, arrete: boolean) => React.ReactNode };
 
-function JeuIndices({ cible, indices, univers, finir, partiel, tempsEcoule, parCle, id }: { cible: OeuvreParcours; indices: Indice[]; univers: OeuvreParcours[]; finir: (r: Resultat) => void; partiel?: React.MutableRefObject<Resultat>; tempsEcoule?: boolean; parCle: Map<string, OeuvreParcours>; id: string }) {
+type PropsJeuIndices = { cible: OeuvreParcours; indices: Indice[]; univers: OeuvreParcours[]; finir: (r: Resultat) => void; partiel?: React.MutableRefObject<Resultat>; tempsEcoule?: boolean; parCle: Map<string, OeuvreParcours>; id: string; niveau: Niveau; progres: number };
+
+function JeuIndices({ cible, indices, univers, finir, partiel, tempsEcoule, parCle, id, niveau, progres }: PropsJeuIndices) {
+  const R = REGLES[niveau].indices;
   const fin = useFinUnique(finir);
   /** Une clé par essai ; "" = « je passe ». */
   const [essais, setEssais] = useState<string[]>([]);
+  /** Combien d'indices étaient ouverts quand la bonne réponse est tombée. */
+  const [vusAuBon, setVusAuBon] = useState(0);
+  const n = indices.length;
+  const auDepart = Math.min(n, R.auDepart);
+  const essaisMax = n + R.essaisEnPlus;
   const gagne = essais.includes(cible.cle);
-  const fini = gagne || essais.length >= indices.length;
+  const fini = gagne || essais.length >= essaisMax;
   const arrete = fini || !!tempsEcoule;
-  const visibles = arrete ? indices.length : Math.min(indices.length, essais.length + 1);
+  // un indice de plus à chaque essai raté, et (sauf en difficile) un de plus régulièrement avec le temps
+  const parTemps = R.parTemps ? Math.floor(progres * (n - auDepart + 1)) : 0;
+  const ouverts = Math.min(n, auDepart + essais.length + parTemps);
+  const visibles = arrete ? n : ouverts;
   const deja = useMemo(() => new Set(essais), [essais]);
   useEffect(() => {
     if (partiel) partiel.current = { score: 0, resume: "Pas trouvé à temps" };
@@ -334,12 +389,16 @@ function JeuIndices({ cible, indices, univers, finir, partiel, tempsEcoule, parC
 
   useEffect(() => {
     if (!fini) return;
-    const k = essais.length, n = indices.length;
-    fin(gagne ? { score: Math.round((SCORE_MAX * (n - k + 1)) / n), resume: `Trouvé avec ${k} indice${k > 1 ? "s" : ""} sur ${n}` } : { score: 0, resume: "Pas trouvé" });
-  }, [fini, gagne, essais.length, indices.length, fin]);
+    const v = vusAuBon, k = essais.length;
+    // tout le barème quand on trouve avec le minimum d'indices du niveau
+    const score = Math.round((SCORE_MAX * (n - v + 1)) / (n - auDepart + 1));
+    fin(gagne ? { score: Math.min(SCORE_MAX, score), resume: `Trouvé avec ${v} indice${v > 1 ? "s" : ""} sur ${n}${k > 1 ? `, ${k} essais` : ""}` } : { score: 0, resume: "Pas trouvé" });
+  }, [fini, gagne, essais.length, n, auDepart, vusAuBon, fin]);
 
   const proposer = (cle: string) => {
-    if (!arrete) setEssais((e) => [...e, cle]);
+    if (arrete) return;
+    if (cle === cible.cle) setVusAuBon(ouverts);
+    setEssais((e) => [...e, cle]);
   };
 
   return (
@@ -349,7 +408,7 @@ function JeuIndices({ cible, indices, univers, finir, partiel, tempsEcoule, parC
           <li key={ind.nom} className={`dv-indice${k < visibles ? " is-ouvert" : ""}`}>
             <span className="dv-indice__num">{k + 1}</span>
             <span className="dv-indice__nom">{ind.nom}</span>
-            <div className="dv-indice__contenu">{k < visibles ? ind.contenu(k, visibles, arrete) : <span className="dv-cache">Encore {k - visibles + 1} essai{k - visibles + 1 > 1 ? "s" : ""}</span>}</div>
+            <div className="dv-indice__contenu">{k < visibles ? ind.contenu(k, visibles, arrete) : <span className="dv-cache">{R.parTemps ? "S'ouvre avec le temps ou un essai" : `Encore ${k - visibles + 1} essai${k - visibles + 1 > 1 ? "s" : ""}`}</span>}</div>
           </li>
         ))}
       </ol>
@@ -359,11 +418,11 @@ function JeuIndices({ cible, indices, univers, finir, partiel, tempsEcoule, parC
         ) : (
           <div className="dv-saisie">
             <p className="mj-indice">
-              {TYPES_OEUVRE[cible.type].label} à trouver · essai {essais.length + 1} / {indices.length}
+              {TYPES_OEUVRE[cible.type].label} à trouver · essai {essais.length + 1} / {essaisMax}
             </p>
             <ChoixOeuvre oeuvres={univers} exclure={deja} choisir={proposer} id={id} />
             <button type="button" className="ctrl-btn ctrl-btn--text dv-passer" onClick={() => proposer("")}>
-              {essais.length + 1 >= indices.length ? "Je donne ma langue au chat" : "Passer : indice suivant"}
+              {essais.length + 1 >= essaisMax ? "Je donne ma langue au chat" : visibles >= n ? "Passer" : "Passer : indice suivant"}
             </button>
           </div>
         )}
@@ -400,7 +459,7 @@ const puces = (l: string[]) => (
   </span>
 );
 
-export function EpreuveDevine({ m, parCle, univers, finir, partiel, tempsEcoule }: PropsEpreuve<Extract<Manche, { e: "devine" }>>) {
+export function EpreuveDevine({ m, parCle, univers, finir, partiel, tempsEcoule, niveau, progres }: PropsEpreuve<Extract<Manche, { e: "devine" }>>) {
   const cible = parCle.get(m.cible)!;
   const indices = useMemo(() => {
     const l: Indice[] = [{ nom: "Genre", contenu: () => <span className="dv-gros">{cible.genre}</span> }];
@@ -427,10 +486,10 @@ export function EpreuveDevine({ m, parCle, univers, finir, partiel, tempsEcoule 
     if (cible.cover) l.push(indicePochette(cible));
     return l;
   }, [cible, parCle]);
-  return <JeuIndices cible={cible} indices={indices} univers={univers} finir={finir} partiel={partiel} tempsEcoule={tempsEcoule} parCle={parCle} id="pc-devine" />;
+  return <JeuIndices cible={cible} indices={indices} univers={univers} finir={finir} partiel={partiel} tempsEcoule={tempsEcoule} parCle={parCle} id="pc-devine" niveau={niveau} progres={progres} />;
 }
 
-export function EpreuveCredits({ m, parCle, univers, finir, partiel, tempsEcoule }: PropsEpreuve<Extract<Manche, { e: "credits" }>>) {
+export function EpreuveCredits({ m, parCle, univers, finir, partiel, tempsEcoule, niveau, progres }: PropsEpreuve<Extract<Manche, { e: "credits" }>>) {
   const cible = parCle.get(m.cible)!;
   const indices = useMemo(() => {
     const c = creditsDe(cible);
@@ -444,7 +503,7 @@ export function EpreuveCredits({ m, parCle, univers, finir, partiel, tempsEcoule
     if (cible.cover) l.push(indicePochette(cible));
     return l;
   }, [cible]);
-  return <JeuIndices cible={cible} indices={indices} univers={univers} finir={finir} partiel={partiel} tempsEcoule={tempsEcoule} parCle={parCle} id="pc-credits" />;
+  return <JeuIndices cible={cible} indices={indices} univers={univers} finir={finir} partiel={partiel} tempsEcoule={tempsEcoule} parCle={parCle} id="pc-credits" niveau={niveau} progres={progres} />;
 }
 
 /* ---------- Chronologie ---------- */
@@ -530,10 +589,10 @@ export function EpreuveChrono({ m, parCle, finir, partiel, tempsEcoule }: PropsE
 
 /* ---------- Le chemin ---------- */
 
-/** Au-delà de ce nombre d'étapes en plus du plus court chemin, c'est perdu. */
-const MARGE_CHEMIN = 8;
-
-export function EpreuveChemin({ m, d, g, parCle, finir, partiel, tempsEcoule }: PropsEpreuve<Extract<Manche, { e: "chemin" }>>) {
+export function EpreuveChemin({ m, d, g, parCle, finir, partiel, tempsEcoule, niveau, progres }: PropsEpreuve<Extract<Manche, { e: "chemin" }>>) {
+  const R = REGLES[niveau].chemin;
+  /** Au-delà de ce nombre d'étapes en plus du plus court chemin, c'est perdu. */
+  const MARGE_CHEMIN = R.marge;
   const fin = useFinUnique(finir);
   const depart = g.index.get(m.depart)!, arrivee = g.index.get(m.arrivee)!;
   const [chemin, setChemin] = useState<number[]>([depart]);
@@ -562,6 +621,10 @@ export function EpreuveChemin({ m, d, g, parCle, finir, partiel, tempsEcoule }: 
     setChemin(deja >= 0 ? chemin.slice(0, deja + 1) : [...chemin, i]);
   };
   const cible = o(arrivee);
+  // l'aide : on signale les œuvres qui rapprochent de l'arrivée (tout de suite en facile, à mi-temps en normal)
+  const versArrivee = useMemo(() => distancesDepuis(g, arrivee), [g, arrivee]);
+  const aide = R.aideDes >= 0 && progres >= R.aideDes;
+  const rapproche = (v: number) => aide && v !== arrivee && (versArrivee.get(v) ?? 99) < (versArrivee.get(ici) ?? 99);
 
   return (
     <div className="pc-chemin">
@@ -599,11 +662,13 @@ export function EpreuveChemin({ m, d, g, parCle, finir, partiel, tempsEcoule }: 
           <p className="dl-h pc-chemin__ici">
             Tu es sur <em>{o(ici).titre}</em>. Elle est reliée à :
           </p>
+          {aide && <p className="mj-note">Les œuvres marquées « plus près » te rapprochent de l&apos;arrivée.</p>}
           <ul className="pc-chemin__voisins">
             {voisins.map((v) => (
               <li key={v}>
-                <button type="button" className={v === arrivee ? "est-arrivee" : chemin.includes(v) ? "est-vu" : ""} onClick={() => aller(v)}>
+                <button type="button" className={`${v === arrivee ? "est-arrivee" : chemin.includes(v) ? "est-vu" : ""}${rapproche(v) ? " est-proche" : ""}`} onClick={() => aller(v)}>
                   <Vignette o={o(v)} />
+                  {rapproche(v) && <span className="pc-chemin__proche">plus près</span>}
                 </button>
               </li>
             ))}
@@ -621,14 +686,14 @@ export function EpreuveChemin({ m, d, g, parCle, finir, partiel, tempsEcoule }: 
 
 /* ---------- La grille ---------- */
 
-/** Essais en tout : une par case, plus quelques erreurs permises. */
-const ESSAIS_GRILLE = 12;
-
-export function EpreuveGrille({ m, univers, parCle, finir, partiel, tempsEcoule }: PropsEpreuve<Extract<Manche, { e: "grille" }>>) {
+export function EpreuveGrille({ m, univers, parCle, finir, partiel, tempsEcoule, niveau }: PropsEpreuve<Extract<Manche, { e: "grille" }>>) {
+  const R = REGLES[niveau].grille;
+  /** Essais en tout : une par case, plus quelques erreurs permises. */
+  const ESSAIS_GRILLE = R.essais;
   const fin = useFinUnique(finir);
   const [cases, setCases] = useState<(string | null)[]>(() => Array(9).fill(null));
   const [choisie, setChoisie] = useState<number | null>(null);
-  const [restants, setRestants] = useState(ESSAIS_GRILLE);
+  const [restants, setRestants] = useState<number>(ESSAIS_GRILLE);
   const [rate, setRate] = useState<number | null>(null);
   const [termine, setTermine] = useState(false);
   const remplies = cases.filter(Boolean).length;
@@ -700,7 +765,7 @@ export function EpreuveGrille({ m, univers, parCle, finir, partiel, tempsEcoule 
                   ) : (
                     <span className="pc-case__plus">{arrete ? "" : "+"}</span>
                   )}
-                  {arrete && <span className="pc-case__n">{reponses[k]!.length}</span>}
+                  {(arrete || (R.comptes && !o)) && <span className="pc-case__n" title="Œuvres du site qui vont dans la case">{reponses[k]!.length}</span>}
                 </button>
               );
             })}
@@ -717,7 +782,7 @@ export function EpreuveGrille({ m, univers, parCle, finir, partiel, tempsEcoule 
             <p className="mj-note">En gris : une réponse possible pour chaque case vide. Le petit chiffre : combien d&apos;œuvres du site allaient dans la case.</p>
           </>
         ) : choisie === null ? (
-          <p className="mj-note">Choisis une case.</p>
+          <p className="mj-note">Choisis une case.{R.comptes ? " Le petit chiffre : combien d'œuvres du site vont dedans." : ""}</p>
         ) : (
           <>
             <p className="pc-grille__case">
