@@ -1,0 +1,345 @@
+import type { DonneesParcours, OeuvreParcours } from "@/lib/jeux";
+
+/*
+ * Le Parcours : une suite d'épreuves sur les œuvres de Henassa.
+ * Ici : les épreuves, leur tirage et leur barème. Rien d'affichage.
+ *
+ * Une manche est décrite par quelques clés d'œuvres seulement : en multijoueur,
+ * l'hôte tire les manches et les envoie telles quelles à tout le monde.
+ */
+
+export type Epreuve = "mot" | "devine" | "chrono" | "chemin" | "grille" | "credits";
+
+export const EPREUVES: { id: Epreuve; nom: string; echo: string; consigne: string; duree: number }[] = [
+  { id: "mot", nom: "Le mot", echo: "Mot", consigne: "Trouve le titre lettre par lettre. La pochette se dévoile à chaque essai.", duree: 100 },
+  { id: "devine", nom: "Devine l'œuvre", echo: "Devine", consigne: "Un indice de plus à chaque essai raté : genre, sous-genres, connexions, année, pochette.", duree: 80 },
+  { id: "chrono", nom: "Chronologie", echo: "Chrono", consigne: "Remets ces œuvres dans l'ordre de sortie, de la plus ancienne à la plus récente.", duree: 50 },
+  { id: "chemin", nom: "Le chemin", echo: "Chemin", consigne: "Va de la première œuvre à la seconde en passant par les connexions de la Toile, en le moins d'étapes possible.", duree: 100 },
+  { id: "grille", nom: "La grille", echo: "Grille", consigne: "Une œuvre par case, qui coche la ligne et la colonne. Chaque œuvre ne sert qu'une fois.", duree: 140 },
+  { id: "credits", nom: "Les crédits", echo: "Crédits", consigne: "Retrouve l'œuvre à partir de ses producteurs, de ses invités et de son label.", duree: 80 },
+];
+export const infoEpreuve = (e: Epreuve) => EPREUVES.find((x) => x.id === e)!;
+
+/** Un critère de « La grille ». */
+export type Critere = { k: "terme" | "scene" | "decennie"; v: string };
+export type Manche =
+  | { e: "mot"; cible: string }
+  | { e: "devine"; cible: string }
+  | { e: "credits"; cible: string }
+  | { e: "chrono"; ordre: string[] }
+  | { e: "chemin"; depart: string; arrivee: string; min: number }
+  | { e: "grille"; lignes: Critere[]; colonnes: Critere[] };
+
+/** Ce qu'une épreuve renvoie à la fin : un score sur 1000 et de quoi le raconter. */
+export type Resultat = { score: number; resume: string };
+export const SCORE_MAX = 1000;
+
+/* ---------- Hasard : reproductible pour le défi du jour ---------- */
+
+export type Hasard = () => number;
+/** Un tirage qui donne toujours la même suite pour la même graine. */
+export function hasardGraine(graine: string): Hasard {
+  let h = 1779033703 ^ graine.length;
+  for (let i = 0; i < graine.length; i++) {
+    h = Math.imul(h ^ graine.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  let a = h >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+export const unParmi = <T>(l: T[], r: Hasard) => l[Math.floor(r() * l.length)]!;
+export function melangerAvec<T>(l: T[], r: Hasard) {
+  const a = [...l];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(r() * (i + 1));
+    [a[i], a[j]] = [a[j]!, a[i]!];
+  }
+  return a;
+}
+
+/* ---------- Outils sur les œuvres ---------- */
+
+/** « Awaken, My Love! » → AWAKEN, MY LOVE! (sans accents) */
+export function normaliserTitre(titre: string) {
+  return titre
+    .replace(/œ/gi, "oe")
+    .replace(/æ/gi, "ae")
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toUpperCase()
+    .replace(/[’`]/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+export const estLettre = (c: string) => /[A-Z0-9]/.test(c);
+export const lettresDe = (t: string) => [...normaliserTitre(t)].filter(estLettre);
+
+export function sansAccents(s: string) {
+  return s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+}
+
+/** Genre, sous-genres et leurs familles : « Drill » couvre aussi « Chicago Drill ». */
+export const termesDe = (o: OeuvreParcours) => [...new Set([...(o.genre ? [o.genre] : []), ...o.sousGenres, ...(o.parents ?? [])])];
+export const decennie = (annee: number) => `${Math.floor(annee / 10) * 10}`;
+export function nomCritere(c: Critere) {
+  if (c.k === "decennie") return `Années ${+c.v >= 2000 ? c.v : c.v.slice(2)}`;
+  return c.v;
+}
+export function respecte(o: OeuvreParcours, c: Critere) {
+  if (c.k === "decennie") return !!o.annee && decennie(o.annee) === c.v;
+  if (c.k === "scene") return (o.scenes ?? []).includes(c.v);
+  return termesDe(o).includes(c.v);
+}
+
+/** Les noms d'artistes d'une œuvre : « Curren$y & The Alchemist » → curren$y, the alchemist. */
+function artistesDe(auteur: string) {
+  return auteur
+    .split(/\s+(?:x|&|and|et|feat\.?|ft\.?|with)\s+|,\s*|\s*\/\s*/i)
+    .map((s) => sansAccents(s.trim()))
+    .filter(Boolean);
+}
+/** Les crédits utiles pour l'épreuve, sans l'artiste lui-même (sinon la réponse est donnée). */
+export function creditsDe(o: OeuvreParcours) {
+  const moi = artistesDe(o.auteur);
+  // « M. Ali producer1 » : RYM colle parfois le rôle et un numéro au nom
+  // le même nom, ou l'un dans l'autre pour les noms assez longs (« Kanye West » / « Ye » ne se recoupent pas)
+  const pareil = (a: string, b: string) => a === b || (Math.min(a.length, b.length) >= 5 && (a.includes(b) || b.includes(a)));
+  const propre = (l?: string[]) => [...new Set((l ?? []).map((s) => s.replace(/\s+(producer|featured|feat|vocals?|guest)\s*\d+$/i, "").trim()).filter((s) => s && !moi.some((a) => pareil(sansAccents(s), a))))];
+  return { producteurs: propre(o.producteurs), featurings: propre(o.featurings), labels: propre(o.labels).filter((l) => !/^(self-released|n\/a|none|aucun)$/i.test(l)) };
+}
+
+/* ---------- Ce qui rend une œuvre jouable dans chaque épreuve ---------- */
+
+const MIN_LETTRES = 3, MAX_LETTRES = 18;
+export const jouableMot = (o: OeuvreParcours) => {
+  const n = lettresDe(o.titre).length;
+  return n >= MIN_LETTRES && n <= MAX_LETTRES;
+};
+export const jouableDevine = (o: OeuvreParcours) => !!o.genre;
+export const jouableCredits = (o: OeuvreParcours) => {
+  const c = creditsDe(o);
+  // au moins un producteur, et assez de noms pour que ce soit jouable
+  return c.producteurs.length >= 1 && c.producteurs.length + c.featurings.length >= 3;
+};
+
+/* ---------- Le graphe de la Toile, pour « Le chemin » ---------- */
+
+export type Graphe = { voisins: number[][]; index: Map<string, number> };
+export function faireGraphe(d: DonneesParcours): Graphe {
+  const voisins: number[][] = d.oeuvres.map(() => []);
+  for (const [a, b] of d.liens) {
+    voisins[a]!.push(b);
+    voisins[b]!.push(a);
+  }
+  return { voisins, index: new Map(d.oeuvres.map((o, i) => [o.cle, i])) };
+}
+/** Distances depuis une œuvre (parcours en largeur). */
+export function distancesDepuis(g: Graphe, depart: number) {
+  const dist = new Map<number, number>([[depart, 0]]);
+  const file = [depart];
+  for (let i = 0; i < file.length; i++) {
+    const n = file[i]!;
+    for (const v of g.voisins[n]!) if (!dist.has(v)) {
+      dist.set(v, dist.get(n)! + 1);
+      file.push(v);
+    }
+  }
+  return dist;
+}
+
+/* ---------- Le tirage des manches ---------- */
+
+export type Contexte = {
+  d: DonneesParcours;
+  g: Graphe;
+  /** Les œuvres qui passent les filtres choisis. */
+  vivier: OeuvreParcours[];
+  r: Hasard;
+  /** Œuvres déjà tombées dans la partie : on évite de les reprendre. */
+  deja: Set<string>;
+};
+
+function cibleParmi(ctx: Contexte, ok: (o: OeuvreParcours) => boolean) {
+  const l = ctx.vivier.filter((o) => ok(o) && !ctx.deja.has(o.cle));
+  const l2 = l.length ? l : ctx.vivier.filter(ok);
+  if (!l2.length) return null;
+  const o = unParmi(l2, ctx.r);
+  ctx.deja.add(o.cle);
+  return o.cle;
+}
+
+function tirerChrono(ctx: Contexte): Manche | null {
+  // 5 œuvres d'années toutes différentes, pas trop collées pour rester faisable
+  const parAnnee = new Map<number, OeuvreParcours[]>();
+  for (const o of ctx.vivier) if (o.annee && !ctx.deja.has(o.cle)) parAnnee.set(o.annee, [...(parAnnee.get(o.annee) ?? []), o]);
+  const annees = [...parAnnee.keys()];
+  if (annees.length < 5) return null;
+  for (let essai = 0; essai < 60; essai++) {
+    const choix = melangerAvec(annees, ctx.r).slice(0, 5).sort((a, b) => a - b);
+    // au moins un an d'écart partout
+    if (choix.some((a, i) => i > 0 && a - choix[i - 1]! < 1)) continue;
+    const oeuvres = choix.map((a) => unParmi(parAnnee.get(a)!, ctx.r));
+    oeuvres.forEach((o) => ctx.deja.add(o.cle));
+    let ordre = melangerAvec(oeuvres.map((o) => o.cle), ctx.r);
+    // jamais déjà dans le bon ordre
+    if (ordre.every((c, i) => c === oeuvres[i]!.cle)) ordre = [...ordre.slice(1), ordre[0]!];
+    return { e: "chrono", ordre };
+  }
+  return null;
+}
+
+function tirerChemin(ctx: Contexte): Manche | null {
+  const departs = melangerAvec(ctx.vivier.filter((o) => !ctx.deja.has(o.cle)), ctx.r);
+  const dansVivier = new Set(ctx.vivier.map((o) => o.cle));
+  for (const o of departs.slice(0, 60)) {
+    const i = ctx.g.index.get(o.cle);
+    if (i === undefined || ctx.g.voisins[i]!.length < 2) continue;
+    const dist = distancesDepuis(ctx.g, i);
+    // une arrivée à 3 ou 4 étapes (sinon 2), elle aussi dans les filtres
+    for (const voulu of [[3, 4], [2]]) {
+      const loin = [...dist].filter(([n, k]) => voulu.includes(k) && dansVivier.has(ctx.d.oeuvres[n]!.cle) && !ctx.deja.has(ctx.d.oeuvres[n]!.cle));
+      if (loin.length) {
+        const [n, k] = unParmi(loin, ctx.r);
+        const arrivee = ctx.d.oeuvres[n]!.cle;
+        ctx.deja.add(o.cle);
+        ctx.deja.add(arrivee);
+        return { e: "chemin", depart: o.cle, arrivee, min: k };
+      }
+    }
+  }
+  return null;
+}
+
+/** Les œuvres de l'univers qui cochent les deux critères d'une case. */
+export function reponsesCase(oeuvres: OeuvreParcours[], a: Critere, b: Critere) {
+  return oeuvres.filter((o) => respecte(o, a) && respecte(o, b));
+}
+
+function tirerGrille(ctx: Contexte): Manche | null {
+  const v = ctx.vivier;
+  if (v.length < 20) return null;
+  // les critères viennent du vivier (les filtres donnent le thème de la grille),
+  // mais toute œuvre de l'univers peut remplir une case
+  const univers = ctx.d.oeuvres.filter((o) => o.type === v[0]!.type);
+  // les critères assez fréquents dans le vivier
+  const compte = new Map<string, number>();
+  const cle = (c: Critere) => `${c.k}:${c.v}`;
+  for (const o of v) {
+    for (const t of termesDe(o)) compte.set(`terme:${t}`, (compte.get(`terme:${t}`) ?? 0) + 1);
+    for (const s of o.scenes ?? []) compte.set(`scene:${s}`, (compte.get(`scene:${s}`) ?? 0) + 1);
+    if (o.annee) compte.set(`decennie:${decennie(o.annee)}`, (compte.get(`decennie:${decennie(o.annee)}`) ?? 0) + 1);
+  }
+  const total = v.length;
+  const criteres: Critere[] = [...compte]
+    // ni trop rare, ni presque tout le vivier (« Hip Hop » partout ne sert à rien)
+    .filter(([, n]) => n >= 4 && n <= total * 0.75)
+    .map(([k]) => ({ k: k.slice(0, k.indexOf(":")) as Critere["k"], v: k.slice(k.indexOf(":") + 1) }));
+  const genres = criteres.filter((c) => c.k !== "decennie");
+  const decs = criteres.filter((c) => c.k === "decennie");
+  const ensemble = new Map(criteres.map((c) => [cle(c), new Set(univers.filter((o) => respecte(o, c)).map((o) => o.cle))]));
+  // deux critères qui disent presque la même chose (Trap et Hip Hop) : case trop facile, on évite
+  const communs = (a: Critere, b: Critere) => {
+    const A = ensemble.get(cle(a))!, B = ensemble.get(cle(b))!;
+    let n = 0;
+    for (const x of A) if (B.has(x)) n++;
+    return { n, inclus: n >= Math.min(A.size, B.size) * 0.85 };
+  };
+  const distincts = (l: Critere[]) => l.every((a, i) => l.every((b, j) => j <= i || !communs(a, b).inclus));
+  const va = (l: Critere, c: Critere) => {
+    const x = communs(l, c);
+    return x.n >= 2 && !x.inclus;
+  };
+  // les lignes parmi les critères les plus présents, puis les colonnes qui marchent avec les trois
+  const frequents = genres.sort((a, b) => ensemble.get(cle(b))!.size - ensemble.get(cle(a))!.size).slice(0, 40);
+  for (let essai = 0; essai < 300; essai++) {
+    const lignes = melangerAvec(frequents, ctx.r).slice(0, 3);
+    if (lignes.length < 3) return null;
+    if (!distincts(lignes)) continue;
+    const avecDecennies = decs.length >= 3 && ctx.r() < 0.5;
+    const candidates = (avecDecennies ? decs : genres.filter((c) => !lignes.some((l) => cle(l) === cle(c)))).filter((c) => lignes.every((l) => va(l, c)));
+    const colonnes: Critere[] = [];
+    for (const c of melangerAvec(candidates, ctx.r)) {
+      if (colonnes.length < 3 && colonnes.every((x) => !communs(x, c).inclus)) colonnes.push(c);
+    }
+    if (colonnes.length < 3) continue;
+    if (avecDecennies) colonnes.sort((a, b) => +a.v - +b.v);
+    return { e: "grille", lignes, colonnes };
+  }
+  return null;
+}
+
+/** Tire une manche de l'épreuve demandée ; null si les filtres ne le permettent pas. */
+export function tirerManche(e: Epreuve, ctx: Contexte): Manche | null {
+  switch (e) {
+    case "mot": {
+      const c = cibleParmi(ctx, jouableMot);
+      return c ? { e, cible: c } : null;
+    }
+    case "devine": {
+      const c = cibleParmi(ctx, jouableDevine);
+      return c ? { e, cible: c } : null;
+    }
+    case "credits": {
+      const c = cibleParmi(ctx, jouableCredits);
+      return c ? { e, cible: c } : null;
+    }
+    case "chrono":
+      return tirerChrono(ctx);
+    case "chemin":
+      return tirerChemin(ctx);
+    case "grille":
+      return tirerGrille(ctx);
+  }
+}
+
+/** Les épreuves possibles avec ce vivier (essai à blanc, sans rien retenir). */
+export function epreuvesPossibles(d: DonneesParcours, g: Graphe, vivier: OeuvreParcours[]) {
+  const ok = new Set<Epreuve>();
+  for (const { id } of EPREUVES) {
+    const ctx: Contexte = { d, g, vivier, r: hasardGraine(`essai-${id}-${vivier.length}`), deja: new Set() };
+    if (tirerManche(id, ctx)) ok.add(id);
+  }
+  return ok;
+}
+
+/**
+ * Tire toute une partie : les épreuves choisies, mélangées et répétées jusqu'au
+ * nombre de manches voulu (pour que la même ne revienne pas deux fois de suite).
+ */
+export function tirerPartie(d: DonneesParcours, g: Graphe, vivier: OeuvreParcours[], epreuves: Epreuve[], nombre: number, r: Hasard, ordreFixe = false) {
+  const ctx: Contexte = { d, g, vivier, r, deja: new Set() };
+  const manches: Manche[] = [];
+  let serie: Epreuve[] = [];
+  let ratees = 0;
+  while (manches.length < nombre && ratees < nombre * 3 + 6) {
+    if (!serie.length) serie = ordreFixe ? [...epreuves] : melangerAvec(epreuves, r);
+    // pas deux fois de suite la même épreuve
+    if (!ordreFixe && serie.length > 1 && manches.length && serie[0] === manches[manches.length - 1]!.e) serie.push(serie.shift()!);
+    const e = serie.shift()!;
+    const m = tirerManche(e, ctx);
+    if (m) manches.push(m);
+    else ratees++;
+    if (ordreFixe && !serie.length && manches.length < nombre) break;
+  }
+  return manches;
+}
+
+/* ---------- Barème ---------- */
+
+/** Points d'une manche en multijoueur : la justesse, plus un bonus de rapidité (jusqu'à 25 %). */
+export function pointsAvecTemps(score: number, restant: number, duree: number) {
+  if (score <= 0) return 0;
+  const vite = Math.max(0, Math.min(1, restant / Math.max(1, duree)));
+  return Math.round(score * (0.75 + 0.25 * vite));
+}
+
+/** Pastille de partage : 🟩 très bien, 🟨 moyen, 🟧 un peu, 🟥 rien. */
+export function pastille(score: number) {
+  return score >= 800 ? "🟩" : score >= 450 ? "🟨" : score > 0 ? "🟧" : "🟥";
+}

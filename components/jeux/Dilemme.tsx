@@ -28,6 +28,12 @@ type Partie = {
   sorties: { cle: string; tour: number }[];
 };
 
+/** Classe du titre d'une carte : plus il est long, plus il est petit. */
+export function classeTitre(titre: string) {
+  const n = titre.length;
+  return `dl-carte__titre${n > 40 ? " dl-carte__titre--tres-long" : n > 22 ? " dl-carte__titre--long" : ""}`;
+}
+
 export function melanger<T>(a: T[]): T[] {
   const r = [...a];
   for (let i = r.length - 1; i > 0; i--) {
@@ -285,7 +291,7 @@ export function Dilemme({ oeuvres }: { oeuvres: ItemDuel[] }) {
         <span className="dl-carte__cover">
           <Pochette o={o} alt="" lazy={false} />
         </span>
-        <span className="dl-carte__titre">{o.titre}</span>
+        <span className={classeTitre(o.titre)}>{o.titre}</span>
         <span className="dl-carte__auteur">
           {o.auteur}
           {o.annee ? ` · ${o.annee}` : ""}

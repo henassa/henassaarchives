@@ -1,4 +1,4 @@
-import { readConnexions } from "./oeuvres";
+import { readAdmin, readConnexions } from "./oeuvres";
 import type { TypeOeuvre } from "./sections";
 
 /** Ce que les mini-jeux reçoivent pour chaque œuvre. */
@@ -51,4 +51,37 @@ export function oeuvresPourJeux(): OeuvreJeu[] {
       .map((v) => cle.get(v.id)!)
       .filter(Boolean),
   }));
+}
+
+/* ---------- Le Parcours : la suite d'épreuves ---------- */
+
+/** Une œuvre telle que la reçoit le Parcours (avec les crédits, pour l'épreuve « Les crédits »). */
+export type OeuvreParcours = OeuvreJeu & {
+  scenes?: string[];
+  producteurs?: string[];
+  featurings?: string[];
+  labels?: string[];
+};
+
+export type DonneesParcours = {
+  oeuvres: OeuvreParcours[];
+  /** Les connexions de la Toile, en positions dans « oeuvres » : [a, b]. Pour « Le chemin ». */
+  liens: [number, number][];
+};
+
+export function donneesParcours(): DonneesParcours {
+  const { oeuvres: brutes, finales } = readAdmin();
+  const jeu = oeuvresPourJeux();
+  const parCle = new Map(brutes.map((o) => [o.slug ?? String(o.id), o]));
+  const oeuvres: OeuvreParcours[] = jeu.map((o) => {
+    const b = parCle.get(o.cle);
+    return { ...o, scenes: b?.scenes, producteurs: b?.producteurs, featurings: b?.featurings, labels: b?.labels };
+  });
+  const position = new Map(brutes.map((o) => [o.id, oeuvres.findIndex((x) => x.cle === (o.slug ?? String(o.id)))]));
+  const liens: [number, number][] = [];
+  for (const l of finales) {
+    const a = position.get(l.a), b = position.get(l.b);
+    if (a !== undefined && b !== undefined && a >= 0 && b >= 0) liens.push([a, b]);
+  }
+  return { oeuvres, liens };
 }

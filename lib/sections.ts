@@ -46,6 +46,5 @@ export function isTypeOeuvre(value: unknown): value is TypeOeuvre {
 export const MINI_JEUX = [
   { slug: "tierlist", titre: "Tierlist", echo: "Tier", pret: true, resume: "Classe les œuvres par rang, renomme les rangs, ajoute-en, puis télécharge ton classement en image." },
   { slug: "dilemme", titre: "Dilemme", echo: "Duel", pret: true, resume: "Deux œuvres, un seul choix. De duel en duel jusqu'à la finale." },
-  { slug: "mot", titre: "Le mot", echo: "Mot", pret: true, resume: "Trouve le titre lettre par lettre. La pochette se dévoile à chaque essai." },
-  { slug: "devine", titre: "Devine l'œuvre", echo: "Devine", pret: true, resume: "Un indice de plus à chaque essai : genre, sous-genres, connexions, année..." },
+  { slug: "parcours", titre: "Le Parcours", echo: "Épreuves", pret: true, resume: "Six épreuves à enchaîner : le mot, devine l'œuvre, chronologie, le chemin, la grille, les crédits. Seul ou à plusieurs." },
 ] as const;

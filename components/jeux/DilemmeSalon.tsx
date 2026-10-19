@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DataConnection, Peer, PeerOptions } from "peerjs";
 import { Pochette } from "@/components/connexions/Pochette";
 import { TYPES_OEUVRE } from "@/lib/sections";
-import { TAILLES, melanger, nomDuTour, type ItemDuel } from "./Dilemme";
+import { TAILLES, classeTitre, melanger, nomDuTour, type ItemDuel } from "./Dilemme";
 import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
 
 /*
@@ -13,7 +13,8 @@ import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
  *
  * Un joueur crée un salon (il en devient l'hôte) et partage son code. Les autres le
  * rejoignent. Tout le monde voit le même duel et vote ; l'œuvre qui a le plus de voix
- * passe au tour suivant. En cas d'égalité, c'est tiré au sort.
+ * passe au tour suivant. En cas d'égalité, c'est tiré au sort. On peut aussi s'abstenir.
+ * À la fin, chaque joueur voit à quelle fréquence il a voté pour l'œuvre qui l'a emporté.
  *
  * Il n'y a pas de serveur de jeu : les navigateurs se relient directement entre eux
  * (bibliothèque PeerJS). Le navigateur de l'hôte fait l'arbitre : il reçoit les votes,
@@ -34,6 +35,11 @@ const PSEUDO_STOCK = "henassa-pseudo";
 /** Chacun envoie un petit signe de vie à ce rythme ; sans nouvelles pendant SILENCE_MAX, on le considère parti. */
 const SIGNE_DE_VIE = 3000;
 const SILENCE_MAX = 11000;
+/** Le « vote » de quelqu'un qui s'abstient sur un duel. */
+const ABSTENTION = "~abstention";
+
+/** Pour le classement de fin : duels où le joueur a voté, et ceux où son œuvre est passée. */
+type Bilan = Record<string, { nom: string; votes: number; gagnes: number }>;
 
 type Joueur = { id: string; nom: string };
 type Etat = {
@@ -52,10 +58,12 @@ type Etat = {
   votes: Record<string, string>;
   gagnant?: string;
   egalite?: boolean;
+  /** Depuis le début de la partie (les duels tirés au sort ne comptent pas). */
+  bilan: Bilan;
 };
 type Message = { t: "bonjour"; nom: string } | { t: "vote"; cle: string } | { t: "signe" } | { t: "depart" } | { t: "nom"; nom: string } | { t: "etat"; etat: Etat; toi: string } | { t: "refus"; raison: string };
 
-const etatVide = (): Etat => ({ phase: "salon", joueurs: [], taille: 16, etiquette: "", tour: [], suite: [], duel: 0, sorties: [], ontVote: [], votes: {} });
+const etatVide = (): Etat => ({ phase: "salon", joueurs: [], taille: 16, etiquette: "", tour: [], suite: [], duel: 0, sorties: [], ontVote: [], votes: {}, bilan: {} });
 
 /** Un pseudo propre : 16 caractères au plus, et un numéro s'il est déjà pris dans le salon. */
 function nomLibre(voulu: string, autres: Joueur[], defaut: string) {
@@ -171,10 +179,20 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
     if (e.phase !== "duel") return;
     const a = e.tour[e.duel * 2]!, b = e.tour[e.duel * 2 + 1]!;
     let pourA = 0, pourB = 0;
-    for (const v of h.votes.values()) v === a ? pourA++ : pourB++;
+    for (const v of h.votes.values()) if (v === a) pourA++;
+    else if (v === b) pourB++;
+    // égalité (ou tout le monde s'est abstenu) : tirage au sort
     const egalite = pourA === pourB;
     const gagnant = egalite ? (Math.random() < 0.5 ? a : b) : pourA > pourB ? a : b;
-    h.etat = { ...e, phase: "resultat", votes: Object.fromEntries(h.votes), gagnant, egalite };
+    // le bilan de chacun, sauf sur les duels tirés au sort
+    const bilan: Bilan = { ...e.bilan };
+    if (!egalite)
+      for (const [id, v] of h.votes) {
+        if (v === ABSTENTION) continue;
+        const avant = bilan[id] ?? { nom: "", votes: 0, gagnes: 0 };
+        bilan[id] = { nom: e.joueurs.find((j) => j.id === id)?.nom ?? avant.nom, votes: avant.votes + 1, gagnes: avant.gagnes + (v === gagnant ? 1 : 0) };
+      }
+    h.etat = { ...e, phase: "resultat", votes: Object.fromEntries(h.votes), gagnant, egalite, bilan };
     diffuser();
     if (h.minuteur) clearTimeout(h.minuteur);
     h.minuteur = setTimeout(avancer, PAUSE_RESULTAT);
@@ -184,7 +202,7 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
     (id: string, cle: string) => {
       const h = H.current, e = h.etat;
       if (e.phase !== "duel" || !e.joueurs.some((j) => j.id === id)) return;
-      if (cle !== e.tour[e.duel * 2] && cle !== e.tour[e.duel * 2 + 1]) return;
+      if (cle !== e.tour[e.duel * 2] && cle !== e.tour[e.duel * 2 + 1] && cle !== ABSTENTION) return;
       h.votes.set(id, cle);
       h.etat = { ...e, ontVote: [...h.votes.keys()] };
       // tout le monde a voté : on compte tout de suite
@@ -297,14 +315,14 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
     if (h.minuteur) clearTimeout(h.minuteur);
     h.votes.clear();
     const etiquette = [f.genre, f.sousGenre, f.de || f.a ? `${f.de || "…"}-${f.a || "…"}` : ""].filter(Boolean).join(" · ");
-    h.etat = { ...h.etat, phase: "duel", taille: n, etiquette, tour: melanger(f.vivier).slice(0, n).map((o) => o.cle), suite: [], duel: 0, sorties: [], ontVote: [], votes: {}, gagnant: undefined, egalite: false };
+    h.etat = { ...h.etat, phase: "duel", taille: n, etiquette, tour: melanger(f.vivier).slice(0, n).map((o) => o.cle), suite: [], duel: 0, sorties: [], ontVote: [], votes: {}, gagnant: undefined, egalite: false, bilan: {} };
     diffuser();
   };
   const retourSalon = () => {
     const h = H.current;
     if (h.minuteur) clearTimeout(h.minuteur);
     h.votes.clear();
-    h.etat = { ...h.etat, phase: "salon", tour: [], suite: [], duel: 0, sorties: [], ontVote: [], votes: {}, gagnant: undefined };
+    h.etat = { ...h.etat, phase: "salon", tour: [], suite: [], duel: 0, sorties: [], ontVote: [], votes: {}, gagnant: undefined, bilan: {} };
     diffuser();
   };
 
@@ -603,6 +621,35 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
 
   /* ---------- Fin ---------- */
   if (etat.phase === "fin") {
+    // classement : la part des duels où chacun a voté pour l'œuvre qui est passée
+    const lignes = etat.joueurs.map((j) => {
+      const b = etat.bilan[j.id] ?? { nom: j.nom, votes: 0, gagnes: 0 };
+      return { id: j.id, nom: j.nom, votes: b.votes, gagnes: b.gagnes, part: b.votes ? b.gagnes / b.votes : -1 };
+    });
+    lignes.sort((x, y) => y.part - x.part || y.votes - x.votes || x.nom.localeCompare(y.nom, "fr"));
+    const classement = (
+      <div className="sl-classement">
+        <h2 className="dl-h">Qui a eu le plus de flair</h2>
+        <p className="dl-note">La part des duels où chacun a voté pour l&apos;œuvre qui est passée. Les abstentions et les duels tirés au sort ne comptent pas.</p>
+        <ol>
+          {lignes.map((l, i) => {
+            const pc = l.part < 0 ? null : Math.round(l.part * 100);
+            const rang = i > 0 && lignes[i - 1]!.part === l.part && l.part >= 0 ? null : i + 1;
+            return (
+              <li key={l.id} className={`${l.id === moi ? "est-moi" : ""}${i === 0 && pc !== null ? " est-premier" : ""}`}>
+                <span className="sl-classement__rang">{pc === null ? "–" : (rang ?? "=")}</span>
+                <span className="sl-classement__nom">{l.nom}</span>
+                <span className="sl-classement__barre" aria-hidden="true">
+                  <i style={{ width: `${pc ?? 0}%` }} />
+                </span>
+                <span className="sl-classement__pc">{pc === null ? "—" : `${pc} %`}</span>
+                <span className="sl-classement__detail">{pc === null ? "aucun vote compté" : `${l.gagnes} / ${l.votes} duel${l.votes > 1 ? "s" : ""}`}</span>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    );
     const vainqueur = parCle.get(etat.tour[0]!);
     const suivants = [...etat.sorties.filter((s) => s.tour === 2), ...etat.sorties.filter((s) => s.tour === 4)].map((s) => ({ o: parCle.get(s.cle), finale: s.tour === 2 }));
     return (
@@ -637,7 +684,7 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
             ) : null
           )}
         </ul>
-        {listeJoueurs}
+        {classement}
         {estHote ? (
           <div className="dl-actions">
             <button type="button" className="ctrl-btn ctrl-btn--text" onClick={lancer} disabled={!tailleChoisie}>
@@ -657,6 +704,7 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
   /* ---------- Duel et résultat ---------- */
   const a = parCle.get(etat.tour[etat.duel * 2]!), b = parCle.get(etat.tour[etat.duel * 2 + 1]!);
   const resultat = etat.phase === "resultat";
+  const abstenus = resultat ? etat.joueurs.filter((j) => etat.votes[j.id] === ABSTENTION) : [];
   const total = etat.taille - 1, faits = etat.sorties.length;
   const carte = (o: ItemDuel, cote: "gauche" | "droite") => {
     const voix = resultat ? etat.joueurs.filter((j) => etat.votes[j.id] === o.cle) : [];
@@ -668,7 +716,7 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
             <Pochette o={o} alt="" lazy={false} />
             {resultat && <span className="sl-score">{voix.length}</span>}
           </span>
-          <span className="dl-carte__titre">{o.titre}</span>
+          <span className={classeTitre(o.titre)}>{o.titre}</span>
           <span className="dl-carte__auteur">
             {o.auteur}
             {o.annee ? ` · ${o.annee}` : ""}
@@ -707,15 +755,31 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
           {carte(b, "droite")}
         </div>
       )}
+      {!resultat && (
+        <div className="dl-actions">
+          <button type="button" className={`ctrl-btn ctrl-btn--text sl-abstenir${monVote === ABSTENTION ? " is-on" : ""}`} aria-pressed={monVote === ABSTENTION} onClick={() => voter(ABSTENTION)}>
+            {monVote === ABSTENTION ? "Tu t'abstiens sur ce duel" : "Je m'abstiens"}
+          </button>
+        </div>
+      )}
       <p className="sl-etat" role="status">
         {resultat
           ? etat.egalite
-            ? `Égalité : le sort a choisi ${parCle.get(etat.gagnant ?? "")?.titre ?? ""}.`
+            ? abstenus.length === etat.joueurs.length
+              ? `Tout le monde s'est abstenu : le sort a choisi ${parCle.get(etat.gagnant ?? "")?.titre ?? ""}.`
+              : `Égalité : le sort a choisi ${parCle.get(etat.gagnant ?? "")?.titre ?? ""}.`
             : `${parCle.get(etat.gagnant ?? "")?.titre ?? ""} passe au tour suivant.`
-          : monVote
-            ? `Vote enregistré (tu peux encore changer). ${etat.ontVote.length} / ${etat.joueurs.length} ont voté.`
-            : `À toi de voter. ${etat.ontVote.length} / ${etat.joueurs.length} ont voté.`}
+          : monVote === ABSTENTION
+            ? `Tu t'abstiens (tu peux encore voter). ${etat.ontVote.length} / ${etat.joueurs.length} ont répondu.`
+            : monVote
+              ? `Vote enregistré (tu peux encore changer). ${etat.ontVote.length} / ${etat.joueurs.length} ont répondu.`
+              : `À toi de voter. ${etat.ontVote.length} / ${etat.joueurs.length} ont répondu.`}
       </p>
+      {resultat && abstenus.length > 0 && abstenus.length < etat.joueurs.length && (
+        <p className="dl-note dl-note--centre">
+          {abstenus.length === 1 ? "S'est abstenu" : "Se sont abstenus"} : {abstenus.map((j) => j.nom).join(", ")}
+        </p>
+      )}
       {listeJoueurs}
       {estHote && (
         <div className="dl-actions">
