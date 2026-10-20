@@ -307,6 +307,11 @@ a.tag.tag--outline:hover {
   font-size: clamp(52px, 8.5vw, 118px);
 }
 
+/* majuscule accentuée en tête (É, À…) : l'accent dépasse de la ligne, on lui garde de la place */
+.echo-title--accent .echo-title__main {
+  padding-top: 0.16em;
+}
+
 /* ---------- Couvertures ---------- */
 
 .card__cover-link,

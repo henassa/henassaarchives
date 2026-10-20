@@ -53,7 +53,8 @@ export default function HomePage() {
                 <Tag label={`${une.categorie ?? "Article"} · À la une`} couleur={une.couleur} variant="sans" />
                 {une.auteur && <span className="tag tag--sans tag--outline">Écrit par {une.auteur}</span>}
               </div>
-              <div className="echo-title echo-title--left">
+              {/* une majuscule accentuée (« MÉDINE ») dépasse en haut : on lui laisse de la place */}
+              <div className={`echo-title echo-title--left${/[À-ÖØ-Þ]/.test(flat(une.display).toUpperCase()) ? " echo-title--accent" : ""}`}>
                 <span className="echo-title__echo" aria-hidden="true">
                   <Lines text={une.echo} />
                 </span>
