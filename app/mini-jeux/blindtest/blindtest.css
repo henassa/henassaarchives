@@ -2259,3 +2259,35 @@
 @media (max-width: 480px) {
   .msq .volume__curseur { width: 70px; }
 }
+
+/* ---------- Révélation : la pochette reste dans le cadre ---------- */
+.msq .scene {
+  --scene-h: clamp(220px, 38vh, 360px);
+  height: var(--scene-h);
+}
+.msq .revelation {
+  box-sizing: border-box;
+  gap: 22px;
+  padding: 16px;
+}
+.msq .revelation__pochette {
+  /* hauteur de la scène, moins son cadre (2 × 3 px) et la marge intérieure (2 × 16 px) */
+  width: calc(var(--scene-h) - 38px);
+  height: calc(var(--scene-h) - 38px);
+  max-height: none;
+}
+@media (max-width: 760px) {
+  .msq .scene {
+    --scene-h: clamp(260px, 36vh, 340px);
+  }
+  .msq .revelation {
+    grid-template-rows: auto auto;
+    align-content: center;
+    gap: 10px;
+    padding: 12px;
+  }
+  .msq .revelation__pochette {
+    width: min(140px, calc(var(--scene-h) - 150px));
+    height: min(140px, calc(var(--scene-h) - 150px));
+  }
+}
