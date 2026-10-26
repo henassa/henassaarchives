@@ -1,12 +1,17 @@
 import type { Joueur } from "@/components/blindtest/salon/useSalon";
-import { correspond, cibleTitre } from "./texte";
+import { correspond, cibleTitre, normaliser } from "./texte";
+import { melanger, type ElementPanier } from "./panier";
 
 /* L'état d'une partie, partagé par l'hôte avec tous les joueurs, et les règles de points. */
 
 export type Cible = "les-deux" | "titre" | "artiste";
-export type Reglages = { manches: number; duree: number; cible: Cible; mode: "tape" };
+export type Mode = "tape" | "qcm";
+/** voir : chacun voit en direct ce que les autres tapent (sauf ce qui donnerait la réponse). */
+export type Reglages = { manches: number; duree: number; cible: Cible; mode: Mode; voir: boolean };
 
-export const REGLAGES_DEFAUT: Reglages = { manches: 10, duree: 30, cible: "les-deux", mode: "tape" };
+export const REGLAGES_DEFAUT: Reglages = { manches: 10, duree: 30, cible: "les-deux", mode: "tape", voir: true };
+/** Nombre de propositions en QCM, et nombre de morceaux qu'il faut dans le panier pour en faire. */
+export const NB_CHOIX = 4;
 export const CHOIX_MANCHES = [5, 10, 15, 20];
 export const CHOIX_DUREE = [15, 20, 30];
 export const MAX_JOUEURS = 10;
@@ -36,7 +41,18 @@ export type Manche = {
   gains?: Record<string, number>;
   /** Heure de l'hôte du passage automatique à la manche suivante. */
   suite?: number;
+  /** QCM : les propositions (la bonne n'est dévoilée qu'à la révélation). */
+  choix?: string[];
+  /** QCM : qui a déjà répondu (sans dire quoi). */
+  ontChoisi?: string[];
+  /** QCM, à la révélation : la bonne proposition et le choix de chacun. */
+  bonne?: number;
+  choisis?: Record<string, number>;
+  /** Ce que chacun est en train de taper (masqué s'il approche de la réponse) ; r = réponse ratée. */
+  frappes?: Record<string, Frappe>;
 };
+
+export type Frappe = { t: string; r?: boolean; chaud?: boolean };
 
 export type EtatJeu = {
   joueurs: Joueur[];
@@ -66,9 +82,14 @@ export const etatVide = (): EtatJeu => ({
 });
 
 /** Messages des joueurs vers l'hôte. */
-export type MsgJeu = { t: "pret" } | { t: "charge"; n: number; ok: boolean } | { t: "reponse"; n: number; texte: string };
+export type MsgJeu =
+  | { t: "pret" }
+  | { t: "charge"; n: number; ok: boolean }
+  | { t: "reponse"; n: number; texte: string }
+  | { t: "choix"; n: number; i: number }
+  | { t: "frappe"; n: number; texte: string };
 /** Message de l'hôte à un seul joueur : le verdict de sa réponse. */
-export type Verdict = { t: "verdict"; n: number; titre: boolean; artiste: boolean; deja: boolean };
+export type Verdict = { t: "verdict"; n: number; titre: boolean; artiste: boolean; deja: boolean; qcm?: boolean };
 
 export const demandeTitre = (c: Cible) => c !== "artiste";
 export const demandeArtiste = (c: Cible) => c !== "titre";
@@ -112,4 +133,54 @@ export function classement(e: Pick<EtatJeu, "joueurs" | "scores">) {
     if (k === 0 || j.points !== l[k - 1].points) rang = k + 1;
     return { ...j, rang };
   });
+}
+
+/* ---------- QCM ---------- */
+
+/** Ce qu'on affiche sur une proposition, selon ce qu'il faut trouver. */
+export function libelle(t: { titre: string; artiste: string }, cible: Cible) {
+  const titre = cibleTitre(t.titre).at(-1) ?? t.titre;
+  return cible === "titre" ? titre : cible === "artiste" ? t.artiste : `${titre} — ${t.artiste}`;
+}
+
+/** Combien de propositions différentes le panier permet (il en faut au moins NB_CHOIX pour un QCM). */
+export function propositionsPossibles(panier: Pick<ElementPanier, "titre" | "artiste">[], cible: Cible) {
+  return new Set(panier.map((t) => normaliser(libelle(t, cible)))).size;
+}
+
+/** Les propositions d'une manche : la bonne et trois autres tirées du panier, mélangées. */
+export function faireChoix(bon: { titre: string; artiste: string }, panier: Pick<ElementPanier, "titre" | "artiste">[], cible: Cible) {
+  const juste = libelle(bon, cible);
+  const vus = new Set([normaliser(juste)]);
+  const autres: string[] = [];
+  for (const t of melanger(panier)) {
+    const l = libelle(t, cible);
+    const k = normaliser(l);
+    if (!k || vus.has(k)) continue;
+    vus.add(k);
+    autres.push(l);
+    if (autres.length >= NB_CHOIX - 1) break;
+  }
+  const choix = melanger([juste, ...autres]);
+  return { choix, bonne: choix.indexOf(juste) };
+}
+
+/* ---------- Ce que les autres tapent ---------- */
+
+/**
+ * Ce qu'on montre aux autres de ce qu'un joueur tape : tel quel, sauf s'il approche
+ * de la réponse (bonne réponse, début du titre ou de l'artiste…) : là, on le cache.
+ */
+export function masquer(texte: string, morceau: { titre: string; artistes: string[] }): Frappe {
+  const t = normaliser(texte);
+  if (!t) return { t: "" };
+  const reponses = [...cibleTitre(morceau.titre), ...morceau.artistes];
+  if (correspond(texte, reponses)) return { t: "", chaud: true };
+  for (const r of reponses.map(normaliser)) {
+    if (!r) continue;
+    const court = t.replace(/ /g, "");
+    const long = r.replace(/ /g, "");
+    if (court.length >= 3 && (long.includes(court) || court.includes(long))) return { t: "", chaud: true };
+  }
+  return { t: texte };
 }

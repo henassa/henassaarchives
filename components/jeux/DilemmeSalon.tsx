@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar } from "@/components/jeux/commun";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DataConnection, Peer, PeerOptions } from "peerjs";
@@ -527,6 +528,7 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
         const aVote = etat.phase === "duel" && etat.ontVote.includes(j.id);
         return (
           <li key={j.id} className={`${aVote ? "a-vote" : ""}${j.id === moi ? " est-moi" : ""}`}>
+            <Avatar nom={j.nom} />
             {etat.phase === "duel" && <span aria-hidden="true">{aVote ? "✓" : "…"}</span>}
             {j.id === moi && edition !== null ? (
               <input
@@ -788,7 +790,7 @@ export function DilemmeSalon({ oeuvres }: { oeuvres: ItemDuel[] }) {
               Clore le vote sans attendre
             </button>
           )}
-          <button type="button" className="ctrl-btn ctrl-btn--text" onClick={retourSalon}>
+          <button type="button" className="ctrl-btn ctrl-btn--text ctrl-btn--danger" onClick={retourSalon}>
             Arrêter la partie
           </button>
         </div>

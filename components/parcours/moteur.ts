@@ -11,12 +11,12 @@ import type { DonneesParcours, OeuvreParcours } from "@/lib/jeux";
 export type Epreuve = "mot" | "devine" | "chrono" | "chemin" | "grille" | "credits";
 
 export const EPREUVES: { id: Epreuve; nom: string; echo: string; consigne: string }[] = [
-  { id: "mot", nom: "Le mot", echo: "Mot", consigne: "Trouve le titre. La pochette se dévoile au fil du temps et à chaque essai." },
-  { id: "devine", nom: "Devine l'œuvre", echo: "Devine", consigne: "Les indices s'ouvrent au fil du temps et à chaque essai raté : genre, sous-genres, connexions, année, pochette." },
-  { id: "chrono", nom: "Chronologie", echo: "Chrono", consigne: "Remets ces œuvres dans l'ordre de sortie, de la plus ancienne à la plus récente." },
-  { id: "chemin", nom: "Le chemin", echo: "Chemin", consigne: "Va de la première œuvre à la seconde en passant par les connexions de la Toile, en le moins d'étapes possible." },
-  { id: "grille", nom: "La grille", echo: "Grille", consigne: "Une œuvre par case, qui coche la ligne et la colonne. Chaque œuvre ne sert qu'une fois." },
-  { id: "credits", nom: "Les crédits", echo: "Crédits", consigne: "Retrouve l'œuvre à partir de ses producteurs, de ses invités et de son label." },
+  { id: "mot", nom: "Le mot", echo: "Mot", consigne: "Trouve le titre, lettre par lettre." },
+  { id: "devine", nom: "Devine l'œuvre", echo: "Devine", consigne: "Trouve l'œuvre grâce aux indices." },
+  { id: "chrono", nom: "Chronologie", echo: "Chrono", consigne: "Classe les œuvres par date de sortie." },
+  { id: "chemin", nom: "Le chemin", echo: "Chemin", consigne: "Relie deux œuvres en un minimum d'étapes." },
+  { id: "grille", nom: "La grille", echo: "Grille", consigne: "Une œuvre par case, qui coche les deux critères." },
+  { id: "credits", nom: "Les crédits", echo: "Crédits", consigne: "Trouve l'œuvre grâce à ses crédits." },
 ];
 export const infoEpreuve = (e: Epreuve) => EPREUVES.find((x) => x.id === e)!;
 
@@ -55,7 +55,7 @@ export const REGLES = {
 } as const;
 
 /** Temps proposés pour une manche (secondes). La grille a moitié plus de temps : il y a neuf cases. */
-export const TEMPS_MANCHE = [45, 60, 90];
+export const TEMPS_MANCHE = [60, 120, 180];
 export const dureeManche = (e: Epreuve, base: number) => (e === "grille" ? Math.round(base * 1.5) : base);
 
 /** Un critère de « La grille ». */
@@ -263,9 +263,8 @@ export function reponsesCase(oeuvres: OeuvreParcours[], a: Critere, b: Critere) 
 function tirerGrille(ctx: Contexte): Manche | null {
   const v = ctx.vivier;
   if (v.length < 20) return null;
-  // les critères viennent du vivier (les filtres donnent le thème de la grille),
-  // mais toute œuvre de l'univers peut remplir une case
-  const univers = ctx.d.oeuvres.filter((o) => o.type === v[0]!.type);
+  // les critères et les réponses viennent du vivier : la grille respecte les filtres
+  const univers = v;
   // les critères assez fréquents dans le vivier
   const compte = new Map<string, number>();
   const cle = (c: Critere) => `${c.k}:${c.v}`;

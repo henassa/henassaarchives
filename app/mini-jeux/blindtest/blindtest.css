@@ -1578,3 +1578,629 @@
     display: none;
   }
 }
+
+/* ============================================================
+   Finitions : vrais boutons, QCM, joueurs, bulles de frappe
+   ============================================================ */
+
+.msq {
+  --rate: #ff4d3d; /* les erreurs restent rouges, même avec l'accent vert des jeux */
+}
+
+/* ---------- Plus de boutons « texte souligné » : des boutons secondaires ---------- */
+
+.msq .lien-bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  background: #161616;
+  color: var(--fg);
+  box-shadow: inset 0 0 0 2px #3a3a3a;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: box-shadow 0.15s, background 0.15s, color 0.15s;
+}
+
+.msq .lien-bouton:hover:not(:disabled) {
+  color: var(--fg);
+  background: #222;
+  box-shadow: inset 0 0 0 2px var(--fg);
+}
+
+.msq .lien-bouton--accent {
+  color: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--accent);
+  background: transparent;
+}
+
+.msq .lien-bouton--accent:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: none;
+}
+
+.msq .lien-bouton--danger {
+  color: #ff8a80;
+  box-shadow: inset 0 0 0 2px #4a2622;
+  background: #1a1110;
+}
+
+.msq .lien-bouton--danger:hover:not(:disabled) {
+  background: var(--rate);
+  color: var(--bg);
+  box-shadow: none;
+}
+
+.msq .manche__pied {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+/* ---------- Couleurs d'erreur ---------- */
+
+.msq .message--erreur,
+.msq .manche__temps.is-court,
+.msq .verdict.is-rate {
+  color: var(--rate);
+}
+
+.msq .message--alerte {
+  background: var(--rate);
+}
+
+.msq .note--alerte {
+  color: #ff8a80;
+}
+
+/* ---------- Blocs un peu plus « posés » ---------- */
+
+.msq .bloc:not(.bloc--pret) {
+  padding: 18px;
+  background: #121212;
+  box-shadow: inset 0 0 0 1px #262626;
+}
+
+.msq .scene {
+  background:
+    radial-gradient(120% 90% at 50% 110%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%),
+    #0e0e0e;
+}
+
+.msq .reponse .champ:not(:disabled) {
+  border-color: var(--accent);
+}
+
+/* ---------- Joueurs : avatar, et en partie une ligne par joueur ---------- */
+
+.msq .joueur__avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-left: -4px;
+  background: hsl(var(--teinte, 0) 70% 62%);
+  color: #0a0a0a;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.msq .manche .joueurs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+}
+
+.msq .manche .joueur {
+  min-height: 48px;
+  background: #121212;
+  border-width: 1px;
+  border-color: #2a2a2a;
+}
+
+.msq .manche .joueur.est-moi {
+  border-color: #666;
+}
+
+.msq .manche .joueur.a-fini {
+  border-color: var(--bon);
+}
+
+.msq .manche .joueur__pts {
+  margin-left: auto;
+}
+
+/* la bulle de ce que le joueur tape */
+.msq .joueur__bulle {
+  position: relative;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 6px;
+  padding: 4px 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: #262626;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  animation: msq-bulle 0.15s ease-out;
+}
+
+.msq .joueur__bulle::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  border: 6px solid transparent;
+  border-left: 0;
+  border-right-color: #262626;
+  transform: translateY(-50%);
+}
+
+.msq .joueur__bulle.is-rate {
+  color: #ff8a80;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.msq .joueur__bulle.is-chaud {
+  background: #3a1f0a;
+  color: #ffb36b;
+}
+
+.msq .joueur__bulle.is-chaud::before {
+  border-right-color: #3a1f0a;
+}
+
+@keyframes msq-bulle {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+}
+
+/* ---------- QCM ---------- */
+
+.msq .qcm {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.msq .qcm__choix {
+  position: relative;
+  width: 100%;
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 0;
+  background: #141414;
+  color: var(--fg);
+  box-shadow: inset 0 0 0 2px #333;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.15s, background 0.15s, transform 0.1s;
+}
+
+.msq .qcm__choix:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 2px var(--accent);
+  background: #181818;
+}
+
+.msq .qcm__choix:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.msq .qcm__choix:disabled {
+  cursor: default;
+}
+
+.msq .qcm__lettre {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+
+.msq .qcm__texte {
+  font-family: var(--font-display);
+  font-size: clamp(17px, 2.2vw, 22px);
+  line-height: 1.05;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.msq .qcm__qui {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.msq .qcm__pseudo {
+  padding: 1px 6px;
+  background: #2a2a2a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.msq .qcm__pseudo.est-moi {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* en attendant la manche, ou une fois ma réponse donnée, les autres propositions s'effacent un peu */
+.msq .qcm__choix:disabled:not(.is-choisi):not(.is-bon):not(.is-rate) {
+  opacity: 0.55;
+}
+
+.msq .qcm--revele .qcm__choix:not(.is-bon):not(.is-rate) {
+  opacity: 0.4;
+}
+
+.msq .qcm__choix.is-choisi {
+  background: var(--fg);
+  color: var(--bg);
+  box-shadow: none;
+}
+
+.msq .qcm__choix.is-choisi .qcm__lettre {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.msq .qcm__choix.is-bon {
+  background: var(--bon);
+  color: #0a0a0a;
+  box-shadow: none;
+  animation: msq-verdict-in 0.3s ease both;
+}
+
+.msq .qcm__choix.is-bon .qcm__lettre {
+  background: #0a0a0a;
+  color: var(--bon);
+}
+
+.msq .qcm__choix.is-rate {
+  background: #2a1210;
+  color: #ff8a80;
+  box-shadow: inset 0 0 0 2px var(--rate);
+}
+
+.msq .qcm__choix.is-rate .qcm__lettre {
+  background: var(--rate);
+  color: #0a0a0a;
+}
+
+.msq .qcm__choix.is-bon .qcm__pseudo:not(.est-moi) {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 760px) {
+  .msq .qcm {
+    grid-template-columns: 1fr;
+  }
+
+  .msq .qcm__choix {
+    min-height: 60px;
+  }
+
+  .msq .bloc:not(.bloc--pret) {
+    padding: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .msq .joueur__bulle,
+  .msq .qcm__choix.is-bon {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Boutons en noir et blanc (plus de couleurs) et salle plus compacte
+   ============================================================ */
+
+.msq .bouton--fort {
+  min-height: 48px;
+  padding: 2px 18px;
+  background: #f2f2f2;
+  color: #050505;
+  font-size: 21px;
+}
+
+.msq .bouton--fort:hover:not(:disabled) {
+  background: #fff;
+  filter: none;
+}
+
+.msq .bouton:not(.bouton--fort) {
+  min-height: 38px;
+  font-size: 11px;
+}
+
+.msq .bouton-carre {
+  width: 38px;
+  height: 38px;
+  font-size: 19px;
+}
+
+.msq .bouton-carre:hover:not(:disabled) {
+  background: #ccc;
+}
+
+.msq .bouton-carre:disabled {
+  color: var(--fg);
+  box-shadow: inset 0 0 0 2px #555;
+}
+
+.msq .lien-bouton {
+  min-height: 38px;
+  padding: 0 13px;
+  font-size: 11px;
+}
+
+.msq .lien-bouton--accent,
+.msq .lien-bouton--danger {
+  background: #161616;
+  color: var(--fg);
+  box-shadow: inset 0 0 0 2px #3a3a3a;
+}
+
+.msq .lien-bouton--accent:hover:not(:disabled),
+.msq .lien-bouton--danger:hover:not(:disabled) {
+  background: #fff;
+  color: #050505;
+  box-shadow: none;
+}
+
+.msq .puces {
+  gap: 5px;
+}
+
+.msq .puce {
+  min-height: 36px;
+  min-width: 44px;
+  padding: 0 10px;
+  border-color: #3a3a3a;
+  font-size: 11px;
+}
+
+.msq .puce:hover:not(:disabled) {
+  border-color: #888;
+}
+
+.msq .puce.is-on {
+  border-color: #f2f2f2;
+}
+
+.msq .switch__btn {
+  min-height: 38px;
+  font-size: 17px;
+}
+
+/* « Je suis prêt » : un bloc gris avec le bouton blanc */
+.msq .bloc--pret {
+  padding: 12px 14px;
+  border: 0;
+  background: #121212;
+  box-shadow: inset 0 0 0 2px #3a3a3a;
+}
+
+.msq .bloc--pret.is-on {
+  padding: 8px 14px;
+  box-shadow: inset 0 0 0 1px #262626;
+}
+
+.msq .pret__aide {
+  font-size: 13px;
+}
+
+.msq .reponse .champ:not(:disabled) {
+  border-color: #f2f2f2;
+}
+
+.msq .qcm__choix:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 2px #f2f2f2;
+}
+
+/* salle d'attente plus serrée */
+.msq .salle {
+  gap: 16px;
+}
+
+.msq .salle__principal {
+  gap: 12px;
+}
+
+.msq .bloc:not(.bloc--pret) {
+  padding: 14px 16px;
+}
+
+.msq .bloc {
+  gap: 10px;
+}
+
+.msq .bloc__h {
+  font-size: 22px;
+}
+
+.msq .reglage {
+  gap: 6px;
+}
+
+.msq .reglage__nom {
+  font-size: 11px;
+}
+
+.msq .note {
+  font-size: 13px;
+}
+
+.msq .ligne {
+  min-height: 50px;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.msq .ligne__pochette {
+  width: 40px;
+}
+
+.msq .champ {
+  min-height: 42px;
+}
+
+.msq .champ--grand {
+  min-height: 48px;
+}
+
+@media (max-width: 760px) {
+  .msq .bloc:not(.bloc--pret) {
+    padding: 12px;
+  }
+}
+
+/* ============================================================
+   Surfaces translucides plutôt que grises : la teinte du fond passe à travers
+   ============================================================ */
+
+.msq .bloc:not(.bloc--pret),
+.msq .bloc--pret.is-on {
+  background: rgba(255, 255, 255, 0.022);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.msq .bloc--pret {
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.22);
+}
+
+.msq .lien-bouton,
+.msq .lien-bouton--accent,
+.msq .lien-bouton--danger {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.22);
+}
+
+.msq .lien-bouton:hover:not(:disabled),
+.msq .lien-bouton--accent:hover:not(:disabled),
+.msq .lien-bouton--danger:hover:not(:disabled) {
+  background: #fff;
+  color: #050505;
+  box-shadow: none;
+}
+
+.msq .puce {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.msq .puce:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.msq .puce.is-on {
+  border-color: #f2f2f2;
+}
+
+.msq .bouton-carre:disabled {
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.msq .ligne {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.msq .manche .joueur {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.msq .manche .joueur.est-moi {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.msq .joueur {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.msq .joueur__bulle {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.msq .joueur__bulle::before {
+  border-right-color: rgba(255, 255, 255, 0.09);
+}
+
+.msq .scene {
+  background: radial-gradient(120% 90% at 50% 110%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%), rgba(0, 0, 0, 0.25);
+}
+
+.msq .qcm__choix {
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.16);
+}
+
+.msq .qcm__choix:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* translucide sombre, à peine teinté : se fond dans le fond du site */
+.msq .bloc:not(.bloc--pret),
+.msq .bloc--pret.is-on {
+  background: color-mix(in srgb, var(--accent) 4%, rgba(0, 0, 0, 0.38));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 16%, rgba(255, 255, 255, 0.05));
+}
+
+.msq .bloc--pret {
+  background: color-mix(in srgb, var(--accent) 4%, rgba(0, 0, 0, 0.38));
+}
+
+.msq .manche .joueur,
+.msq .qcm__choix {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- Partage du panier ---------- */
+.msq .partage {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.msq .partage .champ {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}

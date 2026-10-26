@@ -10,6 +10,7 @@ import "@fontsource/unifrakturmaguntia/400.css";
 import "./globals.css";
 import { Splash } from "@/components/Splash";
 import { FOND_SITE } from "@/lib/fond";
+import { Ambiance } from "@/components/Ambiance";
 import { IMAGE_PARTAGE, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -21,9 +22,9 @@ export const metadata: Metadata = {
   // Aperçu affiché quand on partage un lien du site
   metadataBase: new URL(SITE_URL),
   openGraph: {
-    siteName: "Henassa",
-    title: "Henassa",
-    description: "Articles, connexions entre les œuvres, playlist du mois et mini-jeux.",
+    siteName: "HENASSA",
+    title: "HENASSA",
+    description: "Blog era is coming back.",
     locale: "fr_FR",
     type: "website",
     images: [{ url: IMAGE_PARTAGE, width: 1200, height: 630, alt: "Henassa" }],
@@ -53,6 +54,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             style={{ ["--fond" as string]: `url("${FOND_SITE.image}")`, ["--voile" as string]: Math.min(1, Math.max(0, FOND_SITE.voile)) }}
           />
         )}
+        {/* sans image de fond : le dégradé teinté par la couleur de chaque page */}
+        {!FOND_SITE.image && <Ambiance />}
         <Splash />
         {children}
       </body>

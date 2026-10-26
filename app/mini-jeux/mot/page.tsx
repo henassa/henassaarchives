@@ -1,6 +1,6 @@
 import { permanentRedirect } from "next/navigation";
 
-// Ce jeu fait maintenant partie du Parcours (une suite d'épreuves).
+// Ce jeu fait maintenant partie de l'Arène (une suite d'épreuves).
 export default function AncienJeu() {
-  permanentRedirect("/mini-jeux/parcours");
+  permanentRedirect("/mini-jeux/arene");
 }

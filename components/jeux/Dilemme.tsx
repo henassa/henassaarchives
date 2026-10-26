@@ -4,18 +4,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pochette } from "@/components/connexions/Pochette";
 import { initiales } from "@/components/connexions/utils";
 import { TYPES_OEUVRE, type TypeOeuvre } from "@/lib/sections";
+import { fondDegrade } from "./commun";
 import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
 
 /*
  * Dilemme : un tournoi à élimination directe.
- * On choisit un univers, des filtres (genre, sous-genre, années) et une taille (8, 16, 32... œuvres tirées au
+ * On choisit un univers, des filtres (genre, scène, années) et une taille (8, 16, 32… jusqu'à 1024 œuvres tirées au
  * hasard), puis on tranche duel après duel jusqu'à la finale.
  */
 
 export type ItemDuel = { cle: string; titre: string; auteur: string; annee?: number; type: TypeOeuvre; genre?: string; sousGenres?: string[]; parents?: string[]; scenes?: string[]; cover?: string; mini?: string };
 
 /** Tailles de tournoi proposées (celles qui dépassent le nombre d'œuvres sont grisées). */
-export const TAILLES = [8, 16, 32, 64, 128, 256];
+export const TAILLES = [8, 16, 32, 64, 128, 256, 512, 1024];
 
 type Partie = {
   /** Œuvres encore en lice dans ce tour, dans l'ordre des duels. */
@@ -174,8 +175,7 @@ export function Dilemme({ oeuvres }: { oeuvres: ItemDuel[] }) {
           }
         };
         const accent = "#3FD68A";
-        x.fillStyle = "#0a0a0a";
-        x.fillRect(0, 0, L, H);
+        fondDegrade(x, L, H, accent);
         x.textAlign = "left";
         x.textBaseline = "alphabetic";
         x.fillStyle = accent;
@@ -218,7 +218,7 @@ export function Dilemme({ oeuvres }: { oeuvres: ItemDuel[] }) {
         x.strokeText("Henassa", L - M, H - M + 6);
         x.font = "400 34px Anton, Impact, sans-serif";
         x.lineWidth = 6;
-        x.strokeStyle = "#0a0a0a";
+        x.strokeStyle = "#030303";
         x.strokeText("HENASSA", L - M - 8, H - M + 8);
         x.fillStyle = "#fff";
         x.fillText("HENASSA", L - M - 8, H - M + 8);
@@ -321,7 +321,7 @@ export function Dilemme({ oeuvres }: { oeuvres: ItemDuel[] }) {
         </div>
       )}
       <div className="dl-actions">
-        <button type="button" className="ctrl-btn ctrl-btn--text" onClick={() => setPartie(null)}>
+        <button type="button" className="ctrl-btn ctrl-btn--text ctrl-btn--danger" onClick={() => setPartie(null)}>
           Abandonner
         </button>
       </div>

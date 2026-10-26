@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { chercher, relais } from "@/components/blindtest/lib/api";
 import { ajouter, bilanAjout, enregistrer, lireEnregistres, supprimerEnregistre, type ElementPanier, type PanierEnregistre } from "@/components/blindtest/lib/panier";
+import { lienDuPanier, panierDuCode, ressembleAUnCode } from "@/components/blindtest/lib/partage";
 import type { Album, Artiste, Playlist, Titre, TypeRecherche } from "@/components/blindtest/lib/types";
 import { Pochette } from "@/components/blindtest/commun";
 
@@ -37,6 +38,8 @@ export function Panier({ panier, setPanier }: { panier: ElementPanier[]; setPani
   const [enregistres, setEnregistres] = useState<PanierEnregistre[]>([]);
   const [nomSauvegarde, setNomSauvegarde] = useState("");
   const [sauvegardeOuverte, setSauvegardeOuverte] = useState(false);
+  /** Le lien de partage du panier, une fois créé. */
+  const [partage, setPartage] = useState<{ lien: string; copie: boolean } | null>(null);
   const idChamp = useId();
   const panierRef = useRef(panier);
   panierRef.current = panier;
@@ -47,7 +50,7 @@ export function Panier({ panier, setPanier }: { panier: ElementPanier[]; setPani
   useEffect(() => {
     const texte = q.trim();
     setErreur("");
-    if (texte.length < 2 || estLien(texte)) {
+    if (texte.length < 2 || estLien(texte) || ressembleAUnCode(texte)) {
       setRes({});
       setCharge(false);
       return;
@@ -95,6 +98,31 @@ export function Panier({ panier, setPanier }: { panier: ElementPanier[]; setPani
           setAlbumOuvert({ id: a.id, titres: r.titres, choisis: new Set(r.titres.filter((t) => t.extrait).map((t) => t.id)) });
         });
 
+  /** Un lien ou un code de panier HENASSA collé dans le champ : on ajoute ses morceaux. */
+  const collerPanier = () =>
+    travailler("lien", async () => {
+      const l = await panierDuCode(q);
+      if (!l) {
+        setErreur("Ce code de panier est incomplet ou abîmé. Recopie-le en entier.");
+        return;
+      }
+      const a = ajouter(panierRef.current, l.map((t) => ({ ...t, artistes: [t.artiste], album: "", extrait: true })));
+      setPanier(a.panier);
+      setBilan(`Panier partagé : ${bilanAjout(a)}`);
+      setQ("");
+    });
+
+  const partager = async () => {
+    if (!panier.length) return;
+    const lien = await lienDuPanier(panier);
+    let copie = false;
+    try {
+      await navigator.clipboard.writeText(lien);
+      copie = true;
+    } catch {}
+    setPartage({ lien, copie });
+  };
+
   const collerLien = () =>
     travailler("lien", async () => {
       const cible = await relais("lien", { url: q.trim() });
@@ -117,6 +145,8 @@ export function Panier({ panier, setPanier }: { panier: ElementPanier[]; setPani
       setQ("");
     });
 
+  useEffect(() => setPartage(null), [panier]);
+
   const retirer = (id: string) => setPanier(panier.filter((t) => t.id !== id));
   const vider = () => {
     if (panier.length && window.confirm(`Vider le panier (${panier.length} morceaux) ?`)) {
@@ -137,8 +167,9 @@ export function Panier({ panier, setPanier }: { panier: ElementPanier[]; setPani
     setBilan(`Panier « ${p.nom} » chargé : ${p.titres.length} morceaux.`);
   };
 
-  const lien = estLien(q.trim());
-  const rien = !charge && q.trim().length >= 2 && !lien && !erreur && !Object.values(res).some((l) => l?.length);
+  const codePanier = ressembleAUnCode(q);
+  const lien = !codePanier && estLien(q.trim());
+  const rien = !charge && q.trim().length >= 2 && !lien && !codePanier && !erreur && !Object.values(res).some((l) => l?.length);
   const visibles = toutVoir ? panier : panier.slice(-8).reverse();
 
   return (
@@ -160,7 +191,8 @@ export function Panier({ panier, setPanier }: { panier: ElementPanier[]; setPani
         className="champ-ligne"
         onSubmit={(e) => {
           e.preventDefault();
-          if (lien) void collerLien();
+          if (codePanier) void collerPanier();
+          else if (lien) void collerLien();
         }}
       >
         <label className="visually-hidden" htmlFor={idChamp}>
@@ -172,14 +204,14 @@ export function Panier({ panier, setPanier }: { panier: ElementPanier[]; setPani
           type="search"
           inputMode="search"
           autoComplete="off"
-          maxLength={300}
-          placeholder={`${ONGLETS.find((o) => o.type === type)!.aide}… ou colle un lien Deezer`}
+          maxLength={300000}
+          placeholder={`${ONGLETS.find((o) => o.type === type)!.aide}… ou colle un lien Deezer, ou un panier partagé`}
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
-        {lien && (
+        {(lien || codePanier) && (
           <button type="submit" className="bouton" disabled={occupe === "lien"}>
-            {occupe === "lien" ? "Lecture…" : "Ajouter ce lien"}
+            {occupe === "lien" ? "Lecture…" : codePanier ? "Ajouter ce panier" : "Ajouter ce lien"}
           </button>
         )}
       </form>
@@ -368,12 +400,41 @@ export function Panier({ panier, setPanier }: { panier: ElementPanier[]; setPani
             <button type="button" className="bouton bouton--contour" disabled={!panier.length} onClick={() => setSauvegardeOuverte(true)}>
               Enregistrer ce panier
             </button>
-            <button type="button" className="lien-bouton" disabled={!panier.length} onClick={vider}>
+            <button type="button" className="bouton bouton--contour" disabled={!panier.length} onClick={() => void partager()}>
+              Partager (lien)
+            </button>
+            <button type="button" className="lien-bouton lien-bouton--danger" disabled={!panier.length} onClick={vider}>
               Vider
             </button>
           </>
         )}
       </div>
+
+      {partage && (
+        <div className="partage" role="status">
+          <p className="note">
+            {partage.copie ? "Lien copié ! " : ""}Garde-le dans tes notes ou envoie-le : il redonne ce panier sur n&apos;importe quel appareil, même dans des semaines.
+          </p>
+          <div className="champ-ligne">
+            <label className="visually-hidden" htmlFor={`${idChamp}-partage`}>
+              Lien du panier
+            </label>
+            <input id={`${idChamp}-partage`} className="champ champ--petit" readOnly value={partage.lien} onFocus={(e) => e.target.select()} />
+            <button
+              type="button"
+              className="bouton"
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(partage.lien);
+                  setPartage({ ...partage, copie: true });
+                } catch {}
+              }}
+            >
+              Copier
+            </button>
+          </div>
+        </div>
+      )}
 
       {enregistres.length > 0 && (
         <details className="enregistres">

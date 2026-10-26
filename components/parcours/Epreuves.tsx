@@ -674,7 +674,7 @@ export function EpreuveChemin({ m, d, g, parCle, finir, partiel, tempsEcoule, ni
             ))}
           </ul>
           <div className="dl-actions">
-            <button type="button" className="ctrl-btn ctrl-btn--text" onClick={() => setAbandon(true)}>
+            <button type="button" className="ctrl-btn ctrl-btn--text ctrl-btn--danger" onClick={() => setAbandon(true)}>
               Abandonner
             </button>
           </div>

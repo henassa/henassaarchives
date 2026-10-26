@@ -199,3 +199,51 @@ export function ChoixPartie({ j, id }: { j: ReturnType<typeof useOeuvreATrouver>
     </div>
   );
 }
+
+/** Pastille d'un joueur : son initiale, dans une couleur tirée de son pseudo (toujours la même). */
+/** La teinte (0 à 360) attachée à un pseudo. */
+export function teinteDe(nom: string) {
+  let h = 0;
+  for (const c of nom) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return h;
+}
+
+export function Avatar({ nom }: { nom: string }) {
+  const h = teinteDe(nom);
+  return (
+    <span className="jeu-avatar" aria-hidden="true" style={{ ["--teinte" as string]: h }}>
+      {[...nom.trim()][0]?.toUpperCase() ?? "?"}
+    </span>
+  );
+}
+
+/**
+ * Fond d'une image à télécharger, comme celui du site : un noir profond avec
+ * une lueur de la couleur donnée, et un bruit très fin qui évite les « marches » du dégradé.
+ */
+export function fondDegrade(x: CanvasRenderingContext2D, L: number, H: number, couleur: string) {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(couleur.slice(i, i + 2), 16));
+  const rgba = (a: number) => `rgba(${r}, ${g}, ${b}, ${a})`;
+  x.fillStyle = "#030303";
+  x.fillRect(0, 0, L, H);
+  const lueur = (cx: number, cy: number, rayon: number, force: number) => {
+    const d = x.createRadialGradient(cx, cy, 0, cx, cy, rayon);
+    d.addColorStop(0, rgba(force));
+    d.addColorStop(0.55, rgba(force * 0.35));
+    d.addColorStop(1, rgba(0));
+    x.fillStyle = d;
+    x.fillRect(0, 0, L, H);
+  };
+  lueur(0, 0, Math.max(L, H) * 0.95, 0.2);
+  lueur(L, H, Math.max(L, H) * 0.8, 0.12);
+  // tramage : ±2 niveaux au hasard sur chaque pixel
+  const img = x.getImageData(0, 0, L, H);
+  const p = img.data;
+  for (let i = 0; i < p.length; i += 4) {
+    const n = (Math.random() - 0.5) * 4;
+    p[i] = Math.max(0, Math.min(255, p[i]! + n));
+    p[i + 1] = Math.max(0, Math.min(255, p[i + 1]! + n));
+    p[i + 2] = Math.max(0, Math.min(255, p[i + 2]! + n));
+  }
+  x.putImageData(img, 0, 0);
+}

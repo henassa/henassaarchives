@@ -70,7 +70,7 @@ export function melanger<T>(liste: T[]) {
 
 /* ---------- Enregistrement dans le navigateur ---------- */
 
-function valide(l: unknown): ElementPanier[] {
+export function valide(l: unknown): ElementPanier[] {
   if (!Array.isArray(l)) return [];
   return l
     .filter((t) => t && typeof t.id === "string" && /^\d{1,15}$/.test(t.id) && typeof t.titre === "string" && typeof t.artiste === "string")

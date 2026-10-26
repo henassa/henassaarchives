@@ -9,14 +9,14 @@ import { Epreuve } from "./Epreuves";
 import { EPREUVES, NIVEAUX, SCORE_MAX, TEMPS_MANCHE, dureeManche, epreuvesPossibles, faireGraphe, infoEpreuve, pastille, tirerPartie, type Epreuve as IdEpreuve, type Graphe, type Manche, type Niveau, type Resultat } from "./moteur";
 
 /*
- * Le Parcours, en solo : on choisit les œuvres (filtres), les épreuves, le nombre
+ * L'Arène (anciennement « le Parcours »), en solo : on choisit les œuvres (filtres), les épreuves, le nombre
  * de manches, la difficulté et le temps, puis on les enchaîne.
  * Le multijoueur est dans ParcoursSalon.
  */
 
 export const NOMBRES_MANCHES = [3, 6, 9, 12];
 /** Sans limite de temps, les indices se dévoilent quand même, à ce rythme-là (secondes). */
-const RYTHME_SANS_LIMITE = 60;
+const RYTHME_SANS_LIMITE = 120;
 
 /** Le chrono d'une manche : repart à chaque « cle », s'arrête quand « actif » passe à faux. */
 export function useChrono(duree: number, actif: boolean, cle: string | number) {
@@ -44,7 +44,7 @@ export function Temps({ restant }: { restant: number }) {
   return (
     <span className={`pc-temps${restant <= 10 ? " is-court" : ""}`}>
       {" · "}
-      {Math.ceil(restant)} s
+      {Math.floor(Math.ceil(restant) / 60)}:{String(Math.ceil(restant) % 60).padStart(2, "0")}
     </span>
   );
 }
@@ -63,7 +63,7 @@ export function useReglages(d: DonneesParcours, g: Graphe) {
   const [nombre, setNombre] = useState(6);
   const [niveau, setNiveau] = useState<Niveau>("normal");
   /** Secondes par manche ; 0 = sans limite (en solo seulement). */
-  const [temps, setTemps] = useState(60);
+  const [temps, setTemps] = useState(120);
   // les épreuves faisables avec ces filtres (on attend un peu que les filtres se posent)
   const [possibles, setPossibles] = useState<Set<IdEpreuve>>(() => new Set(EPREUVES.map((e) => e.id)));
   useEffect(() => {
@@ -130,7 +130,7 @@ export function PanneauReglages({ r, id, sansLimite, extra }: { r: Reglages; id:
         <div className="filters" role="group" aria-label="Temps par manche">
           {[...TEMPS_MANCHE, ...(sansLimite ? [0] : [])].map((t) => (
             <button key={t} type="button" className={`filter${r.temps === t ? " is-on" : ""}`} aria-pressed={r.temps === t} onClick={() => r.setTemps(t)}>
-              {t ? `${t} s` : "Sans limite"}
+              {t ? (t % 60 ? `${t} s` : `${t / 60} min`) : "Sans limite"}
             </button>
           ))}
         </div>
@@ -168,11 +168,11 @@ export function EnteteManche({ m, i, n, droite }: { m: Manche; i: number; n: num
   );
 }
 
-/** Texte à partager : « Henassa · Le Parcours · 19.10.2026 · 4 210 pts » et une pastille par manche. */
+/** Texte à partager : « Henassa · Arène · 19.10.2026 · 4 210 pts » et une pastille par manche. */
 export function textePartage(titre: string, manches: Manche[], resultats: Resultat[]) {
   const total = resultats.reduce((s, r) => s + r.score, 0);
   const lignes = manches.map((m, i) => `${pastille(resultats[i]?.score ?? 0)} ${infoEpreuve(m.e).nom}`);
-  return `Henassa · Le Parcours${titre ? " · " + titre : ""} · ${total.toLocaleString("fr-FR")} / ${(manches.length * SCORE_MAX).toLocaleString("fr-FR")}\n${lignes.join("\n")}`;
+  return `Henassa · Arène${titre ? " · " + titre : ""} · ${total.toLocaleString("fr-FR")} / ${(manches.length * SCORE_MAX).toLocaleString("fr-FR")}\n${lignes.join("\n")}`;
 }
 
 /** Le bilan d'une partie solo, manche par manche. */
@@ -209,7 +209,7 @@ function Bilan({ manches, resultats, titre, actions }: { manches: Manche[]; resu
 
 type Partie = { manches: Manche[]; resultats: Resultat[]; univers: OeuvreParcours[]; numero: number; niveau: Niveau; temps: number };
 
-/** Les œuvres d'un univers (pour les propositions des champs de réponse). */
+/** Les œuvres d'un univers (gardé pour compatibilité ; les épreuves utilisent maintenant le vivier filtré). */
 export function oeuvresDeLUnivers(d: DonneesParcours, f: FiltresJeu) {
   return d.oeuvres.filter((o) => o.type === f.type);
 }
@@ -243,7 +243,7 @@ export function Parcours({ d }: { d: DonneesParcours }) {
   const lancer = () => {
     const manches = r.tirer();
     if (!manches.length) return;
-    setPartie((p) => ({ manches, resultats: [], univers: oeuvresDeLUnivers(d, r.f), numero: (p?.numero ?? 0) + 1, niveau: r.niveau, temps: r.temps }));
+    setPartie((p) => ({ manches, resultats: [], univers: r.f.vivier, numero: (p?.numero ?? 0) + 1, niveau: r.niveau, temps: r.temps }));
     setFait(null);
     partiel.current = { score: 0, resume: "Temps écoulé" };
     setTimeout(() => zone.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
@@ -254,7 +254,7 @@ export function Parcours({ d }: { d: DonneesParcours }) {
   return (
     <div className="mj parcours" ref={zone}>
       <div className="mj-choix">
-        <Link href="/mini-jeux/parcours/salon" className="sl-invite__lien pc-plusieurs">
+        <Link href="/mini-jeux/arene/salon" className="sl-invite__lien pc-plusieurs">
           Jouer à plusieurs, en ligne →
         </Link>
       </div>
@@ -263,7 +263,7 @@ export function Parcours({ d }: { d: DonneesParcours }) {
         <div className="dilemme dl-reglages">
           <PanneauReglages r={r} id="pc" sansLimite />
           <button type="button" className="dl-lancer" onClick={lancer} disabled={!r.actives.length}>
-            Lancer le parcours →
+            Entrer dans l'arène →
           </button>
           {!r.actives.length && <p className="dl-note">{r.possibles.size ? "Choisis au moins une épreuve." : "Pas assez d'œuvres avec ces filtres : enlèves-en un."}</p>}
         </div>
@@ -313,7 +313,7 @@ export function Parcours({ d }: { d: DonneesParcours }) {
             </div>
           ) : (
             <div className="dl-actions">
-              <button type="button" className="ctrl-btn ctrl-btn--text" onClick={() => setPartie(null)}>
+              <button type="button" className="ctrl-btn ctrl-btn--text ctrl-btn--danger" onClick={() => setPartie(null)}>
                 Arrêter
               </button>
             </div>

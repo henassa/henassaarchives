@@ -10,10 +10,17 @@ import {
   ATTENTE_CHARGEMENT,
   DECOMPTE,
   DUREE_REVELATION,
+  NB_CHOIX,
   complet,
+  demandeArtiste,
+  demandeTitre,
+  faireChoix,
   gainsManche,
+  masquer,
+  propositionsPossibles,
   verifier,
   type EtatJeu,
+  type Frappe,
   type Reglages,
   type Verdict,
 } from "@/components/blindtest/lib/partie";
@@ -35,12 +42,22 @@ type Secret = {
   essais: Map<string, number>;
   generation: number;
   minuteur: ReturnType<typeof setTimeout> | null;
+  /** QCM : l'index de la bonne proposition, et le choix de chacun (gardés ici jusqu'à la révélation). */
+  bonne: number;
+  choisis: Map<string, number>;
+  /** Frappes en attente d'envoi (on les regroupe pour ne pas inonder le réseau). */
+  frappes: Record<string, Frappe>;
+  minuteurFrappes: ReturnType<typeof setTimeout> | null;
 };
+/** Les frappes des joueurs sont renvoyées à tout le monde au plus à ce rythme (ms). */
+const RYTHME_FRAPPES = 200;
 
 export function useArbitre(salon: Salon<EtatJeu>, panier: ElementPanier[]) {
-  const s = useRef<Secret>({ file: [], courant: null, prochain: null, prochainUrl: "", essais: new Map(), generation: 0, minuteur: null });
+  const s = useRef<Secret>({ file: [], courant: null, prochain: null, prochainUrl: "", essais: new Map(), generation: 0, minuteur: null, bonne: -1, choisis: new Map(), frappes: {}, minuteurFrappes: null });
   const salonRef = useRef(salon);
   salonRef.current = salon;
+  const panierRef = useRef(panier);
+  panierRef.current = panier;
 
   const lire = () => salonRef.current.lire();
   const maj = (f: (e: EtatJeu) => EtatJeu) => salonRef.current.ecrire(f(salonRef.current.lire()));
@@ -49,6 +66,18 @@ export function useArbitre(salon: Salon<EtatJeu>, panier: ElementPanier[]) {
     s.current.minuteur = setTimeout(f, Math.max(0, ms));
   };
   const presents = (e: EtatJeu) => e.joueurs.filter((j) => j.present).map((j) => j.id);
+  /** Garde la frappe d'un joueur, et la renvoie à tout le monde avec les autres, au plus toutes les RYTHME_FRAPPES ms. */
+  const pousserFrappe = (id: string, f: Frappe) => {
+    s.current.frappes[id] = f;
+    if (s.current.minuteurFrappes) return;
+    s.current.minuteurFrappes = setTimeout(() => {
+      s.current.minuteurFrappes = null;
+      const lot = s.current.frappes;
+      s.current.frappes = {};
+      if (!Object.keys(lot).length || lire().phase !== "ecoute") return;
+      maj((a) => ({ ...a, manche: a.manche && { ...a.manche, frappes: { ...a.manche.frappes, ...lot } } }));
+    }, RYTHME_FRAPPES);
+  };
 
   /** Prend le prochain morceau jouable dans la file (ceux sans extrait sont sautés). */
   const reserver = useCallback(async (): Promise<Extrait | null> => {
@@ -104,6 +133,10 @@ export function useArbitre(salon: Salon<EtatJeu>, panier: ElementPanier[]) {
     const gains = gainsManche(m.trouves, e.reglages.duree * 1000);
     const scores = { ...e.scores };
     for (const [id, g] of Object.entries(gains)) scores[id] = (scores[id] ?? 0) + g;
+    if (s.current.minuteurFrappes) clearTimeout(s.current.minuteurFrappes);
+    s.current.minuteurFrappes = null;
+    s.current.frappes = {};
+    const qcm = e.reglages.mode === "qcm" && m.choix;
     const revele = {
       titre: x.titre.titre,
       artiste: x.titre.artistes.join(", "),
@@ -119,7 +152,7 @@ export function useArbitre(salon: Salon<EtatJeu>, panier: ElementPanier[]) {
       scores,
       prochain: s.current.prochainUrl,
       historique: [...a.historique, { ...revele, n: m.n }],
-      manche: { ...m, revele, gains, suite },
+      manche: { ...m, revele, gains, suite, frappes: {}, ...(qcm ? { bonne: s.current.bonne, choisis: Object.fromEntries(s.current.choisis) } : {}) },
     }));
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     programmer(DUREE_REVELATION, () => suivante());
@@ -158,7 +191,17 @@ export function useArbitre(salon: Salon<EtatJeu>, panier: ElementPanier[]) {
       }
       s.current.courant = x;
       s.current.essais = new Map();
-      maj((e) => ({ ...e, manche: e.manche && { ...e.manche, extrait: x.url } }));
+      s.current.choisis = new Map();
+      s.current.frappes = {};
+      // QCM : la bonne réponse et trois autres morceaux du panier
+      let choix: string[] | undefined;
+      s.current.bonne = -1;
+      if (lire().reglages.mode === "qcm") {
+        const q = faireChoix({ titre: x.titre.titre, artiste: x.titre.artiste }, panierRef.current, lire().reglages.cible);
+        choix = q.choix;
+        s.current.bonne = q.bonne;
+      }
+      maj((e) => ({ ...e, manche: e.manche && { ...e.manche, extrait: x.url, ...(choix ? { choix, ontChoisi: [] } : {}) } }));
       if (n < (lire().manche?.total ?? 0)) reserverSuivant();
       programmer(ATTENTE_CHARGEMENT, demarrer);
     },
@@ -177,6 +220,11 @@ export function useArbitre(salon: Salon<EtatJeu>, panier: ElementPanier[]) {
   const lancer = useCallback(() => {
     const e = lire();
     if (!panier.length || (e.phase !== "lobby" && e.phase !== "fin")) return;
+    // QCM avec trop peu de morceaux différents : on joue en réponses tapées
+    if (e.reglages.mode === "qcm" && propositionsPossibles(panier, e.reglages.cible) < NB_CHOIX) {
+      maj((a) => ({ ...a, avis: `Le QCM demande au moins ${NB_CHOIX} morceaux différents dans le panier.` }));
+      return;
+    }
     s.current.generation++;
     s.current.file = melanger(panier);
     s.current.prochain = null;
@@ -216,7 +264,7 @@ export function useArbitre(salon: Salon<EtatJeu>, panier: ElementPanier[]) {
 
   const recevoir = useCallback(
     (id: string, brut: unknown) => {
-      const m = brut as { t?: unknown; n?: unknown; ok?: unknown; texte?: unknown };
+      const m = brut as { t?: unknown; n?: unknown; ok?: unknown; texte?: unknown; i?: unknown };
       if (!m || typeof m !== "object") return;
       const e = lire();
       if (m.t === "pret") {
@@ -241,6 +289,34 @@ export function useArbitre(salon: Salon<EtatJeu>, panier: ElementPanier[]) {
         return;
       }
 
+      // Ce qu'un joueur est en train de taper : renvoyé aux autres, masqué s'il approche de la réponse
+      if (m.t === "frappe") {
+        const x = s.current.courant;
+        if (e.phase !== "ecoute" || !x || !e.reglages.voir || e.reglages.mode !== "tape" || complet(man.trouves[id], e.reglages.cible)) return;
+        pousserFrappe(id, masquer(nettoyer(m.texte, REPONSE_MAX), x.titre));
+        return;
+      }
+
+      // QCM : une seule réponse par manche
+      if (m.t === "choix") {
+        const x = s.current.courant;
+        const maintenant = Date.now();
+        const i = Number(m.i);
+        if (e.phase !== "ecoute" || !x || !man.choix || maintenant > man.fin + 400 || maintenant < man.depart - 200) return;
+        if (!Number.isInteger(i) || i < 0 || i >= man.choix.length || s.current.choisis.has(id)) return;
+        s.current.choisis.set(id, i);
+        const bon = i === s.current.bonne;
+        const ms = Math.min(e.reglages.duree * 1000, Math.max(0, maintenant - salonRef.current.latence(id) / 2 - man.depart));
+        const cible = e.reglages.cible;
+        const verdict: Verdict = { t: "verdict", n: man.n, titre: bon && demandeTitre(cible), artiste: bon && demandeArtiste(cible), deja: false, qcm: true };
+        salonRef.current.envoyerA(id, verdict);
+        const trouves = bon ? { ...man.trouves, [id]: { ...(demandeTitre(cible) ? { titre: ms } : {}), ...(demandeArtiste(cible) ? { artiste: ms } : {}) } } : man.trouves;
+        const ontChoisi = [...(man.ontChoisi ?? []), id];
+        maj((a) => ({ ...a, manche: a.manche && { ...a.manche, trouves, ontChoisi } }));
+        if (presents(lire()).every((j) => ontChoisi.includes(j))) programmer(900, reveler);
+        return;
+      }
+
       if (m.t === "reponse") {
         const x = s.current.courant;
         const maintenant = Date.now();
@@ -256,10 +332,19 @@ export function useArbitre(salon: Salon<EtatJeu>, panier: ElementPanier[]) {
         const ms = Math.min(e.reglages.duree * 1000, Math.max(0, maintenant - salonRef.current.latence(id) / 2 - man.depart));
         const verdict: Verdict = { t: "verdict", n: man.n, titre: v.titre, artiste: v.artiste, deja: complet(deja, e.reglages.cible) };
         salonRef.current.envoyerA(id, verdict);
-        if (!v.titre && !v.artiste) return;
+        // la réponse ratée s'affiche chez les autres (masquée si elle approche de la réponse)
+        if (!v.titre && !v.artiste) {
+          if (e.reglages.voir) {
+            pousserFrappe(id, { ...masquer(texte, x.titre), r: true });
+          }
+          return;
+        }
         const nouveau = { ...deja, ...(v.titre ? { titre: ms } : {}), ...(v.artiste ? { artiste: ms } : {}) };
         const trouves = { ...man.trouves, [id]: nouveau };
-        maj((a) => ({ ...a, manche: a.manche && { ...a.manche, trouves } }));
+        // il a tout trouvé : on efface ce qu'il tapait
+        const fini = complet(nouveau, e.reglages.cible);
+        if (fini) delete s.current.frappes[id];
+        maj((a) => ({ ...a, manche: a.manche && { ...a.manche, trouves, ...(fini && a.manche.frappes?.[id] ? { frappes: { ...a.manche.frappes, [id]: { t: "" } } } : {}) } }));
         // tout le monde a tout trouvé : on révèle sans attendre la fin du temps
         const apres = lire();
         if (presents(apres).every((j) => complet(trouves[j], apres.reglages.cible))) programmer(900, reveler);
@@ -281,6 +366,7 @@ export function useArbitre(salon: Salon<EtatJeu>, panier: ElementPanier[]) {
   useEffect(
     () => () => {
       if (s.current.minuteur) clearTimeout(s.current.minuteur);
+      if (s.current.minuteurFrappes) clearTimeout(s.current.minuteurFrappes);
     },
     []
   );

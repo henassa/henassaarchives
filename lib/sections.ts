@@ -44,8 +44,8 @@ export function isTypeOeuvre(value: unknown): value is TypeOeuvre {
 
 // Les mini-jeux. « pret: false » affiche la carte avec la mention « Bientôt ».
 export const MINI_JEUX = [
-  { slug: "tierlist", titre: "Tierlist", echo: "Tier", pret: true, resume: "Classe les œuvres par rang, renomme les rangs, ajoute-en, puis télécharge ton classement en image." },
-  { slug: "dilemme", titre: "Dilemme", echo: "Duel", pret: true, resume: "Deux œuvres, un seul choix. De duel en duel jusqu'à la finale." },
-  { slug: "parcours", titre: "Le Parcours", echo: "Épreuves", pret: true, resume: "Six épreuves à enchaîner : le mot, devine l'œuvre, chronologie, le chemin, la grille, les crédits. Seul ou à plusieurs." },
-  { slug: "blindtest", titre: "Blindtest", echo: "Écoute", pret: true, resume: "Le blindtest. Trouve le titre et l'artiste avant les autres." },
+  { slug: "tierlist", titre: "Tierlist", echo: "Tier", pret: true, resume: "Classe les œuvres par rang." },
+  { slug: "dilemme", titre: "Dilemme", echo: "Duel", pret: true, resume: "Deux œuvres, un seul choix." },
+  { slug: "arene", titre: "Arène", echo: "Arène", pret: true, resume: "Six épreuves à enchaîner sur les œuvres." },
+  { slug: "blindtest", titre: "Blindtest", echo: "Blind", pret: true, resume: "Trouve le titre et l'artiste." },
 ] as const;

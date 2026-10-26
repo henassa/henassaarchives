@@ -4,7 +4,7 @@
    ============================================================ */
 
 :root {
-  --bg: #0a0a0a;
+  --bg: #050505; /* noir profond */
   --fg: #ffffff;
   --muted: #a6a6a6;
   --faint: #8c8c8c;
@@ -7418,4 +7418,592 @@ body.a-fond .jeu-carte {
   .tls-rangs__nom {
     font-size: 22px;
   }
+}
+
+/* ============================================================
+   Fond du site : un noir profond, à peine teinté par la couleur de la page
+   (composant Ambiance). La teinte glisse d'une page à l'autre.
+   Le bruit très fin posé par-dessus « trame » le dégradé : sans lui,
+   un dégradé aussi sombre fait des marches visibles sur la plupart des écrans.
+   ============================================================ */
+
+@property --ambiance {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #3d3d3d;
+}
+
+/* le fond noir du corps de page passerait par-dessus : on le retire (la page garde son noir) */
+body:has(> .ambiance) {
+  background: transparent;
+}
+
+.ambiance {
+  --ambiance: #3d3d3d;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--ambiance) 6%, transparent) 0%, transparent 65%),
+    radial-gradient(100% 70% at 100% 100%, color-mix(in srgb, var(--ambiance) 4%, transparent) 0%, transparent 70%),
+    #030303;
+  transition: --ambiance 1.2s ease;
+}
+
+/* tramage : un bruit blanc très léger, qui casse les marches du dégradé */
+.ambiance::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* l'accueil : les quatre couleurs des rubriques, une par coin, à peine */
+.ambiance--accueil {
+  background:
+    radial-gradient(90% 70% at 0% 0%, rgba(255, 77, 61, 0.05), transparent 65%),
+    radial-gradient(90% 70% at 100% 0%, rgba(61, 123, 255, 0.045), transparent 65%),
+    radial-gradient(90% 70% at 100% 100%, rgba(63, 214, 138, 0.035), transparent 65%),
+    radial-gradient(90% 70% at 0% 100%, rgba(255, 201, 40, 0.03), transparent 65%),
+    #030303;
+}
+
+/* ============================================================
+   Mini-jeux : la même finition que le Blindtest
+   (blocs posés sur un fond gris, vrais boutons secondaires,
+   gros bouton d'action en Anton, pastilles de joueurs)
+   ============================================================ */
+
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--text {
+  height: auto;
+  min-height: 44px;
+  padding: 0 16px;
+  background: #161616;
+  color: var(--fg);
+  box-shadow: inset 0 0 0 2px #3a3a3a;
+  font-size: 12px;
+  white-space: nowrap;
+  transition: box-shadow 0.15s, background 0.15s, color 0.15s;
+}
+
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--text:hover:not(:disabled) {
+  background: #222;
+  color: var(--fg);
+  box-shadow: inset 0 0 0 2px var(--fg);
+}
+
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--text:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--danger {
+  background: #1a1110;
+  color: #ff8a80;
+  box-shadow: inset 0 0 0 2px #4a2622;
+}
+
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--danger:hover:not(:disabled),
+:is(.dilemme, .tierlist, .mj) .tl-danger {
+  background: #ff4d3d;
+  color: #0a0a0a;
+  box-shadow: none;
+}
+
+/* le gros bouton d'action : en Anton, comme « Lancer la partie » du Blindtest */
+:is(.dilemme, .mj) .dl-lancer {
+  min-height: 56px;
+  padding: 2px 22px;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-size: 24px;
+  letter-spacing: 0.5px;
+  transition: filter 0.15s, transform 0.1s;
+}
+
+:is(.dilemme, .mj) .dl-lancer:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* les blocs de réglages et de salon, posés sur un fond gris */
+.dilemme .dl-bloc,
+.dilemme .sl-carte {
+  padding: 18px;
+  background: #121212;
+  box-shadow: inset 0 0 0 1px #262626;
+}
+
+.dilemme .sl-carte {
+  border: 0;
+}
+
+/* les joueurs : une pastille de couleur avec leur initiale */
+.jeu-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-left: -4px;
+  background: hsl(var(--teinte, 0) 70% 62%);
+  color: #0a0a0a;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.sl-joueurs li {
+  min-height: 40px;
+  padding: 5px 12px 5px 9px;
+  background: #121212;
+  border-width: 1px;
+  border-color: #2a2a2a;
+}
+
+.sl-joueurs li.est-moi {
+  border-color: #777;
+}
+
+@media (max-width: 760px) {
+  .dilemme .dl-bloc,
+  .dilemme .sl-carte {
+    padding: 14px;
+  }
+}
+
+/* ============================================================
+   Mini-jeux : boutons en noir et blanc (plus de couleurs),
+   et réglages plus compacts
+   ============================================================ */
+
+/* le bouton principal : blanc, texte noir */
+:is(.dilemme, .mj) .dl-lancer {
+  min-height: 48px;
+  padding: 2px 18px;
+  background: #f2f2f2;
+  color: #050505;
+  font-size: 21px;
+}
+
+:is(.dilemme, .mj) .dl-lancer:hover:not(:disabled) {
+  background: #fff;
+  filter: none;
+}
+
+/* les boutons « danger » restent gris : seul le survol les détache */
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--danger,
+:is(.dilemme, .tierlist, .mj) .tl-danger {
+  background: #161616;
+  color: var(--fg);
+  box-shadow: inset 0 0 0 2px #3a3a3a;
+}
+
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--danger:hover:not(:disabled),
+:is(.dilemme, .tierlist, .mj) .tl-danger:hover {
+  background: #fff;
+  color: #050505;
+  box-shadow: none;
+}
+
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--text {
+  min-height: 38px;
+  padding: 0 13px;
+  font-size: 11px;
+}
+
+/* puces de choix (univers, nombre de manches, difficulté…) : gris, et blanc quand choisi */
+:is(.dilemme, .tierlist, .mj) .filter {
+  --type: #3a3a3a;
+  border-color: #3a3a3a; /* la couleur de l'univers (posée sur le bouton) est ignorée ici */
+  min-height: 36px;
+  padding: 0 11px;
+  border-width: 2px;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+}
+
+:is(.dilemme, .tierlist, .mj) .filter:hover:not(:disabled) {
+  border-color: #888;
+}
+
+:is(.dilemme, .tierlist, .mj) .filter.is-on {
+  border-color: #f2f2f2;
+  background: #f2f2f2;
+  color: #050505;
+}
+
+:is(.dilemme, .tierlist, .mj) .filter:disabled {
+  opacity: 0.35;
+}
+
+:is(.dilemme, .mj) .dl-taille {
+  min-width: 46px;
+  font-size: 18px;
+}
+
+/* menus des filtres (genre, sous-genre, scène, années) */
+:is(.dilemme, .tierlist, .mj) .jf-menu__btn {
+  min-height: 36px;
+  padding: 0 10px;
+  gap: 8px;
+  border-color: #3a3a3a;
+  font-size: 11px;
+}
+
+:is(.dilemme, .tierlist, .mj) .jf-menu__btn:hover,
+:is(.dilemme, .tierlist, .mj) .jf-menu.is-ouvert .jf-menu__btn {
+  border-color: #888;
+}
+
+:is(.dilemme, .tierlist, .mj) .jf-menu.is-on .jf-menu__btn {
+  border-color: #f2f2f2;
+  background: #f2f2f2;
+  color: #050505;
+}
+
+/* les cartes d'épreuves du Parcours : plus basses, et blanches quand choisies */
+:is(.dilemme, .mj) .pc-epreuves {
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 6px;
+}
+
+:is(.dilemme, .mj) .pc-epreuve {
+  min-height: 96px;
+  padding: 10px 12px;
+  gap: 4px;
+  border-width: 2px;
+  border-color: #2e2e2e;
+  background: #0d0d0d;
+}
+
+:is(.dilemme, .mj) .pc-epreuve.is-on {
+  border-color: #f2f2f2;
+}
+
+:is(.dilemme, .mj) .pc-epreuve__consigne {
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+/* lien « Jouer à plusieurs » et case « poser ici » de la tierlist : sans couleur */
+.sl-invite__lien {
+  border-color: #3a3a3a;
+  color: var(--fg);
+}
+
+.sl-invite__lien:hover {
+  border-color: #f2f2f2;
+  background: #f2f2f2;
+  color: #050505;
+}
+
+.tierlist .tl-poser button {
+  border-color: #666;
+  color: var(--fg);
+}
+
+/* réglages et salons plus serrés */
+.dl-reglages {
+  gap: 12px;
+}
+
+.dilemme .dl-bloc,
+.dilemme .sl-carte {
+  padding: 14px 16px;
+  gap: 10px;
+}
+
+.dilemme .dl-h {
+  font-size: 22px;
+}
+
+.dilemme .dl-note {
+  font-size: 13px;
+}
+
+.dilemme .pc-sous-titre {
+  margin-top: 8px;
+}
+
+.dilemme .filters {
+  gap: 5px;
+}
+
+.sl-choix {
+  gap: 10px;
+}
+
+.salon {
+  gap: 14px;
+}
+
+.sl-champ input {
+  min-height: 44px;
+}
+
+@media (max-width: 760px) {
+  .dilemme .dl-bloc,
+  .dilemme .sl-carte {
+    padding: 12px;
+  }
+
+  :is(.dilemme, .mj) .pc-epreuves {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  :is(.dilemme, .mj) .pc-epreuve__consigne {
+    display: none;
+  }
+
+  :is(.dilemme, .mj) .pc-epreuve {
+    min-height: 64px;
+  }
+}
+
+/* ============================================================
+   Mini-jeux : surfaces translucides plutôt que grises,
+   pour laisser passer la teinte du fond du site
+   ============================================================ */
+
+.dilemme .dl-bloc,
+.dilemme .sl-carte {
+  background: rgba(255, 255, 255, 0.022);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--text,
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--danger,
+:is(.dilemme, .tierlist, .mj) .tl-danger {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.22);
+}
+
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--text:hover:not(:disabled),
+:is(.dilemme, .tierlist, .mj) .ctrl-btn--danger:hover:not(:disabled),
+:is(.dilemme, .tierlist, .mj) .tl-danger:hover {
+  background: #fff;
+  color: #050505;
+  box-shadow: none;
+}
+
+:is(.dilemme, .tierlist, .mj) .filter,
+:is(.dilemme, .tierlist, .mj) .jf-menu__btn {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: transparent;
+}
+
+:is(.dilemme, .tierlist, .mj) .filter:hover:not(:disabled),
+:is(.dilemme, .tierlist, .mj) .jf-menu__btn:hover,
+:is(.dilemme, .tierlist, .mj) .jf-menu.is-ouvert .jf-menu__btn {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+:is(.dilemme, .tierlist, .mj) .filter.is-on,
+:is(.dilemme, .tierlist, .mj) .jf-menu.is-on .jf-menu__btn {
+  border-color: #f2f2f2;
+  background: #f2f2f2;
+}
+
+:is(.dilemme, .mj) .pc-epreuve {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+:is(.dilemme, .mj) .pc-epreuve.is-on {
+  border-color: #f2f2f2;
+}
+
+.sl-joueurs li {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.sl-joueurs li.est-moi {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.sl-invite__lien {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* ============================================================
+   Surfaces « translucide sombre » : un noir transparent, à peine teinté
+   par la couleur de la page, pour se fondre dans le fond du site
+   ============================================================ */
+
+.jeu-carte,
+body.a-fond .jeu-carte {
+  background: color-mix(in srgb, var(--accent) 4%, rgba(0, 0, 0, 0.38));
+  border-width: 2px;
+  border-color: color-mix(in srgb, var(--accent) 22%, rgba(255, 255, 255, 0.12));
+  transition: border-color 0.2s, background 0.2s;
+}
+
+a.jeu-carte:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, rgba(0, 0, 0, 0.38));
+}
+
+.dilemme .dl-bloc,
+.dilemme .sl-carte {
+  background: color-mix(in srgb, var(--accent) 4%, rgba(0, 0, 0, 0.38));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 16%, rgba(255, 255, 255, 0.05));
+}
+
+.sl-joueurs li {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* la tierlist : rangs et réserve en translucide sombre aussi */
+.tierlist .tl-rang,
+.tls-groupe .tl-rang {
+  background: color-mix(in srgb, var(--accent) 3%, rgba(0, 0, 0, 0.4));
+}
+
+.tierlist .tl-reserve {
+  border-width: 2px;
+  border-color: color-mix(in srgb, var(--accent) 16%, rgba(255, 255, 255, 0.1));
+  background: color-mix(in srgb, var(--accent) 3%, rgba(0, 0, 0, 0.38));
+}
+
+.tierlist .tl-reserve__barre,
+.tierlist .tl-reserve__filtres {
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 16%, rgba(255, 255, 255, 0.08));
+}
+
+/* le lien « Jouer à plusieurs » au centre, comme sur les autres jeux */
+.parcours > .mj-choix {
+  justify-content: center;
+}
+
+.pc-plusieurs {
+  margin-left: 0;
+}
+
+/* filtres de la tierlist : sur une ligne, plus petits */
+.tierlist .tl-reserve__filtres {
+  padding: 8px 10px;
+}
+
+.tierlist .jf {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.tierlist .jf .filters,
+.tierlist .jf__listes {
+  gap: 4px;
+}
+
+.tierlist .filter,
+.tierlist .jf-menu__btn {
+  min-height: 30px;
+  padding: 0 8px;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.tierlist .jf-menu__btn {
+  gap: 6px;
+}
+
+.tierlist .jf__vider {
+  min-height: 30px;
+  font-size: 10px;
+}
+
+.tierlist .tl-reserve__barre {
+  padding: 8px 10px;
+  gap: 8px 14px;
+}
+
+/* ============================================================
+   Tierlist à plusieurs : le plateau partagé
+   ============================================================ */
+
+.tls-doc {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tls-doc .salon {
+  gap: 10px;
+}
+
+/* une œuvre qu'un autre joueur vient de bouger : elle s'allume à sa couleur */
+.tl-tuile {
+  position: relative;
+}
+
+.tl-tuile.is-eclair {
+  outline: 3px solid hsl(var(--teinte, 140) 70% 62%);
+  outline-offset: 1px;
+  animation: tl-eclair 0.5s ease-out;
+}
+
+.tl-eclair {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  padding: 1px 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: hsl(var(--teinte, 140) 70% 62%);
+  color: #050505;
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-align: center;
+  pointer-events: none;
+}
+
+@keyframes tl-eclair {
+  from {
+    transform: scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-tuile.is-eclair {
+    animation: none;
+  }
+}
+
+.tierlist .tl-rang__outils {
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* le bouton « Jouer » des cartes : blanc, comme les autres boutons des jeux */
+.jeu-carte__action {
+  background: #f2f2f2;
+  color: #050505;
+}
+
+a.jeu-carte:hover .jeu-carte__action {
+  background: #fff;
+}
+
+/* titres des cartes de jeux et d'épreuves : sans contour */
+.jeu-carte__titre,
+.pc-epreuve__nom {
+  -webkit-text-stroke: 0;
+}
+
+/* le nom d'un rang rétrécit juste assez pour tenir dans sa colonne (--n = nombre de lettres) */
+.tierlist .tl-rang__nom {
+  container-type: inline-size;
+}
+
+.tierlist .tl-rang__nom input {
+  font-size: clamp(9px, calc(90cqw / (var(--n, 1) * 0.5)), 30px);
 }

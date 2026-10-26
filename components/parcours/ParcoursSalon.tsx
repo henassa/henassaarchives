@@ -1,16 +1,18 @@
 "use client";
 
+import { Avatar } from "@/components/jeux/commun";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DonneesParcours } from "@/lib/jeux";
 import type { TypeOeuvre } from "@/lib/sections";
 import { HOTE, LONGUEUR_CODE, useSalon, type Joueur } from "@/components/jeux/useSalon";
+import { filtrer, type ChoixFiltres } from "@/components/jeux/Filtres";
 import { Epreuve } from "./Epreuves";
 import { EnteteManche, PanneauReglages, Temps, useOutilsParcours, useReglages } from "./Parcours";
 import { NIVEAUX, dureeManche, infoEpreuve, pastille, pointsAvecTemps, SCORE_MAX, type Manche, type Niveau, type Resultat } from "./moteur";
 
 /*
- * Le Parcours à plusieurs, en ligne : tout le monde joue la même manche en même temps,
+ * L'Arène à plusieurs, en ligne : tout le monde joue la même manche en même temps,
  * chacun sur son écran, avec un temps limite. Les points : la justesse, plus un bonus
  * de rapidité. Après chaque manche, le classement ; à la fin, le podium.
  */
@@ -35,6 +37,8 @@ type Etat = {
   /** Change à chaque manche : sert à ignorer un résultat arrivé en retard. */
   jeton: number;
   type: TypeOeuvre;
+  /** Les filtres choisis par l'hôte : les propositions de réponse restent dans ces œuvres-là. */
+  filtres?: ChoixFiltres;
   /** Résultats de la manche en cours. */
   rendus: Record<string, Rendu>;
   /** Points de toute la partie (on garde aussi ceux qui sont partis). */
@@ -42,7 +46,7 @@ type Etat = {
 };
 type MessageJeu = { t: "fini"; jeton: number; score: number; resume: string; restant: number };
 
-const etatVide = (): Etat => ({ joueurs: [], phase: "salon", manches: [], indice: 0, duree: 60, niveau: "normal", tempsBase: 60, jeton: 0, type: "album", rendus: {}, totaux: {} });
+const etatVide = (): Etat => ({ joueurs: [], phase: "salon", manches: [], indice: 0, duree: 120, niveau: "normal", tempsBase: 120, jeton: 0, type: "album", rendus: {}, totaux: {} });
 
 export function ParcoursSalon({ d }: { d: DonneesParcours }) {
   const { g, parCle } = useOutilsParcours(d);
@@ -120,7 +124,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
     if (!manches.length) return;
     arreterMinuteur();
     const e = lire();
-    const base: Etat = { ...e, manches, type: r.f.type, niveau: r.niveau, tempsBase: r.temps || 60, totaux: Object.fromEntries(e.joueurs.map((j) => [j.id, { nom: j.nom, pts: 0, pastilles: "" }])), jeton: e.jeton };
+    const base: Etat = { ...e, manches, type: r.f.type, filtres: r.f.choix, niveau: r.niveau, tempsBase: r.temps || 120, totaux: Object.fromEntries(e.joueurs.map((j) => [j.id, { nom: j.nom, pts: 0, pastilles: "" }])), jeton: e.jeton };
     const n = ouvrirManche(base, 0);
     ecrire(n);
     minuteur.current = setTimeout(clore, n.duree * 1000 + MARGE_RESEAU);
@@ -134,7 +138,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
   /* ---------- Côté joueur : la manche en cours ---------- */
   const e = s.etat;
   const m = e.phase === "manche" || e.phase === "bilan" ? e.manches[e.indice] : undefined;
-  const univers = useMemo(() => d.oeuvres.filter((o) => o.type === e.type), [d, e.type]);
+  const univers = useMemo(() => (e.filtres ? filtrer(d.oeuvres, e.filtres) : d.oeuvres.filter((o) => o.type === e.type)), [d, e.type, e.filtres]);
   // toutes les œuvres de la manche existent-elles sur cette version du site ?
   const manquante = useMemo(() => {
     if (!m) return false;
@@ -229,7 +233,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
         {s.statut === "connexion" && <p className="dl-note dl-note--centre" role="status">Connexion en cours…</p>}
         {s.erreur && <p className="tl-message" role="alert">{s.erreur}</p>}
         <p className="dl-note dl-note--centre">
-          <Link href="/mini-jeux/parcours">Jouer seul</Link>
+          <Link href="/mini-jeux/arene">Jouer seul</Link>
         </p>
       </div>
     );
@@ -246,6 +250,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
         const fini = e.phase === "manche" && !!e.rendus[j.id];
         return (
           <li key={j.id} className={`${fini ? "a-vote" : ""}${j.id === s.moi ? " est-moi" : ""}`}>
+            <Avatar nom={j.nom} />
             {e.phase === "manche" && <span aria-hidden="true">{fini ? "✓" : "…"}</span>}
             {j.id === s.moi && edition !== null ? (
               <input className="sl-renommer" value={edition} maxLength={16} autoFocus aria-label="Ton pseudo" onChange={(x) => setEdition(x.target.value)} onBlur={validerPseudo} onKeyDown={(x) => { if (x.key === "Enter") validerPseudo(); if (x.key === "Escape") setEdition(null); }} />
@@ -280,7 +285,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
       >
         {copie ? "Lien copié !" : "Copier le lien d'invitation"}
       </button>
-      <button type="button" className="ctrl-btn ctrl-btn--text" onClick={s.partir}>
+      <button type="button" className="ctrl-btn ctrl-btn--text ctrl-btn--danger" onClick={s.partir}>
         Quitter
       </button>
     </div>
@@ -412,7 +417,7 @@ export function ParcoursSalon({ d }: { d: DonneesParcours }) {
               <button type="button" className="ctrl-btn ctrl-btn--text" onClick={clore}>
                 Clore la manche sans attendre
               </button>
-              <button type="button" className="ctrl-btn ctrl-btn--text" onClick={retourSalon}>
+              <button type="button" className="ctrl-btn ctrl-btn--text ctrl-btn--danger" onClick={retourSalon}>
                 Arrêter la partie
               </button>
             </div>

@@ -8,8 +8,9 @@ import { Bandeau, Joueurs, ReglagesHote, ResumeReglages, compteJoueurs } from "@
 import { Panier } from "@/components/blindtest/panier/Panier";
 import { Pied } from "@/components/blindtest/commun";
 import { arreter, debloquerSon, lancerA, preparer, telecharger } from "@/components/blindtest/lib/audio";
-import { garderPanierCourant, lirePanierCourant, type ElementPanier } from "@/components/blindtest/lib/panier";
-import { MAX_JOUEURS, etatVide, type EtatJeu, type MsgJeu, type Verdict } from "@/components/blindtest/lib/partie";
+import { ajouter, garderPanierCourant, lirePanierCourant, type ElementPanier } from "@/components/blindtest/lib/panier";
+import { panierDuCode } from "@/components/blindtest/lib/partage";
+import { MAX_JOUEURS, NB_CHOIX, etatVide, propositionsPossibles, type EtatJeu, type MsgJeu, type Verdict } from "@/components/blindtest/lib/partie";
 import { PSEUDO_MAX } from "@/components/blindtest/lib/texte";
 
 /*
@@ -45,6 +46,23 @@ export default function Blindtest() {
 
   // Le panier en cours est gardé dans le navigateur de l'hôte
   useEffect(() => setPanierBrut(lirePanierCourant()), []);
+
+  // Arrivée par un lien de panier partagé (…/blindtest?panier=BT1-…) : ses morceaux rejoignent le panier
+  const [panierRecu, setPanierRecu] = useState("");
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const code = url.searchParams.get("panier");
+    if (!code) return;
+    url.searchParams.delete("panier");
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+    void panierDuCode(code).then((l) => {
+      if (!l) return setPanierRecu("Le lien de panier est incomplet : recopie-le en entier.");
+      const r = ajouter(lirePanierCourant(), l.map((t) => ({ ...t, artistes: [t.artiste], album: "", extrait: true })));
+      setPanierBrut(r.panier);
+      garderPanierCourant(r.panier);
+      setPanierRecu(`Panier reçu : ${r.ajoutes} morceau${r.ajoutes > 1 ? "x" : ""} ajouté${r.ajoutes > 1 ? "s" : ""} à ton panier. Crée une room pour jouer avec.`);
+    });
+  }, []);
   const setPanier = useCallback((p: ElementPanier[]) => {
     setPanierBrut(p);
     garderPanierCourant(p);
@@ -125,6 +143,17 @@ export default function Blindtest() {
     return () => window.removeEventListener("beforeunload", avant);
   }, [salon.estHote, etat.phase, etat.joueurs.length]);
 
+  const choisir = (i: number) => {
+    if (m) envoyerJeu({ t: "choix", n: m.n, i });
+  };
+  const nManche = m?.n;
+  const frapper = useCallback(
+    (texte: string) => {
+      if (nManche) envoyerJeu({ t: "frappe", n: nManche, texte });
+    },
+    [nManche, envoyerJeu]
+  );
+
   const repondre = (texte: string) => {
     dernierEssai.current = texte;
     if (m) envoyerJeu({ t: "reponse", n: m.n, texte });
@@ -147,7 +176,7 @@ export default function Blindtest() {
 
   /* ---------- Affichage ---------- */
 
-  if (!role) return <Accueil salon={salon} />;
+  if (!role) return <Accueil salon={salon} panierRecu={panierRecu} />;
 
   const enPartie = etat.phase !== "lobby" && etat.phase !== "fin" && m;
   const nbManches = Math.min(etat.reglages.manches, panier.length);
@@ -170,6 +199,8 @@ export default function Blindtest() {
             sonBloque={sonBloque}
             onRelancerSon={relancerSon}
             onRepondre={repondre}
+            onChoisir={choisir}
+            onFrappe={frapper}
             onSuivante={arbitre.suivante}
             onArreter={arbitre.retourSalle}
             onExclure={salon.exclure}
@@ -204,7 +235,7 @@ export default function Blindtest() {
               {etat.avis && <p className="avis">{etat.avis}</p>}
 
               {salon.estHote ? (
-                <ReglagesHote r={etat.reglages} nbPanier={panier.length} onChange={arbitre.regler} />
+                <ReglagesHote r={etat.reglages} nbPanier={panier.length} qcmPossible={propositionsPossibles(panier, etat.reglages.cible) >= NB_CHOIX} onChange={arbitre.regler} />
               ) : (
                 <ResumeReglages etat={etat} />
               )}
@@ -218,7 +249,7 @@ export default function Blindtest() {
 
             {salon.estHote && (
               <div className="lancer">
-                <button type="button" className="bouton bouton--fort bouton--large" disabled={!panier.length} onClick={lancer}>
+                <button type="button" className="bouton bouton--fort bouton--large" disabled={!panier.length || (etat.reglages.mode === "qcm" && propositionsPossibles(panier, etat.reglages.cible) < NB_CHOIX)} onClick={lancer}>
                   {panier.length ? `Lancer la partie · ${nbManches} manche${nbManches > 1 ? "s" : ""}` : "Ajoute des morceaux pour lancer"}
                 </button>
                 {panier.length > 0 && pretsAbsents > 0 && (
@@ -238,7 +269,7 @@ export default function Blindtest() {
 
 /* ---------- Accueil ---------- */
 
-function Accueil({ salon }: { salon: ReturnType<typeof useSalon<EtatJeu>> }) {
+function Accueil({ salon, panierRecu }: { salon: ReturnType<typeof useSalon<EtatJeu>>; panierRecu: string }) {
   const viaLien = salon.codeSaisi.length === LONGUEUR_CODE;
   const enCours = salon.statut === "connexion" || salon.statut === "reconnexion";
   const rejoindre = (
@@ -299,6 +330,11 @@ function Accueil({ salon }: { salon: ReturnType<typeof useSalon<EtatJeu>> }) {
           />
         </div>
 
+        {panierRecu && (
+          <p className="avis" role="status">
+            {panierRecu}
+          </p>
+        )}
         {salon.erreur && (
           <p className="avis avis--erreur" role="alert">
             {salon.erreur}

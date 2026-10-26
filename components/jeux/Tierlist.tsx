@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pochette } from "@/components/connexions/Pochette";
 import { initiales } from "@/components/connexions/utils";
 import { TYPES_OEUVRE, type TypeOeuvre } from "@/lib/sections";
+import { fondDegrade } from "./commun";
 import { FiltresJeuBarre, nomUnivers, useFiltresJeu } from "./Filtres";
 
 /*
@@ -48,15 +49,71 @@ export function norm(s: string) {
   return s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
 
+/* ---------- Les actions sur une tierlist (les mêmes en solo et à plusieurs) ---------- */
+
+export type EtatTierlist = Etat;
+export type ActionTierlist =
+  | { t: "deplacer"; cle: string; zone: string; index?: number }
+  | { t: "nom"; id: string; nom: string }
+  | { t: "bouger"; id: string; sens: -1 | 1 }
+  | { t: "supprimer"; id: string }
+  | { t: "ajouter"; id: string }
+  | { t: "titre"; titre: string }
+  | { t: "vider" };
+
+export const RANGS_MAX = 12;
+export const etatTierlistDepart = (titre = "Ma tierlist"): Etat => ({ ...etatDepart(), titre });
+
+/** Applique une action à une tierlist (sans rien modifier : renvoie la nouvelle). */
+export function appliquer(e: Etat, a: ActionTierlist): Etat {
+  switch (a.t) {
+    case "deplacer": {
+      if (a.zone !== RESERVE && !e.rangs.some((r) => r.id === a.zone)) return e;
+      let idx = a.index;
+      const rangs = e.rangs.map((r) => {
+        const pos = r.items.indexOf(a.cle);
+        if (pos === -1) return r;
+        if (r.id === a.zone && idx !== undefined && pos < idx) idx--;
+        return { ...r, items: r.items.filter((c) => c !== a.cle) };
+      });
+      return {
+        ...e,
+        rangs: rangs.map((r) => {
+          if (r.id !== a.zone) return r;
+          const items = [...r.items];
+          items.splice(idx === undefined ? items.length : Math.max(0, Math.min(items.length, idx)), 0, a.cle);
+          return { ...r, items };
+        }),
+      };
+    }
+    case "nom":
+      return { ...e, rangs: e.rangs.map((r) => (r.id === a.id ? { ...r, nom: a.nom.slice(0, 24) } : r)) };
+    case "bouger": {
+      const i = e.rangs.findIndex((r) => r.id === a.id);
+      const j = i + a.sens;
+      if (i < 0 || j < 0 || j >= e.rangs.length) return e;
+      const rangs = [...e.rangs];
+      [rangs[i], rangs[j]] = [rangs[j]!, rangs[i]!];
+      return { ...e, rangs };
+    }
+    case "supprimer":
+      return { ...e, rangs: e.rangs.filter((r) => r.id !== a.id) };
+    case "ajouter":
+      if (e.rangs.length >= RANGS_MAX || e.rangs.some((r) => r.id === a.id)) return e;
+      return { ...e, rangs: [...e.rangs, { id: a.id, nom: "Nouveau", items: [] }] };
+    case "titre":
+      return { ...e, titre: a.titre.slice(0, 60) };
+    case "vider":
+      return { ...e, rangs: RANGS_DEPART.map((nom, i) => ({ id: `r${i}-${Date.now().toString(36)}`, nom, items: [] })) };
+  }
+  return e;
+}
+
+/** La tierlist en solo : gardée dans le navigateur. */
 export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
   const parCle = useMemo(() => new Map(oeuvres.map((o) => [o.cle, o])), [oeuvres]);
   const [etat, setEtat] = useState<Etat>(etatDepart);
   const [charge, setCharge] = useState(false);
-  const [choisi, setChoisi] = useState<string | null>(null);
-  const f = useFiltresJeu(oeuvres);
-  const [recherche, setRecherche] = useState("");
-  const [confirmer, setConfirmer] = useState(false);
-  const [export_, setExport] = useState<"" | "encours" | "erreur">("");
 
   // Reprise du classement gardé dans le navigateur
   useEffect(() => {
@@ -87,6 +144,25 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
     }
   }, [etat, charge]);
 
+  const agir = useCallback((a: ActionTierlist) => setEtat((e) => appliquer(e, a)), []);
+  return <PlateauTierlist oeuvres={oeuvres} parCle={parCle} etat={etat} agir={agir} />;
+}
+
+/** Les tuiles qu'un autre joueur vient de bouger : son pseudo et sa couleur. */
+export type Eclair = { nom: string; teinte: number };
+
+/**
+ * Le plateau : rangs, réserve, glisser-déposer. Il ne garde rien lui-même :
+ * chaque geste devient une action (« agir »), appliquée en solo par le navigateur,
+ * et à plusieurs par l'hôte du salon.
+ */
+export function PlateauTierlist({ oeuvres, parCle, etat, agir, eclairs, placeholderTitre = "Titre de ta tierlist" }: { oeuvres: ItemJeu[]; parCle: Map<string, ItemJeu>; etat: Etat; agir: (a: ActionTierlist) => void; eclairs?: Record<string, Eclair>; placeholderTitre?: string }) {
+  const [choisi, setChoisi] = useState<string | null>(null);
+  const f = useFiltresJeu(oeuvres);
+  const [recherche, setRecherche] = useState("");
+  const [confirmer, setConfirmer] = useState(false);
+  const [export_, setExport] = useState<"" | "encours" | "erreur">("");
+
   const places = useMemo(() => new Set(etat.rangs.flatMap((r) => r.items)), [etat]);
   const reserve = useMemo(() => {
     const q = norm(recherche.trim());
@@ -96,43 +172,11 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
   const resteTotal = useMemo(() => oeuvres.filter((o) => o.type === f.type && !places.has(o.cle)).length, [oeuvres, f.type, places]);
 
   /** Déplace une œuvre vers un rang (ou la réserve), à la position voulue (fin par défaut). */
-  const deplacer = useCallback((cle: string, zone: string, index?: number) => {
-    setEtat((e) => {
-      let idx = index;
-      const rangs = e.rangs.map((r) => {
-        const pos = r.items.indexOf(cle);
-        if (pos === -1) return r;
-        if (r.id === zone && idx !== undefined && pos < idx) idx--;
-        return { ...r, items: r.items.filter((c) => c !== cle) };
-      });
-      return {
-        ...e,
-        rangs: rangs.map((r) => {
-          if (r.id !== zone) return r;
-          const items = [...r.items];
-          items.splice(idx ?? items.length, 0, cle);
-          return { ...r, items };
-        }),
-      };
-    });
-  }, []);
-
-  const majRang = (id: string, patch: Partial<Rang>) => setEtat((e) => ({ ...e, rangs: e.rangs.map((r) => (r.id === id ? { ...r, ...patch } : r)) }));
-  const bougerRang = (id: string, sens: -1 | 1) =>
-    setEtat((e) => {
-      const i = e.rangs.findIndex((r) => r.id === id);
-      const j = i + sens;
-      if (i < 0 || j < 0 || j >= e.rangs.length) return e;
-      const rangs = [...e.rangs];
-      [rangs[i], rangs[j]] = [rangs[j]!, rangs[i]!];
-      return { ...e, rangs };
-    });
-  const supprimerRang = (id: string) => setEtat((e) => ({ ...e, rangs: e.rangs.filter((r) => r.id !== id) }));
-  const ajouterRang = () =>
-    setEtat((e) => ({
-      ...e,
-      rangs: [...e.rangs, { id: `r${Date.now()}`, nom: "Nouveau", items: [] }],
-    }));
+  const deplacer = useCallback((cle: string, zone: string, index?: number) => agir({ t: "deplacer", cle, zone, index }), [agir]);
+  const majRang = (id: string, patch: { nom: string }) => agir({ t: "nom", id, nom: patch.nom });
+  const bougerRang = (id: string, sens: -1 | 1) => agir({ t: "bouger", id, sens });
+  const supprimerRang = (id: string) => agir({ t: "supprimer", id });
+  const ajouterRang = () => agir({ t: "ajouter", id: `r${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}` });
 
   /* ---------- Glisser-déposer à la souris ---------- */
   const [glisse, setGlisse] = useState<{ cle: string; x: number; y: number } | null>(null);
@@ -219,8 +263,8 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
       <button
         type="button"
         data-cle={o.cle}
-        className={`tl-tuile${choisi === o.cle ? " is-choisi" : ""}${glisse?.cle === o.cle ? " is-glisse" : ""}`}
-        style={{ ["--type" as string]: TYPES_OEUVRE[o.type].couleur }}
+        className={`tl-tuile${choisi === o.cle ? " is-choisi" : ""}${glisse?.cle === o.cle ? " is-glisse" : ""}${eclairs?.[o.cle] ? " is-eclair" : ""}`}
+        style={{ ["--type" as string]: TYPES_OEUVRE[o.type].couleur, ...(eclairs?.[o.cle] ? { ["--teinte" as string]: eclairs[o.cle]!.teinte } : {}) }}
         title={`${o.titre} — ${o.auteur}`}
         aria-label={`${o.titre}, ${o.auteur}`}
         aria-pressed={choisi === o.cle}
@@ -235,6 +279,7 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
         }}
       >
         <Pochette o={o} petite />
+        {eclairs?.[o.cle] && <span className="tl-eclair">{eclairs[o.cle]!.nom}</span>}
       </button>
     </li>
   );
@@ -264,10 +309,10 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
       <div className="tl-barre">
         <label className="tl-titre">
           <span className="visually-hidden">Titre de la tierlist</span>
-          <input id="tl-titre" value={etat.titre} maxLength={60} onChange={(e) => setEtat((s) => ({ ...s, titre: e.target.value }))} placeholder="Titre de ta tierlist" />
+          <input id="tl-titre" value={etat.titre} maxLength={60} onChange={(e) => agir({ t: "titre", titre: e.target.value })} placeholder={placeholderTitre} />
         </label>
         <div className="tl-actions">
-          <button type="button" className="ctrl-btn ctrl-btn--text" onClick={ajouterRang}>
+          <button type="button" className="ctrl-btn ctrl-btn--text" onClick={ajouterRang} disabled={etat.rangs.length >= RANGS_MAX}>
             + Rang
           </button>
           <button type="button" className="ctrl-btn ctrl-btn--text" onClick={telecharger} disabled={export_ === "encours" || places.size === 0}>
@@ -279,7 +324,7 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
                 type="button"
                 className="ctrl-btn ctrl-btn--text tl-danger"
                 onClick={() => {
-                  setEtat(etatDepart());
+                  agir({ t: "vider" });
                   setConfirmer(false);
                   setChoisi(null);
                 }}
@@ -291,7 +336,7 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
               </button>
             </>
           ) : (
-            <button type="button" className="ctrl-btn ctrl-btn--text" onClick={() => setConfirmer(true)}>
+            <button type="button" className="ctrl-btn ctrl-btn--text ctrl-btn--danger" onClick={() => setConfirmer(true)}>
               Recommencer
             </button>
           )}
@@ -313,6 +358,7 @@ export function Tierlist({ oeuvres }: { oeuvres: ItemJeu[] }) {
                 id={`tl-nom-${r.id}`}
                 value={r.nom}
                 maxLength={24}
+                style={{ ["--n" as string]: Math.max(1, [...r.nom].length) }}
                 aria-label={`Nom du rang ${i + 1}`}
                 onChange={(e) => majRang(r.id, { nom: e.target.value })}
               />
@@ -403,8 +449,7 @@ export async function imageTierlist(titre: string, rangs: { nom: string; items: 
   c.height = H;
   const x = c.getContext("2d")!;
   await document.fonts?.ready;
-  x.fillStyle = "#0a0a0a";
-  x.fillRect(0, 0, L, H);
+  fondDegrade(x, L, H, "#3FD68A");
   x.fillStyle = "#fff";
   x.textBaseline = "middle";
   x.font = "400 54px Anton, Impact, sans-serif";
@@ -438,7 +483,7 @@ export async function imageTierlist(titre: string, rangs: { nom: string; items: 
   let y = haut;
   rangs.forEach((r, i) => {
     const h = hauteurs[i]!;
-    x.fillStyle = "#1a1a1a";
+    x.fillStyle = "rgba(0, 0, 0, 0.38)";
     x.fillRect(M, y, L - M * 2, h);
     x.fillStyle = couleurRang(i, rangs.length);
     x.fillRect(M, y, COL, h);
@@ -458,7 +503,7 @@ export async function imageTierlist(titre: string, rangs: { nom: string; items: 
         const s = Math.min(img.naturalWidth, img.naturalHeight);
         x.drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, tx, ty, T, T);
       } else {
-        x.fillStyle = "#2a2a2a";
+        x.fillStyle = "#1c1c1c";
         x.fillRect(tx, ty, T, T);
         x.fillStyle = TYPES_OEUVRE[o.type].couleur;
         x.fillRect(tx, ty, T, 6);
@@ -478,7 +523,7 @@ export async function imageTierlist(titre: string, rangs: { nom: string; items: 
   x.strokeText("Henassa", L - M, H - 34);
   x.font = "400 34px Anton, Impact, sans-serif";
   x.lineWidth = 6;
-  x.strokeStyle = "#0a0a0a";
+  x.strokeStyle = "#030303";
   x.strokeText("HENASSA", L - M - 8, H - 32);
   x.fillStyle = "#fff";
   x.fillText("HENASSA", L - M - 8, H - 32);

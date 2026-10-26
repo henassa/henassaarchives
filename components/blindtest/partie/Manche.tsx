@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { EchoTitre, Pochette } from "@/components/blindtest/commun";
 import { Joueurs } from "@/components/blindtest/room/Salle";
 import { REPONSE_MAX } from "@/components/blindtest/lib/texte";
+import { imageResultat } from "@/components/blindtest/partie/image";
 import { classement, complet, demandeArtiste, demandeTitre, type EtatJeu, type Verdict } from "@/components/blindtest/lib/partie";
 
 /* Une manche, vue par chaque joueur : chargement, décompte, écoute, révélation. */
@@ -28,13 +29,15 @@ type Props = {
   sonBloque: boolean;
   onRelancerSon: () => void;
   onRepondre: (texte: string) => void;
+  onChoisir: (i: number) => void;
+  onFrappe: (texte: string) => void;
   onSuivante: () => void;
   onArreter: () => void;
   onExclure: (id: string) => void;
   onQuitter: () => void;
 };
 
-export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque, onRelancerSon, onRepondre, onSuivante, onArreter, onExclure, onQuitter }: Props) {
+export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque, onRelancerSon, onRepondre, onChoisir, onFrappe, onSuivante, onArreter, onExclure, onQuitter }: Props) {
   const m = etat.manche!;
   const maintenant = useHorloge(maintenantHote, true);
   const [texte, setTexte] = useState("");
@@ -49,6 +52,23 @@ export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque,
   const mesTrouves = m.trouves[moi];
   const jaiTout = complet(mesTrouves, cible);
   const presents = etat.joueurs.filter((j) => j.present);
+  const qcm = etat.reglages.mode === "qcm" && !!m.choix;
+  /** QCM : ce que j'ai choisi (gardé ici : l'hôte ne le dit qu'à la révélation). */
+  const [monChoix, setMonChoix] = useState<{ n: number; i: number } | null>(null);
+  const choixFait = monChoix?.n === m.n ? monChoix.i : null;
+
+  // Ce que je tape part chez les autres, au plus toutes les 150 ms
+  const dernierEnvoi = useRef({ t: 0, texte: "" });
+  useEffect(() => {
+    if (qcm || !etat.reglages.voir || !enJeu || jaiTout) return;
+    if (dernierEnvoi.current.texte === texte) return;
+    const attente = Math.max(0, 150 - (Date.now() - dernierEnvoi.current.t));
+    const id = setTimeout(() => {
+      dernierEnvoi.current = { t: Date.now(), texte };
+      onFrappe(texte);
+    }, attente);
+    return () => clearTimeout(id);
+  }, [texte, qcm, etat.reglages.voir, enJeu, jaiTout, onFrappe]);
 
   // Le son part : on place le curseur dans le champ (sur ordinateur, sans ouvrir de clavier imposé sur téléphone)
   useEffect(() => {
@@ -61,7 +81,13 @@ export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque,
     const t = texte.trim();
     if (!t || !enJeu || jaiTout) return;
     onRepondre(t);
+    dernierEnvoi.current = { t: Date.now(), texte: "" };
     setTexte("");
+  };
+  const choisir = (i: number) => {
+    if (!enJeu || choixFait !== null) return;
+    setMonChoix({ n: m.n, i });
+    onChoisir(i);
   };
 
   const placeholder = cible === "titre" ? "Le titre…" : cible === "artiste" ? "L'artiste…" : "Titre, artiste… ou les deux";
@@ -125,15 +151,44 @@ export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque,
               <p className="revelation__titre">{m.revele.titre}</p>
               <p className="revelation__artiste">{m.revele.artiste}</p>
               <p className="note">{m.revele.album}</p>
-              <a className="lien-discret" href={m.revele.lien} target="_blank" rel="noopener noreferrer">
-                Écouter sur Deezer
+              <a className="lien-bouton lien-bouton--accent" href={m.revele.lien} target="_blank" rel="noopener noreferrer">
+                Écouter sur Deezer <span aria-hidden="true">↗</span>
               </a>
             </div>
           </div>
         )}
       </div>
 
-      {(etat.phase === "ecoute" || etat.phase === "preparation") && (
+      {qcm && (
+        <ol className={`qcm${etat.phase === "revelation" ? " qcm--revele" : ""}`} aria-label="Propositions">
+          {m.choix!.map((c, i) => {
+            const revele = etat.phase === "revelation" && m.bonne !== undefined;
+            const qui = revele ? etat.joueurs.filter((j) => m.choisis?.[j.id] === i) : [];
+            const etatChoix = revele ? (i === m.bonne ? " is-bon" : choixFait === i ? " is-rate" : "") : choixFait === i ? " is-choisi" : "";
+            return (
+              <li key={i}>
+                <button type="button" className={`qcm__choix${etatChoix}`} disabled={!enJeu || choixFait !== null} aria-pressed={choixFait === i} onClick={() => choisir(i)}>
+                  <span className="qcm__lettre" aria-hidden="true">
+                    {"ABCD"[i]}
+                  </span>
+                  <span className="qcm__texte">{c}</span>
+                  {qui.length > 0 && (
+                    <span className="qcm__qui">
+                      {qui.map((j) => (
+                        <span key={j.id} className={`qcm__pseudo${j.id === moi ? " est-moi" : ""}`}>
+                          {j.nom}
+                        </span>
+                      ))}
+                    </span>
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+
+      {!qcm && (etat.phase === "ecoute" || etat.phase === "preparation") && (
         <form className="reponse" onSubmit={envoyer}>
           <label className="visually-hidden" htmlFor="reponse">
             Ta réponse
@@ -160,7 +215,21 @@ export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque,
         </form>
       )}
 
-      {(etat.phase === "ecoute" || etat.phase === "preparation") && (
+      {qcm && etat.phase === "ecoute" && (
+        <div className="mes-trouves" aria-live="polite">
+          {choixFait === null ? (
+            <span className="etat-trouve">{enJeu ? "Une seule réponse : choisis bien" : "Prépare-toi…"}</span>
+          ) : dernier ? (
+            <span key={dernier.le} className={`verdict${dernier.titre || dernier.artiste ? " is-bon" : " is-rate"}`}>
+              {dernier.titre || dernier.artiste ? "Bonne réponse !" : "Raté…"}
+            </span>
+          ) : (
+            <span className="etat-trouve is-on">Réponse envoyée</span>
+          )}
+        </div>
+      )}
+
+      {!qcm && (etat.phase === "ecoute" || etat.phase === "preparation") && (
         <div className="mes-trouves" aria-live="polite">
           {demandeTitre(cible) && <span className={`etat-trouve${mesTrouves?.titre !== undefined ? " is-on" : ""}`}>Titre {mesTrouves?.titre !== undefined ? "✓" : "…"}</span>}
           {demandeArtiste(cible) && <span className={`etat-trouve${mesTrouves?.artiste !== undefined ? " is-on" : ""}`}>Artiste {mesTrouves?.artiste !== undefined ? "✓" : "…"}</span>}
@@ -203,21 +272,38 @@ export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque,
 
       {etat.phase !== "revelation" && <Joueurs etat={etat} moi={moi} estHote={estHote} onExclure={onExclure} avecScore />}
 
-      {estHote ? (
-        <button type="button" className="lien-bouton manche__arreter" onClick={() => window.confirm("Arrêter la partie et revenir à la salle ?") && onArreter()}>
-          Arrêter la partie
-        </button>
-      ) : (
-        <button type="button" className="lien-bouton manche__arreter manche__quitter" onClick={() => window.confirm("Quitter la room ?") && onQuitter()}>
-          Quitter la room
-        </button>
-      )}
+      <div className="manche__pied">
+        {estHote ? (
+          <button type="button" className="lien-bouton lien-bouton--danger" onClick={() => window.confirm("Arrêter la partie et revenir à la salle ?") && onArreter()}>
+            Arrêter la partie
+          </button>
+        ) : (
+          <button type="button" className="lien-bouton lien-bouton--danger manche__quitter" onClick={() => window.confirm("Quitter la room ?") && onQuitter()}>
+            Quitter la room
+          </button>
+        )}
+      </div>
     </section>
   );
 }
 
 export function Fin({ etat, moi, estHote, onRejouer, onSalle, panierVide }: { etat: EtatJeu; moi: string; estHote: boolean; onRejouer: () => void; onSalle: () => void; panierVide: boolean }) {
   const c = classement(etat);
+  const [image, setImage] = useState<"" | "encours" | "erreur">("");
+  const telecharger = async () => {
+    setImage("encours");
+    try {
+      const blob = await imageResultat(etat);
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "henassa-blindtest.png";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      setImage("");
+    } catch {
+      setImage("erreur");
+    }
+  };
   // ordre d'affichage : 2e, 1er, 3e (le premier au centre, sur la plus haute marche)
   const podium = [c[1], c[0], c[2]].filter(Boolean);
   return (
@@ -248,6 +334,9 @@ export function Fin({ etat, moi, estHote, onRejouer, onSalle, panierVide }: { et
       )}
 
       <div className="fin__actions">
+        <button type="button" className="lien-bouton" disabled={image === "encours"} onClick={() => void telecharger()}>
+          {image === "encours" ? "Préparation…" : "Télécharger le résultat"}
+        </button>
         {estHote ? (
           <>
             <button type="button" className="bouton bouton--fort" disabled={panierVide} onClick={onRejouer}>
@@ -261,6 +350,8 @@ export function Fin({ etat, moi, estHote, onRejouer, onSalle, panierVide }: { et
           <p className="note">L'hôte peut relancer une partie.</p>
         )}
       </div>
+
+      {image === "erreur" && <p className="note">L&apos;image n&apos;a pas pu être créée. Réessaie, ou fais une capture d&apos;écran.</p>}
 
       {etat.historique.length > 0 && (
         <div className="recap">

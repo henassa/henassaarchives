@@ -7,7 +7,7 @@ import { SECTIONS } from "@/lib/sections";
 
 export const metadata: Metadata = {
   title: "Tierlist à plusieurs",
-  description: "La Tierlist en ligne : crée un salon, invite tes potes, et classez les œuvres ensemble, vote après vote.",
+  description: "La Tierlist en ligne : crée un salon, invite tes potes, et remplissez la même tierlist ensemble, en direct.",
 };
 
 export default function TierlistSalonPage() {
@@ -35,7 +35,7 @@ export default function TierlistSalonPage() {
           <h1 className="echo-title__main">Tierlist</h1>
         </div>
         <p className="section-intro">
-          À plusieurs, en ligne : les œuvres passent une par une, tout le monde vote son rang, et la tierlist du groupe se construit au fil des votes.
+          À plusieurs, en ligne : la même tierlist pour tout le monde. Chacun glisse les œuvres, crée et renomme les rangs, et tout s&apos;affiche en direct chez les autres.
         </p>
         <TierlistSalon oeuvres={items} />
       </main>
