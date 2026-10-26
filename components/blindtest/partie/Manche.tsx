@@ -5,6 +5,7 @@ import { EchoTitre, Pochette } from "@/components/blindtest/commun";
 import { Joueurs } from "@/components/blindtest/room/Salle";
 import { REPONSE_MAX } from "@/components/blindtest/lib/texte";
 import { imageResultat } from "@/components/blindtest/partie/image";
+import { lireVolume, reglerVolume } from "@/components/blindtest/lib/audio";
 import { classement, complet, demandeArtiste, demandeTitre, type EtatJeu, type Verdict } from "@/components/blindtest/lib/partie";
 
 /* Une manche, vue par chaque joueur : chargement, décompte, écoute, révélation. */
@@ -18,6 +19,57 @@ export function useHorloge(maintenantHote: () => number, actif: boolean) {
     return () => clearInterval(id);
   }, [actif, maintenantHote]);
   return t;
+}
+
+/** Le curseur du volume, gardé d'une partie à l'autre sur cet appareil. */
+function Volume() {
+  const [v, setV] = useState(1);
+  const avant = useRef(1);
+  useEffect(() => setV(lireVolume()), []);
+  const regler = (x: number) => {
+    setV(x);
+    reglerVolume(x);
+  };
+  const muet = v === 0;
+  return (
+    <div className="volume">
+      <button
+        type="button"
+        className="volume__btn"
+        aria-label={muet ? "Remettre le son" : "Couper le son"}
+        onClick={() => {
+          if (muet) regler(avant.current || 0.8);
+          else {
+            avant.current = v;
+            regler(0);
+          }
+        }}
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+          {muet ? (
+            <path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          ) : (
+            <>
+              <path d="M16 9.5a3.5 3.5 0 0 1 0 5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+              {v > 0.5 && <path d="M18.5 7a7 7 0 0 1 0 10" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />}
+            </>
+          )}
+        </svg>
+      </button>
+      <input
+        type="range"
+        className="volume__curseur"
+        min={0}
+        max={1}
+        step={0.01}
+        value={v}
+        aria-label="Volume"
+        style={{ ["--v" as string]: `${v * 100}%` }}
+        onChange={(e) => regler(Number(e.target.value))}
+      />
+    </div>
+  );
 }
 
 type Props = {
@@ -100,6 +152,7 @@ export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque,
           Manche {m.n}
           <span>/{m.total}</span>
         </h2>
+        <Volume />
         <p className={`manche__temps${enJeu && reste < 5000 ? " is-court" : ""}`} aria-live="off">
           {enJeu ? `${Math.ceil(reste / 1000)} s` : " "}
         </p>

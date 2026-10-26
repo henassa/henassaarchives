@@ -22,6 +22,7 @@ const SILENCE =
 
 function el() {
   if (!lecteur) {
+    lireVolume();
     lecteur = new Audio();
     lecteur.preload = "auto";
     lecteur.setAttribute("playsinline", "");
@@ -48,9 +49,28 @@ export async function debloquerSon() {
   return debloque;
 }
 
+const CLE_VOLUME = "henassa-blindtest-volume";
+let volumeLu = false;
+
+/** Le volume choisi la dernière fois sur cet appareil (1 par défaut). */
+export function lireVolume() {
+  if (!volumeLu) {
+    volumeLu = true;
+    try {
+      const v = Number(localStorage.getItem(CLE_VOLUME));
+      if (localStorage.getItem(CLE_VOLUME) !== null && Number.isFinite(v)) volume = Math.min(1, Math.max(0, v));
+    } catch {}
+  }
+  return volume;
+}
+
 export function reglerVolume(v: number) {
   volume = Math.min(1, Math.max(0, v));
+  volumeLu = true;
   if (lecteur) lecteur.volume = volume;
+  try {
+    localStorage.setItem(CLE_VOLUME, String(volume));
+  } catch {}
 }
 
 /**

@@ -2204,3 +2204,58 @@
   font-weight: 600;
   color: var(--muted);
 }
+
+/* ---------- Volume ---------- */
+.msq .volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  align-self: center;
+}
+.msq .volume__btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.38);
+  color: var(--fg, #fff);
+  cursor: pointer;
+}
+.msq .volume__btn:hover {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+.msq .volume__curseur {
+  -webkit-appearance: none;
+  appearance: none;
+  width: clamp(80px, 18vw, 130px);
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #fff var(--v, 100%), rgba(255, 255, 255, 0.18) var(--v, 100%));
+  cursor: pointer;
+}
+.msq .volume__curseur::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0;
+}
+.msq .volume__curseur::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0;
+}
+.msq .volume__curseur:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+@media (max-width: 480px) {
+  .msq .volume__curseur { width: 70px; }
+}
