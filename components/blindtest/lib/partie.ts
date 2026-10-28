@@ -19,8 +19,8 @@ export const MAX_JOUEURS = 10;
 export const DECOMPTE = 3600;
 /** Temps laissé à tout le monde pour charger l'extrait avant de lancer sans les retardataires. */
 export const ATTENTE_CHARGEMENT = 8000;
-/** Durée de la révélation avant la manche suivante. */
-export const DUREE_REVELATION = 10_000;
+/** Durée de la révélation avant la manche suivante (automatique, personne n'a à cliquer). */
+export const DUREE_REVELATION = 5000;
 
 export type Revele = { titre: string; artiste: string; album: string; pochette: string; lien: string; source: "deezer" | "itunes" };
 
@@ -102,21 +102,44 @@ export function verifier(texte: string, morceau: { titre: string; artistes: stri
   };
 }
 
-/** 100 points par élément trouvé, plus jusqu'à 50 points selon la rapidité. */
-export const POINTS_BASE = 100;
-export const BONUS_MAX = 50;
+/**
+ * Points par élément trouvé (le titre, l'artiste), selon l'ordre d'arrivée :
+ * le premier rafle gros, puis ça descend. Au-delà du 4e, tout le monde a le minimum.
+ * Petit bonus de rapidité en plus, pour départager sur la durée de la partie.
+ */
+export const POINTS_RANG = [200, 130, 90, 60];
+export const POINTS_MIN = 40;
+export const BONUS_MAX = 20;
 
-export function pointsPour(ms: number | undefined, dureeMs: number) {
-  if (ms === undefined) return 0;
+export const pointsDuRang = (rang: number) => POINTS_RANG[rang - 1] ?? POINTS_MIN;
+
+/** Rang d'arrivée de chaque joueur pour un élément (1 = le plus rapide ; ex æquo au même rang). */
+export function rangs(trouves: Trouves, quoi: "titre" | "artiste") {
+  const l = Object.entries(trouves)
+    .map(([id, t]) => [id, t[quoi]] as const)
+    .filter((x): x is readonly [string, number] => x[1] !== undefined)
+    .sort((a, b) => a[1] - b[1]);
+  const r: Record<string, number> = {};
+  l.forEach(([id, ms], k) => (r[id] = k > 0 && ms === l[k - 1][1] ? r[l[k - 1][0]] : k + 1));
+  return r;
+}
+
+export function pointsPour(rang: number | undefined, ms: number | undefined, dureeMs: number) {
+  if (rang === undefined || ms === undefined) return 0;
   const reste = Math.min(1, Math.max(0, 1 - ms / dureeMs));
-  return POINTS_BASE + Math.round(BONUS_MAX * reste);
+  return pointsDuRang(rang) + Math.round(BONUS_MAX * reste);
 }
 
 export function gainsManche(trouves: Trouves, dureeMs: number) {
+  const rt = rangs(trouves, "titre");
+  const ra = rangs(trouves, "artiste");
   const g: Record<string, number> = {};
-  for (const [id, t] of Object.entries(trouves)) g[id] = pointsPour(t.titre, dureeMs) + pointsPour(t.artiste, dureeMs);
+  for (const [id, t] of Object.entries(trouves)) g[id] = pointsPour(rt[id], t.titre, dureeMs) + pointsPour(ra[id], t.artiste, dureeMs);
   return g;
 }
+
+/** « 1er », « 2e »… */
+export const ordinal = (n: number) => (n === 1 ? "1er" : `${n}e`);
 
 /** A-t-il tout trouvé ? */
 export function complet(t: { titre?: number; artiste?: number } | undefined, cible: Cible) {

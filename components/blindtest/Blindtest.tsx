@@ -313,7 +313,7 @@ function Accueil({ salon, panierRecu }: { salon: ReturnType<typeof useSalon<Etat
   return (
     <div className="msq">
       <div className="accueil">
-        <p className="accueil__dek">Une room, un code, trente secondes d'extrait. Le premier qui trouve le titre et l'artiste rafle les points.</p>
+        <p className="accueil__dek">Une room, un code, trente secondes d'extrait. Le premier qui trouve rafle le plus de points, puis le deuxième, le troisième…</p>
 
         <div className="accueil__pseudo">
           <label className="champ-label" htmlFor="pseudo">

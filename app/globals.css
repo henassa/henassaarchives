@@ -8007,3 +8007,375 @@ a.jeu-carte:hover .jeu-carte__action {
 .tierlist .tl-rang__nom input {
   font-size: clamp(9px, calc(90cqw / (var(--n, 1) * 0.5)), 30px);
 }
+
+/* ============================================================
+   Pochettes en portrait : carré pour la musique, 2:3 pour le reste
+   (affiches de films…). La pochette porte la classe « pochette--portrait »
+   (components/connexions/Pochette.tsx) : son cadre change de format.
+   ============================================================ */
+
+/* cadres qui suivent la largeur : on passe en 2:3 */
+.tile__btn:has(> .pochette--portrait),
+.panneau__cover:has(> .pochette--portrait),
+.mini-tile__cover:has(> .pochette--portrait),
+.dl-carte__cover:has(> .pochette--portrait),
+.dl-vainqueur__cover:has(> .pochette--portrait),
+.tls-oeuvre__cover:has(> .pochette--portrait) {
+  aspect-ratio: 2 / 3;
+}
+
+/* le vainqueur du Dilemme : même hauteur qu'un carré, moins large */
+.dl-vainqueur__cover:has(> .pochette--portrait) {
+  width: min(280px, 52vw);
+}
+
+/* vignettes de taille fixe : même hauteur, largeur 2:3 */
+.recherche__pochette:has(> .pochette--portrait),
+.lien__cover:has(> .pochette--portrait),
+.dl-podium__cover:has(> .pochette--portrait),
+.tl-fantome:has(> .pochette--portrait),
+.tl-tuile:has(> .pochette--portrait),
+.dv-liees__cover:has(> .pochette--portrait),
+.pc-vignette__cover:has(> .pochette--portrait) {
+  width: auto;
+  aspect-ratio: 2 / 3;
+}
+
+/* dans les listes (recherche, connexions de la fiche), le texte reste aligné avec celui des albums */
+.recherche__pochette:has(> .pochette--portrait) {
+  margin-inline: 6.5px;
+}
+
+.lien__cover:has(> .pochette--portrait) {
+  justify-self: center;
+}
+
+/* pochette pixelisée (Le mot, Devine) : même hauteur qu'en carré */
+.mj-mosaique--portrait {
+  aspect-ratio: 2 / 3;
+  width: 66.667%;
+  margin-inline: auto;
+}
+
+/* Vitrine de l'accueil : albums carrés et affiches 2:3 mélangés, en rangées de même hauteur
+   qui remplissent toute la largeur (chaque pochette s'élargit selon son format). */
+.vitrine {
+  --h: 150px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.vitrine li {
+  --r: 1;
+  flex: calc(var(--r) * 100) 1 calc(var(--r) * var(--h));
+  min-width: 0;
+}
+
+.vitrine li:has(.pochette--portrait) {
+  --r: 0.6667;
+}
+
+.vitrine__item {
+  aspect-ratio: var(--r);
+}
+
+/* la dernière rangée ne s'étire pas */
+.vitrine::after {
+  content: "";
+  flex: 100000 1 0;
+}
+
+@media (max-width: 960px) {
+  .vitrine {
+    --h: 110px;
+  }
+}
+
+@media (max-width: 600px) {
+  .vitrine {
+    --h: 76px;
+  }
+}
+
+/* ============================================================
+   Filtres des jeux au survol : le texte reste blanc (il devenait noir sur fond transparent)
+   ============================================================ */
+:is(.dilemme, .tierlist, .mj) .filter:hover:not(:disabled):not(.is-on),
+:is(.dilemme, .tierlist, .mj) .jf-menu:not(.is-on) .jf-menu__btn:hover,
+:is(.dilemme, .tierlist, .mj) .jf-menu.is-ouvert:not(.is-on) .jf-menu__btn {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--fg);
+}
+
+:is(.dilemme, .tierlist, .mj) .jf-menu:not(.is-on) .jf-menu__btn:hover .jf-menu__nom,
+:is(.dilemme, .tierlist, .mj) .jf-menu.is-ouvert:not(.is-on) .jf-menu__nom {
+  color: var(--muted);
+}
+
+/* filtre choisi : reste blanc, texte noir, même au survol */
+:is(.dilemme, .tierlist, .mj) .filter.is-on:hover,
+:is(.dilemme, .tierlist, .mj) .jf-menu.is-on .jf-menu__btn:hover {
+  background: #fff;
+  color: #050505;
+}
+
+/* ============================================================
+   Tierlist : zoom des pochettes (dans les rangs et dans la réserve)
+   Dans les rangs, les pochettes touchent le haut et le bas du rang.
+   ============================================================ */
+.tl-rangs .tl-rang__items {
+  padding: 0;
+  gap: 3px;
+  min-height: calc(96px * var(--tlz, 1));
+}
+
+.tl-rangs .tl-tuile {
+  width: calc(96px * var(--tlz, 1));
+  height: calc(96px * var(--tlz, 1));
+}
+
+.tl-reserve__items .tl-tuile {
+  width: calc(72px * var(--tlz, 1));
+  height: calc(72px * var(--tlz, 1));
+}
+
+@media (max-width: 600px) {
+  .tl-rangs .tl-rang__items {
+    min-height: calc(76px * var(--tlz, 1));
+  }
+
+  .tl-rangs .tl-tuile {
+    width: calc(76px * var(--tlz, 1));
+    height: calc(76px * var(--tlz, 1));
+  }
+
+  .tl-reserve__items .tl-tuile {
+    width: calc(60px * var(--tlz, 1));
+    height: calc(60px * var(--tlz, 1));
+  }
+}
+
+/* affiches (films…) : même hauteur, largeur 2:3 */
+.tl-rangs .tl-tuile:has(> .pochette--portrait),
+.tl-reserve__items .tl-tuile:has(> .pochette--portrait) {
+  width: auto;
+  aspect-ratio: 2 / 3;
+}
+
+/* la marque de dépôt et le bouton « Poser ici » suivent la hauteur du rang */
+.tl-rangs .tl-marque {
+  min-height: calc(96px * var(--tlz, 1));
+}
+
+.tl-rangs .tl-poser button {
+  width: calc(96px * var(--tlz, 1));
+  height: calc(96px * var(--tlz, 1));
+}
+
+.tl-zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+}
+
+.tl-zoom button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tl-zoom button:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.tl-zoom button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.tl-zoom input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 90px;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #fff var(--v, 50%), rgba(255, 255, 255, 0.18) var(--v, 50%));
+  cursor: pointer;
+}
+
+.tl-zoom input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0;
+}
+
+.tl-zoom input::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0;
+}
+
+.tl-zoom input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.tl-reserve__barre .tl-zoom {
+  margin-left: auto;
+}
+
+.tl-reserve__barre .tl-zoom + .search {
+  margin-left: 0;
+}
+
+/* crans du zoom : petits traits sous le curseur, et le pourcentage */
+.tl-zoom__piste {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+}
+
+.tl-zoom__piste::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  bottom: 0;
+  height: 4px;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.45) 0 1px,
+    transparent 1px calc((100% - 1px) / var(--crans, 6))
+  );
+  pointer-events: none;
+}
+
+.tl-zoom__val {
+  min-width: 4ch;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Rangs bas (zoom à 60 %) : les boutons du rang tiennent sur une ligne,
+   pour que la hauteur du rang soit celle des pochettes et pas celle des boutons */
+@media (min-width: 601px) {
+  .tl-rangs .tl-rang__outils {
+    grid-template-columns: repeat(3, 28px);
+    align-content: center;
+    padding: 0 4px;
+  }
+
+  .tl-rangs .tl-rang__outils button {
+    width: 28px;
+    height: 28px;
+    font-size: 15px;
+  }
+}
+
+.tl-rangs .tl-rang__nom input {
+  padding-block: 0;
+}
+
+/* Réserve : les pochettes remplissent toute la largeur, avec la même marge à gauche et à droite.
+   Le zoom règle la taille minimale ; chaque pochette s'agrandit un peu pour combler la ligne. */
+.tl-reserve__items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(72px * var(--tlz, 1)), 1fr));
+  align-content: start;
+}
+
+.tl-reserve__items:has(.pochette--portrait) {
+  grid-template-columns: repeat(auto-fill, minmax(calc(48px * var(--tlz, 1)), 1fr));
+}
+
+.tl-reserve__items .tl-tuile,
+.tl-reserve__items .tl-tuile:has(> .pochette--portrait) {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.tl-reserve__items .tl-tuile:has(> .pochette--portrait) {
+  aspect-ratio: 2 / 3;
+}
+
+.tl-reserve__items > .tl-vide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .tl-reserve__items {
+    grid-template-columns: repeat(auto-fill, minmax(calc(60px * var(--tlz, 1)), 1fr));
+  }
+
+  .tl-reserve__items:has(.pochette--portrait) {
+    grid-template-columns: repeat(auto-fill, minmax(calc(40px * var(--tlz, 1)), 1fr));
+  }
+}
+
+/* ============================================================
+   Jaquettes de jeux vidéo : un peu plus larges qu'une affiche (format IGDB, 3:4).
+   Même liste que « Pochettes en portrait », avec « pochette--jeu ».
+   ============================================================ */
+.tile__btn:has(> .pochette--jeu),
+.panneau__cover:has(> .pochette--jeu),
+.mini-tile__cover:has(> .pochette--jeu),
+.dl-carte__cover:has(> .pochette--jeu),
+.dl-vainqueur__cover:has(> .pochette--jeu),
+.tls-oeuvre__cover:has(> .pochette--jeu),
+.recherche__pochette:has(> .pochette--jeu),
+.lien__cover:has(> .pochette--jeu),
+.dl-podium__cover:has(> .pochette--jeu),
+.tl-fantome:has(> .pochette--jeu),
+.tl-tuile:has(> .pochette--jeu),
+.dv-liees__cover:has(> .pochette--jeu),
+.pc-vignette__cover:has(> .pochette--jeu),
+.tl-rangs .tl-tuile:has(> .pochette--jeu),
+.tl-reserve__items .tl-tuile:has(> .pochette--jeu) {
+  aspect-ratio: 3 / 4;
+}
+
+/* dans la recherche, le texte reste aligné (40 px de place, jaquette de 30 px) */
+.recherche__pochette:has(> .pochette--jeu) {
+  margin-inline: 5px;
+}
+
+.mj-mosaique--jeu {
+  aspect-ratio: 3 / 4;
+  width: 75%;
+}
+
+.vitrine li:has(.pochette--jeu) {
+  --r: 0.75;
+}
+
+.tl-reserve__items:has(.pochette--jeu) {
+  grid-template-columns: repeat(auto-fill, minmax(calc(54px * var(--tlz, 1)), 1fr));
+}
+
+@media (max-width: 600px) {
+  .tl-reserve__items:has(.pochette--jeu) {
+    grid-template-columns: repeat(auto-fill, minmax(calc(45px * var(--tlz, 1)), 1fr));
+  }
+}

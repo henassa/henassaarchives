@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pochette } from "@/components/connexions/Pochette";
-import { initiales } from "@/components/connexions/utils";
+import { initiales, ratioPochette } from "@/components/connexions/utils";
 import { TYPES_OEUVRE, type TypeOeuvre } from "@/lib/sections";
 import { fondDegrade } from "./commun";
 import { FiltresJeuBarre, nomUnivers, useFiltresJeu } from "./Filtres";
@@ -158,6 +158,7 @@ export type Eclair = { nom: string; teinte: number };
  */
 export function PlateauTierlist({ oeuvres, parCle, etat, agir, eclairs, placeholderTitre = "Titre de ta tierlist" }: { oeuvres: ItemJeu[]; parCle: Map<string, ItemJeu>; etat: Etat; agir: (a: ActionTierlist) => void; eclairs?: Record<string, Eclair>; placeholderTitre?: string }) {
   const [choisi, setChoisi] = useState<string | null>(null);
+  const [zoom, setZoom] = useZoom();
   const f = useFiltresJeu(oeuvres);
   const [recherche, setRecherche] = useState("");
   const [confirmer, setConfirmer] = useState(false);
@@ -294,7 +295,8 @@ export function PlateauTierlist({ oeuvres, parCle, etat, agir, eclairs, placehol
   const telecharger = async () => {
     setExport("encours");
     try {
-      await enregistrerImage(await imageTierlist(etat.titre, etat.rangs, parCle), etat.titre);
+      // l'image reprend le zoom des rangs : au plus grand, les pochettes sont aussi grandes dans l'image
+      await enregistrerImage(await imageTierlist(etat.titre, etat.rangs, parCle, "", zoom.rangs), etat.titre);
       setExport("");
     } catch {
       setExport("erreur");
@@ -312,6 +314,7 @@ export function PlateauTierlist({ oeuvres, parCle, etat, agir, eclairs, placehol
           <input id="tl-titre" value={etat.titre} maxLength={60} onChange={(e) => agir({ t: "titre", titre: e.target.value })} placeholder={placeholderTitre} />
         </label>
         <div className="tl-actions">
+          <Zoom valeur={zoom.rangs} onChange={(v) => setZoom({ ...zoom, rangs: v })} nom="Taille des pochettes de la tierlist" />
           <button type="button" className="ctrl-btn ctrl-btn--text" onClick={ajouterRang} disabled={etat.rangs.length >= RANGS_MAX}>
             + Rang
           </button>
@@ -350,7 +353,7 @@ export function PlateauTierlist({ oeuvres, parCle, etat, agir, eclairs, placehol
         </p>
       )}
 
-      <ol className="tl-rangs">
+      <ol className="tl-rangs" style={{ ["--tlz" as string]: zoom.rangs }}>
         {etat.rangs.map((r, i) => (
           <li key={r.id} className={`tl-rang${cible?.zone === r.id ? " is-cible" : ""}`} style={{ ["--rang" as string]: couleurRang(i, etat.rangs.length) }}>
             <div className="tl-rang__nom">
@@ -403,6 +406,7 @@ export function PlateauTierlist({ oeuvres, parCle, etat, agir, eclairs, placehol
           <h2 className="tl-reserve__h">
             Réserve <span>{resteTotal}</span>
           </h2>
+          <Zoom valeur={zoom.reserve} onChange={(v) => setZoom({ ...zoom, reserve: v })} nom="Taille des pochettes de la réserve" />
           <label className="search">
             <span className="visually-hidden">Rechercher une œuvre</span>
             <input id="tl-recherche" type="search" placeholder="Rechercher…" value={recherche} onChange={(e) => setRecherche(e.target.value)} />
@@ -412,7 +416,7 @@ export function PlateauTierlist({ oeuvres, parCle, etat, agir, eclairs, placehol
           <FiltresJeuBarre f={f} id="tl" />
         </div>
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
-        <ul className="tl-reserve__items" data-zone={RESERVE} onClick={() => poser(RESERVE)}>
+        <ul className="tl-reserve__items" data-zone={RESERVE} onClick={() => poser(RESERVE)} style={{ ["--tlz" as string]: zoom.reserve }}>
           {reserve.map((o) => tuile(o))}
           {reserve.length === 0 && <li className="tl-vide">{resteTotal === 0 ? `${nomUnivers(f.type)} : tout est classé.` : "Aucune œuvre ne correspond à ces filtres."}</li>}
         </ul>
@@ -437,19 +441,106 @@ function FragmentMarque({ montrer, children }: { montrer: boolean; children: Rea
   );
 }
 
+/* ---------- Zoom des pochettes (tierlist et réserve, chacun le sien) ---------- */
+
+const STOCK_ZOOM = "henassa-tierlist-zoom";
+const ZOOM_MIN = 0.6;
+const ZOOM_MAX = 1.8;
+/** Le zoom avance par crans : 60 %, 80 %, 100 %… 180 %. */
+const ZOOM_PAS = 0.2;
+const CRANS = Array.from({ length: Math.round((ZOOM_MAX - ZOOM_MIN) / ZOOM_PAS) + 1 }, (_, i) => Math.round((ZOOM_MIN + i * ZOOM_PAS) * 10) / 10);
+type Zooms = { rangs: number; reserve: number };
+/** Ramène une valeur au cran le plus proche. */
+const borne = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? CRANS.reduce((a, b) => (Math.abs(b - v) < Math.abs(a - v) ? b : a)) : 1);
+
+/** Les deux zooms, gardés dans ce navigateur. */
+function useZoom(): [Zooms, (z: Zooms) => void] {
+  const [z, setZ] = useState<Zooms>({ rangs: 1, reserve: 1 });
+  useEffect(() => {
+    try {
+      const brut = JSON.parse(localStorage.getItem(STOCK_ZOOM) ?? "null");
+      if (brut) setZ({ rangs: borne(brut.rangs), reserve: borne(brut.reserve) });
+    } catch {}
+  }, []);
+  const changer = (n: Zooms) => {
+    setZ(n);
+    try {
+      localStorage.setItem(STOCK_ZOOM, JSON.stringify(n));
+    } catch {}
+  };
+  return [z, changer];
+}
+
+/** Curseur « taille » par crans (60 % à 180 %) : −, les crans, +, et le pourcentage. */
+function Zoom({ valeur, onChange, nom }: { valeur: number; onChange: (v: number) => void; nom: string }) {
+  const pas = (d: number) => onChange(borne(valeur + d * ZOOM_PAS));
+  const part = (valeur - ZOOM_MIN) / (ZOOM_MAX - ZOOM_MIN);
+  return (
+    <div className="tl-zoom" role="group" aria-label={nom}>
+      <button type="button" onClick={() => pas(-1)} disabled={valeur <= ZOOM_MIN} aria-label="Plus petit" title="Plus petit">
+        −
+      </button>
+      <span className="tl-zoom__piste" style={{ ["--crans" as string]: CRANS.length - 1 }}>
+        <input
+          type="range"
+          min={ZOOM_MIN}
+          max={ZOOM_MAX}
+          step={ZOOM_PAS}
+          value={valeur}
+          aria-label={nom}
+          aria-valuetext={`${Math.round(valeur * 100)} %`}
+          style={{ ["--v" as string]: `${part * 100}%` }}
+          onChange={(e) => onChange(borne(Number(e.target.value)))}
+          onDoubleClick={() => onChange(1)}
+          title="Double-clic : taille normale"
+        />
+      </span>
+      <button type="button" onClick={() => pas(1)} disabled={valeur >= ZOOM_MAX} aria-label="Plus grand" title="Plus grand">
+        +
+      </button>
+      <span className="tl-zoom__val" aria-hidden="true">
+        {Math.round(valeur * 100)} %
+      </span>
+    </div>
+  );
+}
+
 /** Dessine une tierlist en image (PNG), avec la signature Henassa. */
-export async function imageTierlist(titre: string, rangs: { nom: string; items: string[] }[], parCle: Map<string, ItemJeu>, sousTitre = "") {
-  const L = 1200, COL = 150, T = 100, G = 6, M = 24;
-  const parLigne = Math.floor((L - COL - M - G) / (T + G));
-  const hauteurs = rangs.map((r) => Math.max(1, Math.ceil(r.items.length / parLigne)) * (T + G) + G);
+export async function imageTierlist(titre: string, rangs: { nom: string; items: string[] }[], parCle: Map<string, ItemJeu>, sousTitre = "", zoom = 1) {
+  // T : hauteur d'une pochette, qui suit le zoom ; les pochettes touchent le haut et le bas de leur rang
+  const L = 1200, COL = 150, T = Math.round(100 * borne(zoom)), G = 3, M = 24;
+  /** L'image est dessinée en double résolution : des pochettes nettes, même réduites. */
+  const K = 2;
+  // chaque œuvre a sa largeur : T pour un album (carré), moins pour une affiche ou une jaquette
+  const largeur = (cle: string) => Math.round(T * ratioPochette(parCle.get(cle)?.type));
+  const dispo = L - COL - M - G;
+  // place de chaque œuvre dans son rang : décalage horizontal et numéro de ligne
+  const places = rangs.map((r) => {
+    let cx = 0, ligne = 0;
+    return r.items.map((cle) => {
+      const w = largeur(cle);
+      if (cx > 0 && cx + w > dispo) {
+        ligne++;
+        cx = 0;
+      }
+      const p = { dx: cx, ligne, w };
+      cx += w + G;
+      return p;
+    });
+  });
+  const hauteurs = places.map((p) => (p.length ? p[p.length - 1]!.ligne + 1 : 1) * (T + G) - G);
   const haut = sousTitre ? 140 : 110;
   const H = haut + hauteurs.reduce((a, b) => a + b + 4, 0) + 70;
   const c = document.createElement("canvas");
-  c.width = L;
-  c.height = H;
+  c.width = L * K;
+  c.height = H * K;
   const x = c.getContext("2d")!;
   await document.fonts?.ready;
-  fondDegrade(x, L, H, "#3FD68A");
+  fondDegrade(x, L * K, H * K, "#3FD68A");
+  // la suite se dessine en coordonnées « normales », agrandies K fois
+  x.setTransform(K, 0, 0, K, 0, 0);
+  x.imageSmoothingEnabled = true;
+  x.imageSmoothingQuality = "high";
   x.fillStyle = "#fff";
   x.textBaseline = "middle";
   x.font = "400 54px Anton, Impact, sans-serif";
@@ -496,20 +587,24 @@ export async function imageTierlist(titre: string, rangs: { nom: string; items: 
     r.items.forEach((cle, k) => {
       const o = parCle.get(cle);
       if (!o) return;
-      const tx = M + COL + G + (k % parLigne) * (T + G);
-      const ty = y + G + Math.floor(k / parLigne) * (T + G);
+      const { dx, ligne, w } = places[i]![k]!;
+      const tx = M + COL + G + dx;
+      const ty = y + ligne * (T + G);
       const img = images.get(cle);
       if (img) {
-        const s = Math.min(img.naturalWidth, img.naturalHeight);
-        x.drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, tx, ty, T, T);
+        // la partie centrale de l'image, au format de la case (carré ou 2:3)
+        const ratio = w / T;
+        const sw = Math.min(img.naturalWidth, img.naturalHeight * ratio);
+        const sh = sw / ratio;
+        x.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh) / 2, sw, sh, tx, ty, w, T);
       } else {
         x.fillStyle = "#1c1c1c";
-        x.fillRect(tx, ty, T, T);
+        x.fillRect(tx, ty, w, T);
         x.fillStyle = TYPES_OEUVRE[o.type].couleur;
-        x.fillRect(tx, ty, T, 6);
+        x.fillRect(tx, ty, w, 6);
         x.fillStyle = "#fff";
         x.font = "400 40px Anton, Impact, sans-serif";
-        x.fillText(initiales(o), tx + T / 2, ty + T / 2 + 3);
+        x.fillText(initiales(o), tx + w / 2, ty + T / 2 + 3);
       }
     });
     x.textAlign = "left";

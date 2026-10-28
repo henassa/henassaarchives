@@ -6,7 +6,7 @@ import { Joueurs } from "@/components/blindtest/room/Salle";
 import { REPONSE_MAX } from "@/components/blindtest/lib/texte";
 import { imageResultat } from "@/components/blindtest/partie/image";
 import { lireVolume, reglerVolume } from "@/components/blindtest/lib/audio";
-import { classement, complet, demandeArtiste, demandeTitre, type EtatJeu, type Verdict } from "@/components/blindtest/lib/partie";
+import { classement, complet, demandeArtiste, demandeTitre, ordinal, rangs, type EtatJeu, type Verdict } from "@/components/blindtest/lib/partie";
 
 /* Une manche, vue par chaque joueur : chargement, décompte, écoute, révélation. */
 
@@ -83,13 +83,14 @@ type Props = {
   onRepondre: (texte: string) => void;
   onChoisir: (i: number) => void;
   onFrappe: (texte: string) => void;
-  onSuivante: () => void;
+  /** Plus utilisé : la manche suivante part toute seule (gardé pour ne rien changer ailleurs). */
+  onSuivante?: () => void;
   onArreter: () => void;
   onExclure: (id: string) => void;
   onQuitter: () => void;
 };
 
-export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque, onRelancerSon, onRepondre, onChoisir, onFrappe, onSuivante, onArreter, onExclure, onQuitter }: Props) {
+export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque, onRelancerSon, onRepondre, onChoisir, onFrappe, onArreter, onExclure, onQuitter }: Props) {
   const m = etat.manche!;
   const maintenant = useHorloge(maintenantHote, true);
   const [texte, setTexte] = useState("");
@@ -141,6 +142,9 @@ export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque,
     setMonChoix({ n: m.n, i });
     onChoisir(i);
   };
+
+  const rangsTitre = rangs(m.trouves, "titre");
+  const rangsArtiste = rangs(m.trouves, "artiste");
 
   const placeholder = cible === "titre" ? "Le titre…" : cible === "artiste" ? "L'artiste…" : "Titre, artiste… ou les deux";
   const dernier = verdict && verdict.n === m.n && maintenant - verdict.le < 4000 ? verdict : null;
@@ -300,10 +304,33 @@ export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque,
           <ol>
             {classement(etat).map((j) => {
               const g = m.gains?.[j.id] ?? 0;
+              // l'ordre d'arrivée sur cette manche : « 1er titre », « 3e artiste »…
+              const seul = rangsTitre[j.id] ?? rangsArtiste[j.id];
+              const places =
+                qcm || cible !== "les-deux"
+                  ? seul
+                    ? [{ quoi: "", r: seul }]
+                    : []
+                  : [
+                      ...(rangsTitre[j.id] ? [{ quoi: "titre", r: rangsTitre[j.id] }] : []),
+                      ...(rangsArtiste[j.id] ? [{ quoi: "artiste", r: rangsArtiste[j.id] }] : []),
+                    ];
               return (
                 <li key={j.id} className={`${j.id === moi ? "est-moi" : ""}${j.rang === 1 ? " est-premier" : ""}`}>
                   <span className="classement__rang">{j.rang}</span>
-                  <span className="classement__nom">{j.nom}</span>
+                  <span className="classement__nom">
+                    {j.nom}
+                    {places.length > 0 && (
+                      <span className="classement__places">
+                        {places.map((p) => (
+                          <span key={p.quoi} className={`place${p.r === 1 ? " place--1" : ""}`}>
+                            {ordinal(p.r)}
+                            {p.quoi ? ` ${p.quoi}` : ""}
+                          </span>
+                        ))}
+                      </span>
+                    )}
+                  </span>
                   <span className={`classement__gain${g ? " is-on" : ""}`}>{g ? `+${g}` : "·"}</span>
                   <span className="classement__pts">{j.points}</span>
                 </li>
@@ -314,11 +341,6 @@ export function Manche({ etat, moi, estHote, maintenantHote, verdict, sonBloque,
             <p className="note">
               {m.n >= m.total ? "Résultats" : "Manche suivante"} dans {Math.max(0, Math.ceil(((m.suite ?? maintenant) - maintenant) / 1000))} s
             </p>
-            {estHote && (
-              <button type="button" className="bouton" onClick={onSuivante}>
-                {m.n >= m.total ? "Voir le podium" : "Suivante"}
-              </button>
-            )}
           </div>
         </div>
       )}

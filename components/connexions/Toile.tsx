@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Lien, Oeuvre } from "@/lib/oeuvres";
 import { REGLAGES, normTag } from "@/lib/liens-auto";
 import { SECTIONS, TYPES_OEUVRE } from "@/lib/sections";
-import { initiales } from "./utils";
+import { enPortrait, initiales, ratioPochette } from "./utils";
 
 /*
  * La Toile, en deux vues, dessinées sur un canvas.
@@ -51,6 +51,13 @@ const MAX_ORBITE = 36;
 const ACCENT = SECTIONS.connexions.couleur;
 const BG = "#0a0a0a";
 const MUTED = "#9a9a9a";
+
+/** Taille dessinée d'une tuile : carrée pour un album, portrait (même surface) pour un film ou un jeu. */
+function formatTuile(o: { type: string }, s: number) {
+  if (!enPortrait(o.type)) return { l: s, h: s };
+  const k = Math.sqrt(ratioPochette(o.type));
+  return { l: s * k, h: s / k };
+}
 const ANGLE_OR = 2.39996323;
 
 type Voisin = { id: number; score: number; communs: string[] };
@@ -439,16 +446,20 @@ export function Toile({
     const tuile = (o: Oeuvre, x: number, y: number, s: number, opts: { alpha?: number; cadre?: string | null; label?: boolean } = {}) => {
       const { alpha = 1, cadre = null, label = false } = opts;
       const typeC = TYPES_OEUVRE[o.type].couleur;
+      // album : carré s × s ; film : portrait 2:3 de même surface
+      const { l: tl, h: th } = formatTuile(o, s);
       ctx.globalAlpha = alpha;
       const img = images.current.get(o.id);
       if (img && img.complete && img.naturalWidth > 0) {
-        const c = Math.min(img.naturalWidth, img.naturalHeight);
-        ctx.drawImage(img, (img.naturalWidth - c) / 2, (img.naturalHeight - c) / 2, c, c, x - s / 2, y - s / 2, s, s);
+        const ratio = tl / th;
+        const sw = Math.min(img.naturalWidth, img.naturalHeight * ratio);
+        const sh = sw / ratio;
+        ctx.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh) / 2, sw, sh, x - tl / 2, y - th / 2, tl, th);
       } else {
         ctx.fillStyle = "#1a1a1a";
-        ctx.fillRect(x - s / 2, y - s / 2, s, s);
+        ctx.fillRect(x - tl / 2, y - th / 2, tl, th);
         ctx.fillStyle = typeC;
-        ctx.fillRect(x - s / 2, y - s / 2, s, Math.max(2, s * 0.08));
+        ctx.fillRect(x - tl / 2, y - th / 2, tl, Math.max(2, s * 0.08));
         ctx.fillStyle = "#fff";
         ctx.font = `400 ${Math.round(s * 0.42)}px Anton, Impact, sans-serif`;
         ctx.textAlign = "center";
@@ -458,7 +469,7 @@ export function Toile({
       if (cadre) {
         ctx.strokeStyle = cadre;
         ctx.lineWidth = 2.5;
-        ctx.strokeRect(x - s / 2, y - s / 2, s, s);
+        ctx.strokeRect(x - tl / 2, y - th / 2, tl, th);
       }
       if (label) {
         ctx.textAlign = "center";
@@ -466,10 +477,10 @@ export function Toile({
         ctx.fillStyle = "#fff";
         ctx.font = `800 ${Math.max(10, Math.min(12, s * 0.24))}px Archivo, sans-serif`;
         const t = o.titre.length > 22 ? o.titre.slice(0, 21) + "…" : o.titre;
-        ctx.fillText(t, x, y + s / 2 + 5);
+        ctx.fillText(t, x, y + th / 2 + 5);
         ctx.fillStyle = MUTED;
         ctx.font = `400 ${Math.max(9, Math.min(11, s * 0.22))}px Archivo, sans-serif`;
-        ctx.fillText(o.auteur.length > 24 ? o.auteur.slice(0, 23) + "…" : o.auteur, x, y + s / 2 + 20);
+        ctx.fillText(o.auteur.length > 24 ? o.auteur.slice(0, 23) + "…" : o.auteur, x, y + th / 2 + 20);
       }
       ctx.globalAlpha = 1;
     };
@@ -648,10 +659,11 @@ export function Toile({
       ctx.textBaseline = "top";
       ctx.fillStyle = "#fff";
       ctx.font = `400 ${Math.round(c.s * 0.24)}px Anton, Impact, sans-serif`;
-      ctx.fillText(C.titre.toUpperCase(), c.x, c.y + c.s / 2 + 8);
+      const hc = formatTuile(C, c.s).h;
+      ctx.fillText(C.titre.toUpperCase(), c.x, c.y + hc / 2 + 8);
       ctx.fillStyle = MUTED;
       ctx.font = "600 12px Archivo, sans-serif";
-      ctx.fillText(C.auteur + (C.annee ? ` · ${C.annee}` : ""), c.x, c.y + c.s / 2 + 14 + c.s * 0.24);
+      ctx.fillText(C.auteur + (C.annee ? ` · ${C.annee}` : ""), c.x, c.y + hc / 2 + 14 + c.s * 0.24);
       if (s.reste > 0) {
         ctx.textAlign = "right";
         ctx.textBaseline = "top";
@@ -663,7 +675,7 @@ export function Toile({
       if (!(adj.get(s.centreId)?.length)) {
         ctx.fillStyle = MUTED;
         ctx.font = "600 13px Archivo, sans-serif";
-        ctx.fillText("Pas encore reliée à une autre œuvre.", c.x, c.y + c.s / 2 + 52);
+        ctx.fillText("Pas encore reliée à une autre œuvre.", c.x, c.y + hc / 2 + 52);
       }
     };
 
@@ -703,7 +715,13 @@ export function Toile({
       }
       return best;
     }
-    for (const [id, d] of s.disp) if (d.a > 0.5 && Math.abs(d.x - px) < d.s / 2 + 3 && Math.abs(d.y - py) < d.s / 2 + 3) return id;
+    const { byId } = donnees.current;
+    for (const [id, d] of s.disp) {
+      if (d.a <= 0.5) continue;
+      const o = byId.get(id);
+      const f = o ? formatTuile(o, d.s) : { l: d.s, h: d.s };
+      if (Math.abs(d.x - px) < f.l / 2 + 3 && Math.abs(d.y - py) < f.h / 2 + 3) return id;
+    }
     return null;
   }, []);
 

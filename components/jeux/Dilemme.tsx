@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pochette } from "@/components/connexions/Pochette";
-import { initiales } from "@/components/connexions/utils";
+import { initiales, ratioPochette } from "@/components/connexions/utils";
 import { TYPES_OEUVRE, type TypeOeuvre } from "@/lib/sections";
 import { fondDegrade } from "./commun";
 import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
@@ -160,19 +160,25 @@ export function Dilemme({ oeuvres }: { oeuvres: ItemDuel[] }) {
             i.onerror = () => ok(null);
             i.src = o.cover;
           });
+        /** Dessine la pochette dans une case s × s : carrée pour un album, affiche 2:3 centrée pour un film. */
         const dessiner = (o: ItemDuel, img: HTMLImageElement | null, px: number, py: number, s: number) => {
+          const w = Math.round(s * ratioPochette(o.type));
+          const ox = px + (s - w) / 2;
           if (img) {
-            const k = Math.min(img.naturalWidth, img.naturalHeight);
-            x.drawImage(img, (img.naturalWidth - k) / 2, (img.naturalHeight - k) / 2, k, k, px, py, s, s);
+            const ratio = w / s;
+            const sw = Math.min(img.naturalWidth, img.naturalHeight * ratio);
+            const sh = sw / ratio;
+            x.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh) / 2, sw, sh, ox, py, w, s);
           } else {
             x.fillStyle = "#1a1a1a";
-            x.fillRect(px, py, s, s);
+            x.fillRect(ox, py, w, s);
             x.fillStyle = "#fff";
             x.textAlign = "center";
             x.textBaseline = "middle";
             x.font = `400 ${s * 0.4}px Anton, Impact, sans-serif`;
             x.fillText(initiales(o), px + s / 2, py + s / 2);
           }
+          return { x: ox, w };
         };
         const accent = "#3FD68A";
         fondDegrade(x, L, H, accent);
@@ -183,10 +189,10 @@ export function Dilemme({ oeuvres }: { oeuvres: ItemDuel[] }) {
         x.fillText(`DILEMME · ${partie.sorties.length + 1} ŒUVRES${etiquette ? " · " + etiquette.toUpperCase() : ""}`, M, M + 22);
         // Vainqueur
         const s1 = 640, vx = (L - s1) / 2, vy = 150;
-        dessiner(vainqueur, await charger(vainqueur), vx, vy, s1);
+        const cadre = dessiner(vainqueur, await charger(vainqueur), vx, vy, s1);
         x.strokeStyle = accent;
         x.lineWidth = 8;
-        x.strokeRect(vx, vy, s1, s1);
+        x.strokeRect(cadre.x, vy, cadre.w, s1);
         x.textAlign = "center";
         x.fillStyle = "#fff";
         let fs = 72;

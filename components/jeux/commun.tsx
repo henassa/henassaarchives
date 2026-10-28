@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { OeuvreJeu } from "@/lib/jeux";
 import { FiltresJeuBarre, useFiltresJeu } from "./Filtres";
-import { initiales } from "@/components/connexions/utils";
+import { enPortrait, initiales, ratioPochette } from "@/components/connexions/utils";
 
 /* Outils partagés par « Le mot » et « Devine l'œuvre ». */
 
@@ -65,7 +65,11 @@ export async function copier(texte: string) {
  * Pochette en mosaïque : « cases » carrés par côté (peu de cases = très flou).
  * cases = 0 affiche la pochette nette.
  */
-export function Mosaique({ o, cases, className = "" }: { o: Pick<OeuvreJeu, "titre" | "cover">; cases: number; className?: string }) {
+export function Mosaique({ o, cases, className = "" }: { o: Pick<OeuvreJeu, "titre" | "cover"> & { type?: string }; cases: number; className?: string }) {
+  // affiche de film : 2:3 au lieu du carré
+  const portrait = enPortrait(o.type);
+  const jeu = o.type === "jeu";
+  const ratioImage = ratioPochette(o.type);
   const ref = useRef<HTMLCanvasElement>(null);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
   const [rate, setRate] = useState(false);
@@ -90,34 +94,39 @@ export function Mosaique({ o, cases, className = "" }: { o: Pick<OeuvreJeu, "tit
   useEffect(() => {
     const c = ref.current;
     if (!c || !img) return;
-    const T = 600;
-    c.width = T;
-    c.height = T;
+    // carré (600 × 600), affiche 2:3 (600 × 900) ou jaquette de jeu 3:4 (600 × 800)
+    const L = 600, H = Math.round(600 / ratioImage);
+    c.width = L;
+    c.height = H;
     const x = c.getContext("2d")!;
-    const k = Math.min(img.naturalWidth, img.naturalHeight);
-    const sx = (img.naturalWidth - k) / 2, sy = (img.naturalHeight - k) / 2;
+    // la partie de l'image à garder, au centre, dans le bon format
+    const ratio = L / H;
+    const sw = Math.min(img.naturalWidth, img.naturalHeight * ratio);
+    const sh = sw / ratio;
+    const sx = (img.naturalWidth - sw) / 2, sy = (img.naturalHeight - sh) / 2;
     if (!cases) {
       x.imageSmoothingEnabled = true;
-      x.drawImage(img, sx, sy, k, k, 0, 0, T, T);
+      x.drawImage(img, sx, sy, sw, sh, 0, 0, L, H);
       return;
     }
-    // on réduit l'image à « cases » pixels, puis on la ré-agrandit sans lissage
+    // on réduit l'image à « cases » pixels de large, puis on la ré-agrandit sans lissage
+    const cl = cases, ch = Math.max(1, Math.round(cases / ratio));
     const petit = document.createElement("canvas");
-    petit.width = cases;
-    petit.height = cases;
+    petit.width = cl;
+    petit.height = ch;
     const p = petit.getContext("2d")!;
     p.imageSmoothingEnabled = true;
-    p.drawImage(img, sx, sy, k, k, 0, 0, cases, cases);
+    p.drawImage(img, sx, sy, sw, sh, 0, 0, cl, ch);
     x.imageSmoothingEnabled = false;
-    x.clearRect(0, 0, T, T);
-    x.drawImage(petit, 0, 0, cases, cases, 0, 0, T, T);
-  }, [img, cases]);
+    x.clearRect(0, 0, L, H);
+    x.drawImage(petit, 0, 0, cl, ch, 0, 0, L, H);
+  }, [img, cases, ratioImage]);
 
   if (rate) {
     // pas d'image : un point d'interrogation tant que c'est caché, les initiales une fois dévoilé
-    return <div className={`mj-mosaique mj-mosaique--vide ${className}`}>{cases ? "?" : initiales(o)}</div>;
+    return <div className={`mj-mosaique mj-mosaique--vide${portrait ? " mj-mosaique--portrait" : ""}${jeu ? " mj-mosaique--jeu" : ""} ${className}`}>{cases ? "?" : initiales(o)}</div>;
   }
-  return <canvas ref={ref} className={`mj-mosaique ${className}`} role="img" aria-label={cases ? "Pochette cachée" : `Pochette : ${o.titre}`} />;
+  return <canvas ref={ref} className={`mj-mosaique${portrait ? " mj-mosaique--portrait" : ""}${jeu ? " mj-mosaique--jeu" : ""} ${className}`} role="img" aria-label={cases ? "Pochette cachée" : `Pochette : ${o.titre}`} />;
 }
 
 export type Mode = "jour" | "libre";

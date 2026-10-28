@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { assemblerLiens, calculerCandidats, normTag, REGLAGES, type LienAuto } from "./liens-auto";
+import { assemblerLiens, calculerCandidats, normTag, REGLAGES, REGLAGES_FILMS, REGLAGES_JEUX, type LienAuto, type OeuvreTags } from "./liens-auto";
 import { affinitesRacines, ancetres, creerFamilles, nomAffiche, nomRym, profondeur, type Familles } from "./familles";
 import { isTypeOeuvre, type TypeOeuvre } from "./sections";
 import { enListe, enTexte, lireTableur, type Cellule } from "./tableur";
@@ -8,7 +8,9 @@ import { enListe, enTexte, lireTableur, type Cellule } from "./tableur";
 export const CONNEXIONS_FILE = path.join(process.cwd(), "content", "connexions.json");
 /**
  * Le tableur, s'il existe, remplace connexions.json : c'est lui que le site lit.
- * Onglets : « Œuvres » (une ligne par œuvre) et « Familles » (qui descend de qui).
+ * Onglets : « Œuvres » (une ligne par œuvre), « Films » (une ligne par film,
+ * remplie par scripts/import-films.mjs), « Jeux » (une ligne par jeu vidéo,
+ * remplie par scripts/import-jeux.mjs) et « Familles » (qui descend de qui).
  */
 export const TABLEUR_FILE = path.join(process.cwd(), "content", "oeuvres.xlsx");
 /**
@@ -105,6 +107,25 @@ export type Oeuvre = {
   producteurs?: string[];
   featurings?: string[];
   labels?: string[];
+  /* Films (onglet « Films ») : le réalisateur est dans « auteur ». */
+  scenario?: string[];
+  casting?: string[];
+  musique?: string[];
+  /** Chef opérateur (colonne « Image »). */
+  chefOp?: string[];
+  montage?: string[];
+  studios?: string[];
+  pays?: string[];
+  titreOriginal?: string;
+  /* Jeux vidéo (onglet « Jeux ») : le studio est dans « auteur ». */
+  editeurs?: string[];
+  series?: string[];
+  themes?: string[];
+  perspectives?: string[];
+  modes?: string[];
+  plateformes?: string[];
+  moteurs?: string[];
+  motsCles?: string[];
   cover?: string;
   /** Petite copie de la pochette (fabriquée par scripts/miniatures.mjs), si elle existe. */
   mini?: string;
@@ -251,8 +272,89 @@ function champDe(entete: string) {
   return COLONNES.find(([debut]) => [debut, debut + "s"].some((d) => n === d || n.startsWith(d + " ")))?.[1];
 }
 
+/** Colonnes de l'onglet Films (même principe : le début du titre de la colonne). */
+const COLONNES_FILMS: [string, string][] = [
+  ["ne pas relier", "pasDeLien"],
+  ["pas de lien", "pasDeLien"],
+  ["relier", "liens"],
+  ["liens", "liens"],
+  ["titre original", "titreOriginal"],
+  ["titre", "titre"],
+  ["id", "id"],
+  ["identifiant", "id"],
+  ["realisation", "auteur"],
+  ["realisateur", "auteur"],
+  ["annee", "annee"],
+  ["genre", "sousGenres"],
+  ["descripteur", "descripteurs"],
+  ["scenario", "scenario"],
+  ["casting", "casting"],
+  ["acteur", "casting"],
+  ["musique", "musique"],
+  ["image", "chefOp"],
+  ["montage", "montage"],
+  ["studio", "studios"],
+  ["pays", "pays"],
+  ["langue", "langues"],
+  ["description", "description"],
+  ["affiche", "cover"],
+];
+function champFilm(entete: string) {
+  const n = sansAccent(entete);
+  return COLONNES_FILMS.find(([debut]) => [debut, debut + "s"].some((d) => n === d || n.startsWith(d + " ")))?.[1];
+}
+
+/** Colonnes de l'onglet Jeux. */
+const COLONNES_JEUX: [string, string][] = [
+  ["ne pas relier", "pasDeLien"],
+  ["pas de lien", "pasDeLien"],
+  ["relier", "liens"],
+  ["liens", "liens"],
+  ["titre", "titre"],
+  ["id", "id"],
+  ["identifiant", "id"],
+  ["studio", "auteur"],
+  ["developpeur", "auteur"],
+  ["annee", "annee"],
+  ["editeur", "editeurs"],
+  ["serie", "series"],
+  ["genre", "sousGenres"],
+  ["theme", "themes"],
+  ["descripteur", "descripteurs"],
+  ["perspective", "perspectives"],
+  ["mode", "modes"],
+  ["plateforme", "plateformes"],
+  ["moteur", "moteurs"],
+  ["mots cles", "motsCles"],
+  ["mot cle", "motsCles"],
+  ["description", "description"],
+  ["jaquette", "cover"],
+];
+function champJeu(entete: string) {
+  const n = sansAccent(entete);
+  return COLONNES_JEUX.find(([debut]) => [debut, debut + "s"].some((d) => n === d || n.startsWith(d + " ")))?.[1];
+}
+
 /** Colonnes qui contiennent une liste séparée par des virgules. */
-const LISTES = new Set(["sousGenres", "secondaires", "scenes", "descripteurs", "langues", "producteurs", "featurings", "labels", "liens", "pasDeLien"]);
+const LISTES = new Set([
+  "sousGenres", "secondaires", "scenes", "descripteurs", "langues", "producteurs", "featurings", "labels", "liens", "pasDeLien",
+  "scenario", "casting", "musique", "chefOp", "montage", "studios", "pays",
+  "editeurs", "series", "themes", "perspectives", "modes", "plateformes", "moteurs", "motsCles",
+]);
+
+/** Une ligne du tableur → un objet { champ: valeur }, selon les en-têtes. */
+function lireLigne(entetes: (string | undefined)[], ligne: Cellule[]) {
+  const r: Record<string, unknown> = {};
+  entetes.forEach((champ, col) => {
+    if (!champ) return;
+    const c = ligne[col];
+    if (LISTES.has(champ)) {
+      const l = enListe(c);
+      if (l.length) r[champ] = l;
+    } else if (enTexte(c)) r[champ] = enTexte(c);
+  });
+  return r;
+}
 
 /** Ce qu'on accepte dans la colonne Type. */
 const TYPES_TEXTE: Record<string, TypeOeuvre> = {
@@ -289,15 +391,7 @@ function lireDepuisTableur(): Source {
   const entetes = (lignes[0] ?? []).map((c) => champDe(enTexte(c)));
   const rawOeuvres: Record<string, unknown>[] = [];
   lignes.slice(1).forEach((ligne, i) => {
-    const r: Record<string, unknown> = {};
-    entetes.forEach((champ, col) => {
-      if (!champ) return;
-      const c = ligne[col];
-      if (LISTES.has(champ)) {
-        const l = enListe(c);
-        if (l.length) r[champ] = l;
-      } else if (enTexte(c)) r[champ] = enTexte(c);
-    });
+    const r = lireLigne(entetes, ligne);
     if (!Object.keys(r).length) return; // ligne vide
     const n = i + 2;
     if (!r.titre || !r.auteur) return prevenir(`ligne ${n} ignorée : il manque le titre ou l'artiste.`);
@@ -309,6 +403,38 @@ function lireDepuisTableur(): Source {
     rawOeuvres.push(r);
   });
 
+  // Rappel des genres RYM inconnus : seulement pour l'onglet Œuvres (les films ont leurs propres genres)
+  const nbOeuvres = rawOeuvres.length;
+
+  // Onglet Films : une ligne par film (le titre et la réalisation suffisent, le reste vient de scripts/import-films.mjs)
+  const films = onglet(onglets, "films", "film");
+  if (films) {
+    const entetesF = (films[0] ?? []).map((c) => champFilm(enTexte(c)));
+    films.slice(1).forEach((ligne, i) => {
+      const r = lireLigne(entetesF, ligne);
+      if (!r.titre) return; // ligne vide
+      if (!r.auteur) return prevenir(`onglet Films, ligne ${i + 2} (${r.titre}) ignorée : pas encore de réalisation. Lance « node scripts/import-films.mjs » ou remplis-la à la main.`);
+      r.type = "film";
+      if (!r.id) r.id = slugify(`${r.auteur} ${r.titre}`);
+      rawOeuvres.push(r);
+    });
+  }
+
+  // Onglet Jeux : une ligne par jeu (le titre et le studio suffisent, le reste vient de scripts/import-jeux.mjs)
+  const jeux = onglet(onglets, "jeux", "jeu", "jeux video");
+  if (jeux) {
+    const entetesJ = (jeux[0] ?? []).map((c) => champJeu(enTexte(c)));
+    jeux.slice(1).forEach((ligne, i) => {
+      const r = lireLigne(entetesJ, ligne);
+      if (!r.titre) return; // ligne vide
+      if (!r.auteur) return prevenir(`onglet Jeux, ligne ${i + 2} (${r.titre}) ignorée : pas encore de studio. Lance « node scripts/import-jeux.mjs » ou remplis-le à la main.`);
+      r.type = "jeu";
+      r.depuisOngletJeux = true;
+      if (!r.id) r.id = slugify(`${r.auteur} ${r.titre}`);
+      rawOeuvres.push(r);
+    });
+  }
+
   const fam = onglet(onglets, "familles", "famille") ?? [];
   const tesFamilles = familles(fam.slice(1).map((l) => [enTexte(l[0]), enListe(l[1])] as [string, string[]]).filter(([t, p]) => t && p.length));
 
@@ -316,7 +442,7 @@ function lireDepuisTableur(): Source {
   if (tesFamilles.size) {
     const connus = new Set([...lireReference().tous, ...tesFamilles.keys(), ...[...tesFamilles.values()].flat().map(normTag)]);
     const absents = new Set<string>();
-    for (const r of rawOeuvres) for (const t of [String(r.genre ?? ""), ...((r.sousGenres as string[]) ?? [])]) if (t && !connus.has(normTag(t))) absents.add(t);
+    for (const r of rawOeuvres.slice(0, nbOeuvres)) for (const t of [String(r.genre ?? ""), ...((r.sousGenres as string[]) ?? [])]) if (t && !connus.has(normTag(t))) absents.add(t);
     if (absents.size) prevenir(`${absents.size} tag(s) qui ne sont pas des noms de genre RateYourMusic (vérifie l'orthographe, ou ajoute-les dans l'onglet Familles) : ${[...absents].sort().join(", ")}.`);
   }
 
@@ -351,6 +477,8 @@ export function readBrut(): ConnexionsBrut {
       slug = `${slug}-${id}`;
     }
     byKey.set(slug, id);
+    if (r.type === "film") return lireFilm(r, id, slug, presentes, minis);
+    if (r.depuisOngletJeux) return lireJeu(r, id, slug, presentes, minis);
     // genres principaux : les seuls affichés. Secondaires et scènes : seulement pour les connexions.
     const sousGenres = liste(r.sousGenres ?? r["sous-genres"] ?? r["sous-genre"] ?? r.sousGenre);
     const secondaires = liste([...(liste(r.secondaires) ?? []), ...(liste(r.scenes) ?? [])].filter((t) => !(sousGenres ?? []).includes(t)));
@@ -414,6 +542,93 @@ export function readBrut(): ConnexionsBrut {
   return { oeuvres, liens: paires("liens"), exclus: paires("pasDeLien") };
 }
 
+/** Un film de l'onglet Films. Pas de familles RYM : ses genres sont ceux du cinéma. */
+function lireFilm(r: Record<string, unknown>, id: number, slug: string, presentes: Map<string, string>, minis: Set<string>): Oeuvre {
+  const genres = liste(r.sousGenres);
+  const cover = str(r.cover) ?? pochetteAuto(slug, presentes);
+  return {
+    id,
+    slug,
+    titre: String(r.titre ?? ""),
+    auteur: String(r.auteur ?? ""),
+    annee: r.annee ? Number(r.annee) : undefined,
+    type: "film",
+    // le premier genre sert de « grande famille » (sphère de la carte, filtres)
+    genre: genres?.[0],
+    sousGenres: genres,
+    racine: genres?.[0],
+    descripteurs: liste(r.descripteurs),
+    langues: liste((liste(r.langues) ?? []).flatMap((x) => x.split("/"))),
+    scenario: liste(r.scenario),
+    casting: liste(r.casting),
+    musique: liste(r.musique),
+    chefOp: liste(r.chefOp),
+    montage: liste(r.montage),
+    studios: liste(r.studios),
+    pays: liste(r.pays),
+    titreOriginal: str(r.titreOriginal),
+    cover,
+    mini: miniDe(cover, minis),
+    description: str(r.description),
+  };
+}
+
+/** Un jeu vidéo de l'onglet Jeux. Comme les films : pas de familles RYM. */
+function lireJeu(r: Record<string, unknown>, id: number, slug: string, presentes: Map<string, string>, minis: Set<string>): Oeuvre {
+  const genres = liste(r.sousGenres);
+  const cover = str(r.cover) ?? pochetteAuto(slug, presentes);
+  return {
+    id,
+    slug,
+    titre: String(r.titre ?? ""),
+    auteur: String(r.auteur ?? ""),
+    annee: r.annee ? Number(r.annee) : undefined,
+    type: "jeu",
+    genre: genres?.[0],
+    sousGenres: genres,
+    racine: genres?.[0],
+    descripteurs: liste(r.descripteurs),
+    editeurs: liste(r.editeurs),
+    series: liste(r.series),
+    themes: liste(r.themes),
+    perspectives: liste(r.perspectives),
+    modes: liste(r.modes),
+    plateformes: liste(r.plateformes),
+    moteurs: liste(r.moteurs),
+    motsCles: liste(r.motsCles),
+    cover,
+    mini: miniDe(cover, minis),
+    description: str(r.description),
+  };
+}
+
+/** Un jeu vu par le calcul des liens (voir REGLAGES_JEUX dans lib/liens-auto.ts). */
+const tagsJeu = (o: Oeuvre): OeuvreTags => ({
+  ...o,
+  secondaires: o.themes,
+  scenes: o.series,
+  descripteurs: [...(o.descripteurs ?? []), ...(o.perspectives ?? []), ...(o.modes ?? []), ...(o.motsCles ?? [])],
+  labels: o.editeurs,
+  producteurs: o.moteurs,
+  featurings: undefined,
+  langues: undefined,
+});
+
+/** Les univers qui ont leurs propres réglages, et comment leurs colonnes entrent dans le calcul. */
+const UNIVERS_A_PART: Partial<Record<TypeOeuvre, { reglages: typeof REGLAGES; tags: (o: Oeuvre) => OeuvreTags }>> = {
+  film: { reglages: REGLAGES_FILMS, tags: (o) => tagsFilm(o) },
+  jeu: { reglages: REGLAGES_JEUX, tags: (o) => tagsJeu(o) },
+};
+
+/** Un film vu par le calcul des liens : les colonnes des films prennent la place de celles des albums. */
+const tagsFilm = (o: Oeuvre): OeuvreTags => ({
+  ...o,
+  scenes: o.pays,
+  producteurs: [...(o.scenario ?? []), ...(o.musique ?? []), ...(o.chefOp ?? []), ...(o.montage ?? [])],
+  featurings: o.casting,
+  labels: o.studios,
+});
+
 /**
  * Les univers ne se mélangent pas : un album n'est jamais relié à un film ou
  * à un jeu, même si leurs tags se ressemblent ou si le lien est écrit à la main.
@@ -436,18 +651,34 @@ function candidats(brut: ConnexionsBrut): LienAuto[] {
     if (!memo.has(g)) memo.set(g, profondeur(nomRym(g), fams));
     return memo.get(g);
   };
-  return [...parType.values()].flatMap((groupe) => calculerCandidats(groupe, REGLAGES, prof)).filter((l) => !exclus.has(cle(l.a, l.b)));
+  return [...parType]
+    .flatMap(([type, groupe]) => {
+      const u = UNIVERS_A_PART[type as TypeOeuvre];
+      return u ? calculerCandidats(groupe.map(u.tags), u.reglages) : calculerCandidats(groupe, REGLAGES, prof);
+    })
+    .filter((l) => !exclus.has(cle(l.a, l.b)));
 }
 
 /** Connexions finales : automatiques + manuelles − cassées. */
 export function assembler(brut: ConnexionsBrut): Lien[] {
-  return assemblerLiens(candidats(brut), brut.liens.filter(memeType(brut)));
+  // chaque univers garde ses propres réglages (seuil, nombre de liens par œuvre)
+  const types = new Map(brut.oeuvres.map((o) => [o.id, o.type]));
+  const tous = candidats(brut);
+  const manuels = brut.liens.filter(memeType(brut));
+  const aPart = (l: { a: number }) => types.get(l.a)! in UNIVERS_A_PART;
+  const groupes = [assemblerLiens(tous.filter((l) => !aPart(l)), manuels.filter((l) => !aPart(l)))];
+  for (const [type, u] of Object.entries(UNIVERS_A_PART)) {
+    const du = (l: { a: number }) => types.get(l.a) === type;
+    groupes.push(assemblerLiens(tous.filter(du), manuels.filter(du), u!.reglages));
+  }
+  return groupes.flat();
 }
 
 export function readConnexions(): ConnexionsData {
   const brut = readBrut();
   // Les infos qui ne servent qu'au calcul des liens ne partent pas dans les pages (moins lourd)
   // (les genres secondaires restent : ils s'affichent au survol sur la carte ; les scènes servent aux filtres des jeux)
+  // (les crédits des films restent : ils sont courts et serviront à leur fiche)
   const oeuvres = brut.oeuvres.map(({ descripteurs, langues, producteurs, featurings, labels, ...o }) => o);
   return { oeuvres, liens: assembler(brut) };
 }

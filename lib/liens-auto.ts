@@ -15,6 +15,9 @@
  *     catalogue (deux albums en français ressortent si presque tout est en anglais).
  *  4. CRÉDITS : même artiste, producteur en commun, featuring en commun, même label.
  *
+ * Les films et les jeux vidéo ont leurs propres réglages (REGLAGES_FILMS et
+ * REGLAGES_JEUX, plus bas) : même calcul, avec leurs colonnes à eux.
+ *
  * Les comparaisons se font au mot près, seuls les majuscules, accents et tirets
  * sont ignorés (« boom bap » = « Boom Bap »).
  *
@@ -142,6 +145,99 @@ export const REGLAGES = {
    * Les liens ajoutés à la main ne comptent pas dans ce plafond.
    */
   maxParOeuvre: 16 as number | null,
+
+  /** Mots affichés dans l'admin devant chaque point commun. */
+  libelles: { scene: "scène", prod: "prod", feat: "feat", label: "label", memeArtiste: "même artiste" },
+};
+
+/*
+ * Réglages des FILMS (onglet « Films » du tableur).
+ * Le même calcul que pour les albums, avec les colonnes des films à la place :
+ *   genres        ← Genres (ceux de TMDB et les tiens)
+ *   descripteurs  ← Descripteurs (les tiens)
+ *   scènes        ← Pays
+ *   producteurs   ← l'équipe : Scénario, Musique, Image, Montage
+ *   featurings    ← Casting
+ *   labels        ← Studios
+ *   artiste       ← Réalisation
+ * Les genres de cinéma sont larges (Drame, Thriller…) : ce sont surtout les
+ * personnes en commun qui relient deux films.
+ */
+export const REGLAGES_FILMS: typeof REGLAGES = {
+  ...REGLAGES,
+  // genres : moins de poids, et pas de familles RYM
+  maxGenres: 30,
+  rareteExposant: 1,
+  poidsParents: 0,
+  precision: [1, 1, 1],
+  // tes descripteurs à toi
+  maxDescripteurs: 20,
+  ordreDescripteurs: 0.1,
+  descripteursIgnores: [],
+  // pays : petit bonus, et deux pays différents n'éloignent pas deux films
+  maxScenes: 6,
+  scenesDifferentes: 1,
+  // époque : un peu plus tolérant que pour la musique
+  epoqueTolerance: 6,
+  epoquePerteParAn: 0.02,
+  epoqueMin: 0.6,
+  bonusLangue: 8,
+  // même réalisateur : gros bonus (au plus 3 liens vers ses autres films)
+  bonusArtiste: 25,
+  maxMemeArtiste: 3,
+  // un réalisateur qui écrit ou compose pour un autre film, ça compte (Ladj Ly scénariste d'Athena)
+  ignorerArtisteDansCredits: false,
+  /** Par membre de l'équipe en commun : scénario, musique, image, montage (2 au plus comptés). */
+  bonusProducteur: 12,
+  /** Par acteur en commun (3 au plus comptés). */
+  bonusFeaturing: 10,
+  /** Même studio, multiplié par sa rareté. */
+  bonusLabel: 3,
+  seuil: 42,
+  seuilSecours: 30,
+  maxParOeuvre: 10,
+  libelles: { scene: "pays", prod: "équipe", feat: "casting", label: "studio", memeArtiste: "même réalisateur" },
+};
+
+/*
+ * Réglages des JEUX VIDÉO (onglet « Jeux » du tableur, rempli depuis IGDB).
+ * Même calcul, avec les colonnes des jeux :
+ *   genres        ← Genres (et les Thèmes, avec un peu moins de poids)
+ *   descripteurs  ← Descripteurs (les tiens), Perspective, Modes et Mots-clés
+ *   scènes        ← Série (Zelda, Dark Souls…) : un lien fort
+ *   labels        ← Éditeur
+ *   producteurs   ← Moteur (petit bonus)
+ *   artiste       ← Studio (développeur)
+ */
+export const REGLAGES_JEUX: typeof REGLAGES = {
+  ...REGLAGES,
+  maxGenres: 30,
+  rareteExposant: 1,
+  poidsSecondaires: 0.6,
+  poidsParents: 0,
+  precision: [1, 1, 1],
+  maxDescripteurs: 25,
+  ordreDescripteurs: 0.05,
+  descripteursIgnores: ["single player"],
+  // même série : gros bonus, et deux séries différentes n'éloignent pas deux jeux
+  maxScenes: 35,
+  scenesDifferentes: 1,
+  epoqueTolerance: 5,
+  epoquePerteParAn: 0.02,
+  epoqueMin: 0.6,
+  bonusLangue: 0,
+  // même studio : gros bonus (au plus 3 liens vers ses autres jeux)
+  bonusArtiste: 22,
+  maxMemeArtiste: 3,
+  /** Même moteur de jeu (2 au plus comptés). */
+  bonusProducteur: 3,
+  bonusFeaturing: 0,
+  /** Même éditeur, multiplié par sa rareté (un gros éditeur compte peu). */
+  bonusLabel: 6,
+  seuil: 40,
+  seuilSecours: 30,
+  maxParOeuvre: 10,
+  libelles: { scene: "série", prod: "moteur", feat: "", label: "éditeur", memeArtiste: "même studio" },
 };
 
 export type OeuvreTags = {
@@ -309,7 +405,7 @@ export function calculerCandidats(oeuvres: OeuvreTags[], r = REGLAGES, profondeu
       const sc = ressemblance(scenes, a.id, b.id);
       if (sc.sim > 0) {
         score += r.maxScenes * sc.sim;
-        communs.push(...sc.communs.map((c) => `scène : ${c}`));
+        communs.push(...sc.communs.map((c) => `${r.libelles.scene} : ${c}`));
       }
 
       const g = ressemblance(genres, a.id, b.id);
@@ -332,16 +428,16 @@ export function calculerCandidats(oeuvres: OeuvreTags[], r = REGLAGES, profondeu
       const pasArtiste = (c: { k: string }) => !artistes.includes(c.k);
       for (const c of communsDe(prods, a.id, b.id).filter(pasArtiste).slice(0, 2)) {
         score += r.bonusProducteur;
-        communs.push(`prod : ${c.label}`);
+        communs.push(`${r.libelles.prod} : ${c.label}`);
       }
       for (const c of communsDe(feats, a.id, b.id).filter(pasArtiste).slice(0, 3)) {
         score += r.bonusFeaturing;
-        communs.push(`feat : ${c.label}`);
+        communs.push(`${r.libelles.feat} : ${c.label}`);
       }
       // « n/a » ou « self-released » sur RYM = pas de label : ce n'est pas un point commun
       for (const c of communsDe(labels, a.id, b.id).filter((c) => !PAS_DE_LABEL.has(c.k)).slice(0, 1)) {
         score += r.bonusLabel * labels.rarete(c.k);
-        communs.push(`label : ${c.label}`);
+        communs.push(`${r.libelles.label} : ${c.label}`);
       }
 
       // Scènes : deux régions différentes, sans scène commune, éloignent les albums
@@ -349,7 +445,7 @@ export function calculerCandidats(oeuvres: OeuvreTags[], r = REGLAGES, profondeu
         const sb = new Set(b.scenes.map(normTag));
         if (!a.scenes.some((x) => sb.has(normTag(x)))) {
           score *= r.scenesDifferentes;
-          communs.push("scènes différentes");
+          if (r.scenesDifferentes < 1) communs.push("scènes différentes");
         }
       }
 
@@ -364,7 +460,7 @@ export function calculerCandidats(oeuvres: OeuvreTags[], r = REGLAGES, profondeu
       const memeArtiste = !!a.auteur && (normTag(a.auteur) === normTag(b.auteur) || artistesDe(a.auteur).some((x) => artistesDe(b.auteur).includes(x)));
       if (memeArtiste) {
         score += r.bonusArtiste;
-        communs.push("même artiste");
+        communs.push(r.libelles.memeArtiste);
       }
 
       if (score >= r.seuil) {
