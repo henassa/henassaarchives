@@ -527,7 +527,7 @@ export function Toile({
         const pont = genre(l.a) !== genre(l.b);
         const a = (pont ? 0.55 : 0.22) * (focus !== null ? 0.25 : 1);
         ctx.strokeStyle = pont ? hexA(ACCENT, a) : `rgba(255,255,255,${a})`;
-        ctx.lineWidth = Math.max(0.6, (l.score - REGLAGES.seuil + 3) / 8);
+        ctx.lineWidth = Math.min(7, Math.max(0.6, (l.score - REGLAGES.seuil + 3) / 8));
         const [x1, y1] = ecran(A.x, A.y), [x2, y2] = ecran(B.x, B.y);
         const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
         ctx.beginPath();
@@ -545,7 +545,7 @@ export function Toile({
             if (!B) continue;
             const [x2, y2] = ecran(B.x, B.y);
             ctx.strokeStyle = hexA(ACCENT, 0.9);
-            ctx.lineWidth = Math.max(1, (e.score - REGLAGES.seuil + 3) / 6);
+            ctx.lineWidth = Math.min(8, Math.max(1, (e.score - REGLAGES.seuil + 3) / 6));
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
@@ -642,7 +642,7 @@ export function Toile({
           const d = s.disp.get(id)!;
           const score = s.cible.get(id)?.score ?? REGLAGES.seuil;
           ctx.strokeStyle = hexA(ACCENT, 0.85 * d.a);
-          ctx.lineWidth = Math.max(1, (score - REGLAGES.seuil + 2) / 4);
+          ctx.lineWidth = Math.min(10, Math.max(1, (score - REGLAGES.seuil + 2) / 4));
           ctx.beginPath();
           ctx.moveTo(c.x, c.y);
           ctx.lineTo(d.x, d.y);

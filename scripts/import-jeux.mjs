@@ -193,6 +193,15 @@ async function trouver(titre, annee) {
 }
 
 const noms = (l) => [...new Set((l ?? []).map((x) => x?.name).filter(Boolean))];
+
+/** « Role-playing (RPG) » → « RPG », « Turn-based strategy (TBS) » → « Turn-based strategy », « 4X (explore, …) » → « 4X ». */
+const SIGLES = new Set(["RPG", "RTS", "MMO", "MOBA", "FPS"]);
+const propre = (t) => {
+  const sigle = /\(([A-Z0-9]{2,5})\)\s*$/.exec(t)?.[1];
+  if (sigle && SIGLES.has(sigle)) return sigle;
+  return t.replace(/\s*\([^)]*\)?/g, "").replace(/\s*\/\s*/g, " / ").trim();
+};
+const termes = (l) => [...new Set(noms(l).map(propre).filter(Boolean))];
 const dateIso = (ts) => (typeof ts === "number" && ts > 0 ? new Date(ts * 1000).toISOString().slice(0, 10) : undefined);
 
 const CHAMPS = [
@@ -217,10 +226,10 @@ async function details(id) {
     editeur: societes((c) => c.publisher && !c.developer).slice(0, 3),
     // série : la « collection » IGDB (The Legend of Zelda), et la franchise si elle est différente
     serie: [...new Set([...noms(g.collections), ...noms(g.franchises)])].slice(0, 2),
-    genres: noms(g.genres),
-    themes: noms(g.themes),
-    perspective: noms(g.player_perspectives),
-    modes: noms(g.game_modes),
+    genres: termes(g.genres),
+    themes: termes(g.themes),
+    perspective: termes(g.player_perspectives),
+    modes: termes(g.game_modes),
     plateformes: [...new Set((g.platforms ?? []).map((p) => p?.abbreviation || p?.name).filter(Boolean))],
     moteur: noms(g.game_engines).slice(0, 2),
     motsCles: noms(g.keywords).slice(0, NB_MOTS_CLES),

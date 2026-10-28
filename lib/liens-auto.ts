@@ -150,6 +150,22 @@ export const REGLAGES = {
   libelles: { scene: "scène", prod: "prod", feat: "feat", label: "label", memeArtiste: "même artiste" },
 };
 
+/**
+ * Les films et les jeux prennent le SEUIL, le filet de sécurité (seuilSecours), la règle
+ * « relatif » et le nombre max de liens par œuvre (maxParOeuvre) de la musique, plus haut :
+ * change-les là-haut, ça change pour les trois univers.
+ *
+ * Leurs points (genres, crédits…) sont réglés sur une échelle où le seuil vaudrait « base » :
+ * ils sont agrandis pour que le seuil de la musique ait le même sens chez eux.
+ */
+const POINTS = ["maxGenres", "maxDescripteurs", "maxScenes", "bonusLangue", "bonusArtiste", "bonusProducteur", "bonusFeaturing", "bonusLabel"] as const;
+function memeSeuilQueLaMusique(r: typeof REGLAGES, base: number): typeof REGLAGES {
+  const k = REGLAGES.seuil / base;
+  const out = { ...r };
+  for (const p of POINTS) out[p] = r[p] * k;
+  return { ...out, seuil: REGLAGES.seuil, seuilSecours: REGLAGES.seuilSecours, relatif: REGLAGES.relatif, maxParOeuvre: REGLAGES.maxParOeuvre };
+}
+
 /*
  * Réglages des FILMS (onglet « Films » du tableur).
  * Le même calcul que pour les albums, avec les colonnes des films à la place :
@@ -163,7 +179,7 @@ export const REGLAGES = {
  * Les genres de cinéma sont larges (Drame, Thriller…) : ce sont surtout les
  * personnes en commun qui relient deux films.
  */
-export const REGLAGES_FILMS: typeof REGLAGES = {
+export const REGLAGES_FILMS: typeof REGLAGES = memeSeuilQueLaMusique({
   ...REGLAGES,
   // genres : moins de poids, et pas de familles RYM
   maxGenres: 30,
@@ -193,11 +209,9 @@ export const REGLAGES_FILMS: typeof REGLAGES = {
   bonusFeaturing: 10,
   /** Même studio, multiplié par sa rareté. */
   bonusLabel: 3,
-  seuil: 42,
-  seuilSecours: 30,
-  maxParOeuvre: 10,
   libelles: { scene: "pays", prod: "équipe", feat: "casting", label: "studio", memeArtiste: "même réalisateur" },
-};
+  // points ci-dessus pensés pour un seuil de 42 (agrandis pour le seuil de la musique)
+}, 42);
 
 /*
  * Réglages des JEUX VIDÉO (onglet « Jeux » du tableur, rempli depuis IGDB).
@@ -209,7 +223,7 @@ export const REGLAGES_FILMS: typeof REGLAGES = {
  *   producteurs   ← Moteur (petit bonus)
  *   artiste       ← Studio (développeur)
  */
-export const REGLAGES_JEUX: typeof REGLAGES = {
+export const REGLAGES_JEUX: typeof REGLAGES = memeSeuilQueLaMusique({
   ...REGLAGES,
   maxGenres: 30,
   rareteExposant: 1,
@@ -234,11 +248,9 @@ export const REGLAGES_JEUX: typeof REGLAGES = {
   bonusFeaturing: 0,
   /** Même éditeur, multiplié par sa rareté (un gros éditeur compte peu). */
   bonusLabel: 6,
-  seuil: 40,
-  seuilSecours: 30,
-  maxParOeuvre: 10,
   libelles: { scene: "série", prod: "moteur", feat: "", label: "éditeur", memeArtiste: "même studio" },
-};
+  // points ci-dessus pensés pour un seuil de 40 (agrandis pour le seuil de la musique)
+}, 40);
 
 export type OeuvreTags = {
   id: number;

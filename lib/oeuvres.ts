@@ -573,9 +573,31 @@ function lireFilm(r: Record<string, unknown>, id: number, slug: string, presente
   };
 }
 
+/**
+ * Noms d'IGDB plus lisibles : « Role-playing (RPG) » → « RPG », « Turn-based strategy (TBS) »
+ * → « Turn-based strategy », « 4X (explore, expand, exploit, and exterminate) » → « 4X ».
+ * Les parenthèses ont pu être coupées aux virgules en lisant la cellule : on les recolle d'abord.
+ */
+const SIGLES_JEUX = new Set(["RPG", "RTS", "MMO", "MOBA", "FPS"]);
+function termesJeu(l: string[] | undefined): string[] | undefined {
+  if (!l) return l;
+  const recolles: string[] = [];
+  for (const t of l) {
+    const dernier = recolles[recolles.length - 1];
+    if (dernier !== undefined && dernier.split("(").length > dernier.split(")").length) recolles[recolles.length - 1] = `${dernier}, ${t}`;
+    else recolles.push(t);
+  }
+  const propres = recolles.map((t) => {
+    const sigle = /\(([A-Z0-9]{2,5})\)\s*$/.exec(t)?.[1];
+    if (sigle && SIGLES_JEUX.has(sigle)) return sigle;
+    return t.replace(/\s*\([^)]*\)?/g, "").replace(/\s*\/\s*/g, " / ").trim();
+  });
+  return liste(propres.filter(Boolean));
+}
+
 /** Un jeu vidéo de l'onglet Jeux. Comme les films : pas de familles RYM. */
 function lireJeu(r: Record<string, unknown>, id: number, slug: string, presentes: Map<string, string>, minis: Set<string>): Oeuvre {
-  const genres = liste(r.sousGenres);
+  const genres = termesJeu(liste(r.sousGenres));
   const cover = str(r.cover) ?? pochetteAuto(slug, presentes);
   return {
     id,
@@ -590,9 +612,9 @@ function lireJeu(r: Record<string, unknown>, id: number, slug: string, presentes
     descripteurs: liste(r.descripteurs),
     editeurs: liste(r.editeurs),
     series: liste(r.series),
-    themes: liste(r.themes),
-    perspectives: liste(r.perspectives),
-    modes: liste(r.modes),
+    themes: termesJeu(liste(r.themes)),
+    perspectives: termesJeu(liste(r.perspectives)),
+    modes: termesJeu(liste(r.modes)),
     plateformes: liste(r.plateformes),
     moteurs: liste(r.moteurs),
     motsCles: liste(r.motsCles),
