@@ -18,6 +18,8 @@ export const PLATEFORMES = [
   { key: "deezer", label: "Deezer" },
   { key: "appleMusic", label: "Apple Music" },
   { key: "soundcloud", label: "SoundCloud" },
+  // lien de téléchargement (MediaFire, Drive, WeTransfer…)
+  { key: "telechargement", label: "Télécharger" },
 ] as const;
 
 export type PlateformeKey = (typeof PLATEFORMES)[number]["key"];

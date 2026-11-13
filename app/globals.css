@@ -8379,3 +8379,156 @@ a.jeu-carte:hover .jeu-carte__action {
     grid-template-columns: repeat(auto-fill, minmax(calc(45px * var(--tlz, 1)), 1fr));
   }
 }
+
+/* ============================================================
+   Playlist longue (plus de 20 titres) : liste compacte en colonnes, avec une recherche
+   ============================================================ */
+.tracklist__outils {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.tracklist__recherche {
+  flex: 1 1 260px;
+  max-width: 380px;
+}
+
+.tracklist__recherche input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tracklist__recherche input:focus {
+  outline: 0;
+  border-color: var(--accent);
+}
+
+.tracklist__compte {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tracklist--compact {
+  max-width: 1200px;
+  columns: 3 300px;
+  column-gap: 36px;
+  border-top-width: 2px;
+}
+
+.tracklist--compact > .track {
+  break-inside: avoid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  animation: none;
+}
+
+.tracklist--compact .track__n {
+  font-size: 15px;
+}
+
+.tracklist--compact .track__text {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.tracklist--compact .track__title {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tracklist--compact .track__artist {
+  flex: 1 1 0;
+  min-width: 40px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tracklist--compact .track__link {
+  width: 30px;
+  height: 30px;
+  font-size: 15px;
+}
+
+.tracklist__vide {
+  padding: 14px 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .tracklist--compact .track__text {
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .tracklist--compact .track__artist {
+    flex: none;
+  }
+}
+
+/* Liens d'écoute en haut de la playlist : une rangée compacte, alignée sur la liste */
+.platforms--haut {
+  max-width: 1200px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.platforms--haut .platforms__title {
+  font-size: 22px;
+}
+
+.platforms--haut .platforms__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.platforms--haut .platform {
+  min-height: 46px;
+  padding: 0 16px;
+  gap: 18px;
+  border-width: 2px;
+  font-size: 19px;
+}
+
+/* le téléchargement se distingue : plein, couleur de la rubrique */
+.platforms--haut .platform--telecharger {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.platforms--haut .platform--telecharger:hover,
+.platforms--haut .platform--telecharger:focus-visible {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+}

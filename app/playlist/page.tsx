@@ -46,25 +46,26 @@ export default function PlaylistPage() {
               </div>
             </header>
 
-            {p.morceaux.length > 0 && <Tracklist morceaux={p.morceaux} />}
-
+            {/* les liens d'écoute en premier : visibles sans descendre sous les titres */}
             {p.liens.length > 0 && (
-              <section className="platforms" aria-labelledby="ecouter">
+              <section className="platforms platforms--haut" aria-labelledby="ecouter">
                 <h2 id="ecouter" className="platforms__title">
-                  Écouter sur
+                  Écouter
                 </h2>
                 <ul className="platforms__list">
                   {p.liens.map((l) => (
                     <li key={l.key}>
-                      <a className="platform" href={l.url} target="_blank" rel="noopener noreferrer">
+                      <a className={`platform${l.key === "telechargement" ? " platform--telecharger" : ""}`} href={l.url} target="_blank" rel="noopener noreferrer">
                         <span>{l.label}</span>
-                        <span aria-hidden="true">↗</span>
+                        <span aria-hidden="true">{l.key === "telechargement" ? "↓" : "↗"}</span>
                       </a>
                     </li>
                   ))}
                 </ul>
               </section>
             )}
+
+            {p.morceaux.length > 0 && <Tracklist morceaux={p.morceaux} />}
 
             {p.content.trim() && (
               <div className="prose">
